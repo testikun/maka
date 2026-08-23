@@ -98,20 +98,8 @@ export interface MakaPiTranscriptState {
   renderGeometry: MakaPiRenderGeometry;
   /** Aggregated token usage for statusline display; reset on session switch. */
   usage: MakaPiUsageSummary;
-  /**
-   * Read-only mirror of the runtime's authoritative pending queues, driven by
-   * `queue_update` events and enqueue results. Rendered as the pending bar above
-   * the editor; never the source of truth (the runtime owns that).
-   */
-  steering: string[];
+  /** Host-owned follow-ups that have not started their Turn yet. */
   followup: string[];
-  /**
-   * Messages whose enqueue hit the no-live-owner fallback while a turn was
-   * running (the begin window). CLI-owned, NOT a runtime mirror: the runner
-   * retries the original enqueue until it lands and flushes any remainder
-   * into the next turn at the turn boundary, so the text is never dropped.
-   * Rendered in the pending bar alongside the mirror.
-   */
   /** Current non-durable provider retry progress for the activity strip. */
   providerRetry?: ProviderRetryEvent;
 }
@@ -214,7 +202,6 @@ export function createMakaPiTranscriptState(): MakaPiTranscriptState {
     expandAllThinking: false,
     renderGeometry: { entryFirstLine: undefined, viewportTop: 0 },
     usage: { costUsd: 0, cacheHitInput: 0, cacheMissInput: 0 },
-    steering: [],
     followup: [],
   };
 }
@@ -340,7 +327,6 @@ export function replaceTranscriptWithStoredMessages(
   state.renderGeometry.entryFirstLine = undefined;
   state.usage = { costUsd: 0, cacheHitInput: 0, cacheMissInput: 0 };
   // Queues are per-active-run; a switched/reset session has none pending.
-  state.steering = [];
   state.followup = [];
   for (const msg of messages) {
     if (msg.type === 'token_usage') accumulateUsage(state.usage, msg);
@@ -711,8 +697,8 @@ export function applyMakaSessionEventToTranscript(
       break;
 
     case 'queue_update':
-      // Authoritative snapshot from the runtime; mirror it for the pending bar.
-      state.steering = [...event.steering];
+      // Steering is already a durable transcript message; only future-turn
+      // follow-ups belong in the pending bar.
       state.followup = [...event.followup];
       break;
 
@@ -1439,25 +1425,17 @@ function formatElapsedDuration(elapsedMs: number): string {
 }
 
 /**
- * Pending-queue bar shown above the editor while messages are queued. Each
- * steering message reads `Steering: <text>` (injected into the running turn at
- * the next step boundary); each followup reads `Queued: <text>` (opens the next
- * turn). A trailing hint reminds the user that alt+↑ takes them back to edit.
- * Renders nothing when both queues are empty.
+ * Pending follow-ups shown above the editor before their Turn starts. A
+ * trailing hint reminds the user that alt+↑ takes them back to edit.
  */
 export function renderMakaPiPendingQueue(
   state: MakaPiTranscriptState,
   width: number,
   platform: NodeJS.Platform = process.platform,
 ): string[] {
-  if (state.steering.length === 0 && state.followup.length === 0) return [];
+  if (state.followup.length === 0) return [];
   const safeWidth = Math.max(1, width);
   const lines: string[] = [];
-  for (const text of state.steering) {
-    lines.push(
-      fitLine(`${ansi.accent('Steering:')} ${ansi.dim(firstLinePreview(text))}`, safeWidth),
-    );
-  }
   for (const text of state.followup) {
     lines.push(fitLine(`${ansi.dim('Queued:')} ${ansi.dim(firstLinePreview(text))}`, safeWidth));
   }

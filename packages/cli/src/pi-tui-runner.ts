@@ -801,7 +801,6 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
   // lag a step-boundary consumption and would resurrect an already-consumed
   // steering message for a double execution. Clears the local mirror.
   const refillEditorFromQueues = (joined: string) => {
-    state.steering = [];
     state.followup = [];
     if (!joined) return;
     const draft = editor.getText();

@@ -372,7 +372,6 @@ describe('Maka Pi TUI transcript', () => {
       event({ type: 'tool_start', toolUseId: 'tool-1', toolName: 'Read', args: {} }),
     );
     state.entries.push({ kind: 'notice', level: 'error', text: 'Turn failed: provider_error' });
-    state.steering = ['Keep going'];
 
     assert.equal(
       hydrateToolsWithStoredMessages(state, 'turn-1', [
@@ -403,7 +402,6 @@ describe('Maka Pi TUI transcript', () => {
     );
     assert.deepEqual(tool?.input, { path: 'README.md' });
     assert.deepEqual(tool?.result, { kind: 'text', text: 'README contents' });
-    assert.deepEqual(state.steering, ['Keep going']);
     assert.equal(state.entries.at(-1)?.kind, 'notice');
   });
 

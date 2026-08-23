@@ -1939,7 +1939,7 @@ describe('Maka Pi TUI runner', () => {
     await run;
   });
 
-  test('Enter during a turn steers the running turn and shows a pending Steering line', async () => {
+  test('Enter during a turn submits steering without creating a pending queue row', async () => {
     const terminal = new FakeTerminal();
     const driver = new SteeringTurnDriver();
     const run = runMakaPiTui({
@@ -1958,10 +1958,13 @@ describe('Maka Pi TUI runner', () => {
 
     terminal.input('also handle Y');
     terminal.input('\r');
-    await waitFor(() =>
-      plainTerminalOutput(terminal.screenOutput()).includes('Steering: also handle Y'),
-    );
+    await waitFor(() => driver.steered.length === 1);
+    await delay(0);
     assert.deepEqual(driver.steered, ['also handle Y']);
+    assert.equal(
+      plainTerminalOutput(terminal.screenOutput()).includes('Steering: also handle Y'),
+      false,
+    );
 
     terminal.input('\x1b');
     terminal.input('\x1b');
@@ -2082,9 +2085,9 @@ describe('Maka Pi TUI runner', () => {
     await waitFor(() => terminal.progressStates.at(-1) === true);
 
     terminal.input('reword this later');
-    terminal.input('\r'); // steer
+    terminal.input('\x1b\r'); // Alt+Enter queues a follow-up
     await waitFor(() =>
-      plainTerminalOutput(terminal.screenOutput()).includes('Steering: reword this later'),
+      plainTerminalOutput(terminal.screenOutput()).includes('Queued: reword this later'),
     );
 
     terminal.input('\x1b[1;3A'); // Alt+Up
@@ -2092,9 +2095,7 @@ describe('Maka Pi TUI runner', () => {
     // The pending bar is cleared and the text is back in the editor.
     await waitFor(() => {
       const screen = plainTerminalOutput(terminal.screenOutput());
-      return (
-        !screen.includes('Steering: reword this later') && screen.includes('reword this later')
-      );
+      return !screen.includes('Queued: reword this later') && screen.includes('reword this later');
     });
 
     terminal.input('\x1b');
@@ -2129,14 +2130,12 @@ describe('Maka Pi TUI runner', () => {
     await waitFor(() => terminal.progressStates.at(-1) === true);
 
     terminal.input('reword this later');
-    terminal.input('\r'); // steer — queued synchronously in the driver
+    terminal.input('\x1b\r'); // follow-up queued synchronously in the driver
     terminal.input('\x1b[1;3A'); // Alt+Up in the same tick, mirror still empty
     await waitFor(() => driver.retractCalls === 1);
     await waitFor(() => {
       const screen = plainTerminalOutput(terminal.screenOutput());
-      return (
-        screen.includes('reword this later') && !screen.includes('Steering: reword this later')
-      );
+      return screen.includes('reword this later') && !screen.includes('Queued: reword this later');
     });
 
     terminal.input('\x1b');
@@ -2166,9 +2165,9 @@ describe('Maka Pi TUI runner', () => {
     await waitFor(() => terminal.progressStates.at(-1) === true);
 
     terminal.input('unfinished idea');
-    terminal.input('\r'); // steer
+    terminal.input('\x1b\r'); // queue a follow-up
     await waitFor(() =>
-      plainTerminalOutput(terminal.screenOutput()).includes('Steering: unfinished idea'),
+      plainTerminalOutput(terminal.screenOutput()).includes('Queued: unfinished idea'),
     );
 
     terminal.input('\x1b');
@@ -2178,7 +2177,7 @@ describe('Maka Pi TUI runner', () => {
     // Queue cleared from the pending bar; text preserved in the editor.
     await waitFor(() => {
       const screen = plainTerminalOutput(terminal.screenOutput());
-      return !screen.includes('Steering: unfinished idea') && screen.includes('unfinished idea');
+      return !screen.includes('Queued: unfinished idea') && screen.includes('unfinished idea');
     });
 
     terminal.input('\x03'); // clear the refilled draft
@@ -2206,9 +2205,7 @@ describe('Maka Pi TUI runner', () => {
 
     terminal.input('already consumed');
     terminal.input('\r'); // steer
-    await waitFor(() =>
-      plainTerminalOutput(terminal.screenOutput()).includes('Steering: already consumed'),
-    );
+    await waitFor(() => driver.steered.includes('already consumed'));
 
     terminal.input('still queued');
     terminal.input('\x1b\r'); // Alt+Enter queues a followup
@@ -2216,8 +2213,8 @@ describe('Maka Pi TUI runner', () => {
       plainTerminalOutput(terminal.screenOutput()).includes('Queued: still queued'),
     );
 
-    // The turn consumes the steering message at a step boundary; the CLI
-    // mirror has not seen a queue_update yet and still shows it.
+    // The turn consumes the steering message at a step boundary; only the
+    // future-turn follow-up remains retractable.
     driver.consumeSteering();
 
     terminal.input('\x1b');
@@ -5539,9 +5536,7 @@ describe('Maka Pi TUI runner', () => {
       // text for the running turn, exactly like any other steered message.
       terminal.input('/skill:review');
       terminal.input('\r');
-      await waitFor(() =>
-        plainTerminalOutput(terminal.screenOutput()).includes('Steering: /skill:review'),
-      );
+      await waitFor(() => driver.steered.includes('/skill:review'));
       assert.deepEqual(driver.steered, ['/skill:review']);
 
       terminal.input('\x1b');

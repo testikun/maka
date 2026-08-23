@@ -4813,6 +4813,18 @@ export class SessionManager {
   }
 
   /** Queue a user message for mid-turn injection at the next step boundary. */
+  commitSteeringAdmission(input: {
+    sessionId: string;
+    turnId: string;
+    runId: string;
+    messageId: string;
+    content: MessageContent;
+  }): Promise<void> {
+    const commit = this.runtimeKernel.commitSteeringAdmission;
+    if (!commit) throw new Error('Runtime steering admission authority is unavailable');
+    return commit.call(this.runtimeKernel, input);
+  }
+
   steer(sessionId: string, text: string): QueueEnqueueOutcome {
     return this.runtimeKernel.steer(sessionId, text);
   }

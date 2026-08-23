@@ -28,6 +28,7 @@ import { isSessionInlineRun } from '@maka/core/agent-run';
 import type {
   ActiveInteractionRequestEvent,
   CompleteEvent,
+  MessageContent,
   QueueEnqueueOutcome,
   QueueUpdateEvent,
   SessionEvent,
@@ -168,6 +169,13 @@ export interface RuntimeKernelLike {
   respondToSandboxBoundary(sessionId: string, response: SandboxBoundaryResponse): Promise<void>;
   listActiveInteractions?(sessionId: string): ActiveInteractionRequestEvent[];
   respondToUserQuestion?(sessionId: string, response: UserQuestionResponse): Promise<void>;
+  commitSteeringAdmission?(input: {
+    sessionId: string;
+    turnId: string;
+    runId: string;
+    messageId: string;
+    content: MessageContent;
+  }): Promise<void>;
   /** Queue a user message for mid-turn injection at the next step boundary. */
   steer(sessionId: string, text: string): QueueEnqueueOutcome;
   /** Queue a user message to open the turn after the current one finishes. */
@@ -2562,6 +2570,26 @@ export class RuntimeKernel implements RuntimeKernelLike {
     }
     state.sink = undefined;
     state.activeTurnId = undefined;
+  }
+
+  async commitSteeringAdmission(input: {
+    sessionId: string;
+    turnId: string;
+    runId: string;
+    messageId: string;
+    content: MessageContent;
+  }): Promise<void> {
+    if (!this.hasActiveRun(input.sessionId, input.runId, input.turnId)) {
+      throw new Error('Steering admission no longer matches the active root Turn');
+    }
+    await this.deps.store.appendMessage(input.sessionId, {
+      type: 'user',
+      id: input.messageId,
+      turnId: input.turnId,
+      ts: this.deps.now(),
+      ...structuredClone(input.content),
+      steeringEventId: input.messageId,
+    });
   }
 
   hasActiveRuns(sessionId: string): boolean {

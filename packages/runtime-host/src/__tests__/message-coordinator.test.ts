@@ -332,6 +332,58 @@ test('full snapshot preflight rejection leaves queue, receipt, residency, and pu
   await fixture.coordinator.close();
 });
 
+test('persists a steering message before admitting it to the active Turn queue', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+
+  const accepted = await submit(
+    fixture,
+    'durable-steering',
+    'persist before queueing',
+    'current_turn',
+  );
+
+  assert.equal(accepted.ok && accepted.result.disposition, 'steering');
+  assert.deepEqual(fixture.steeringAdmissions, [
+    {
+      sessionId: ROOT.sessionId,
+      turnId: ROOT.turnId,
+      runId: ROOT.runId,
+      messageId: 'durable-steering',
+      content: { text: 'persist before queueing' },
+    },
+  ]);
+  assert.equal(fixture.coordinator.projection(ROOT.sessionId).steering.length, 1);
+
+  await fixture.coordinator.handlers['queue.retract'](
+    { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-durable' },
+    operationContext(),
+  );
+  fixture.coordinator.abandonRootReservation(ROOT);
+  await fixture.coordinator.close();
+});
+
+test('does not expose steering when its durable admission fails', async () => {
+  const changedSessions: string[] = [];
+  const fixture = createFixture((sessionId) => changedSessions.push(sessionId));
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const delay = fixture.delaySteeringAdmission(new Error('durable admission failed'));
+
+  const submission = submit(fixture, 'failed-steering', 'must not become visible', 'current_turn');
+  await delay.started.promise;
+  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
+  assert.deepEqual(changedSessions, []);
+  delay.release.resolve(undefined);
+
+  await assert.rejects(submission, /durable admission failed/);
+  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
+  assert.equal(fixture.liveResidencies(), 0);
+  assert.deepEqual(changedSessions, []);
+
+  fixture.coordinator.abandonRootReservation(ROOT);
+  await fixture.coordinator.close();
+});
+
 test('queue admission rejects content that cannot form a durable follow-up Turn', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
@@ -2106,6 +2158,20 @@ function createFixture(
     | undefined;
   const receipts = new Map<string, RootTurnSourceMessageReceipt>();
   const events: RuntimeEvent[] = [];
+  const steeringAdmissions: Array<{
+    sessionId: string;
+    turnId: string;
+    runId: string;
+    messageId: string;
+    content: MessageContent;
+  }> = [];
+  let steeringAdmissionDelay:
+    | {
+        readonly started: ReturnType<typeof deferred<void>>;
+        readonly release: ReturnType<typeof deferred<void>>;
+        readonly error?: Error;
+      }
+    | undefined;
   const operationReceipts = new Map<string, MessageOperationReceipt>();
   const receiptDelays = new Map<
     string,
@@ -2161,6 +2227,15 @@ function createFixture(
       return { turnId };
     },
     prepareMessage: (input) => prepareMessage(input),
+    commitSteeringAdmission: async (input) => {
+      steeringAdmissions.push(structuredClone(input));
+      const delay = steeringAdmissionDelay;
+      if (!delay) return;
+      steeringAdmissionDelay = undefined;
+      delay.started.resolve(undefined);
+      await delay.release.promise;
+      if (delay.error) throw delay.error;
+    },
     claimStop: async (_input, commitQueueFence) => {
       commitQueueFence();
       return {
@@ -2230,6 +2305,12 @@ function createFixture(
     startCalls: () => startCalls,
     events,
     receipts,
+    steeringAdmissions,
+    delaySteeringAdmission: (error?: Error) => {
+      const delay = { started: deferred<void>(), release: deferred<void>(), error };
+      steeringAdmissionDelay = delay;
+      return delay;
+    },
     stopClaimed,
     resolveTerminal: terminal.resolve,
     liveResidencies: () => liveResidencies,

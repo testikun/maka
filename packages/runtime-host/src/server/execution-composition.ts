@@ -453,6 +453,8 @@ export async function createExecutionRuntimeHostComposition(
       startFromMessage: (input, admission) =>
         requireRootCoordinator(rootCoordinator).startFromMessage(input, admission),
       prepareMessage: (input) => requireRootCoordinator(rootCoordinator).prepareMessage(input),
+      commitSteeringAdmission: (input) =>
+        requireRootCoordinator(rootCoordinator).commitSteeringAdmission(input),
       claimStop: (input, commitQueueFence, admission) =>
         requireRootCoordinator(rootCoordinator).claimStop(input, commitQueueFence, admission),
     };

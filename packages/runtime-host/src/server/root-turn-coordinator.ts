@@ -1085,6 +1085,16 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     });
   }
 
+  commitSteeringAdmission(input: {
+    readonly sessionId: string;
+    readonly turnId: string;
+    readonly runId: string;
+    readonly messageId: string;
+    readonly content: MessageContent;
+  }): Promise<void> {
+    return this.runCommand(() => this.manager.commitSteeringAdmission(input));
+  }
+
   prepareMessage(
     input: HostMessagePreparationInput,
   ): Promise<

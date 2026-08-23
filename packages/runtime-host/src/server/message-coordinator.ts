@@ -143,6 +143,13 @@ export interface HostMessageRootPort {
     | { readonly kind: 'ready'; readonly content: MessageContent }
     | { readonly kind: 'rejected'; readonly error: string }
   >;
+  commitSteeringAdmission(input: {
+    readonly sessionId: string;
+    readonly turnId: string;
+    readonly runId: string;
+    readonly messageId: string;
+    readonly content: MessageContent;
+  }): Promise<void>;
   claimStop(
     input: Omit<TurnInterruptInput, 'originHostEpoch' | 'interruptId'>,
     commitQueueFence: () => QueueFenceResult,
@@ -734,6 +741,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           continue;
         }
         const result = { disposition, queueRevision: candidateRevision + 1 } as const;
+        if (disposition === 'steering') {
+          await this.#root.commitSteeringAdmission({
+            sessionId: input.sessionId,
+            turnId: rootState.turnId,
+            runId: rootState.runId,
+            messageId: input.messageId,
+            content: payload.content,
+          });
+        }
         const residency = this.#acquireResidency();
         const entry: LiveEntry = {
           entryId,

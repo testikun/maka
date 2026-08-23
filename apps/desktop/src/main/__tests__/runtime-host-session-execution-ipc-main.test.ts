@@ -855,16 +855,11 @@ test("routes per-entry queue mutations to the Runtime Host", async () => {
   );
 });
 
-test("binds steer and stop to Host-owned queue and active Turn identities", async () => {
-  const submits: unknown[] = [];
+test("binds stop to the Host-owned active Turn identity", async () => {
   const interrupts: unknown[] = [];
   const stopLifecycle: string[] = [];
   let sequence = 0;
   const client = executionClient({
-    submitMessage: async (input) => {
-      submits.push(input);
-      return { disposition: "steering", queueRevision: 2 };
-    },
     interruptTurn: async (input) => {
       stopLifecycle.push("interrupt");
       interrupts.push(input);
@@ -900,12 +895,6 @@ test("binds steer and stop to Host-owned queue and active Turn identities", asyn
     ipc,
   );
 
-  assert.deepEqual(
-    await ipc.invoke("sessions:steer", "session-1", "  Continue  "),
-    {
-      kind: "queued",
-    },
-  );
   await ipc.invoke("sessions:stop", "session-1", {
     source: "stop_button",
     expectedTurnId: "turn-unrelated",
@@ -917,18 +906,10 @@ test("binds steer and stop to Host-owned queue and active Turn identities", asyn
   });
   assert.deepEqual(stopLifecycle, ["teardown", "interrupt"]);
 
-  assert.deepEqual(submits, [
-    {
-      sessionId: "session-1",
-      messageId: "id-1",
-      content: { text: "Continue" },
-      placement: "current_turn",
-    },
-  ]);
   assert.deepEqual(interrupts, [
     {
       sessionId: "session-1",
-      interruptId: "id-2",
+      interruptId: "id-1",
       turnId: "turn-1",
       runId: "run-1",
     },

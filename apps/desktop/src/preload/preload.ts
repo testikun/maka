@@ -111,7 +111,6 @@ import type {
   SessionCommand,
   SessionEvent,
   ShellRunUpdate,
-  QueueEnqueueOutcome,
 } from '@maka/core/events';
 import type { UserQuestionResponse } from '@maka/core/user-question';
 import type { PermissionMode } from '@maka/core/permission';
@@ -1515,9 +1514,6 @@ const makaBridge = {
       input?: { source?: 'stop_button'; expectedTurnId?: string },
     ): Promise<void> {
       return invokeSessionRuntimeHost('sessions:stop', sessionId, input);
-    },
-    steer(sessionId: string, text: string): Promise<QueueEnqueueOutcome> {
-      return invokeSessionRuntimeHost('sessions:steer', sessionId, text);
     },
     async enqueue(
       sessionId: string,

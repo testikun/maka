@@ -121,7 +121,10 @@ export function createDesktopWorkbarServices(
         bridge.sessions.abandonSessionCopy(sourceSessionId, copyId),
       send: (sessionId, command) => bridge.sessions.send(sessionId, command),
       stop: (sessionId) => bridge.sessions.stop(sessionId),
-      steer: (sessionId, text) => bridge.sessions.steer(sessionId, text),
+      steer: async (sessionId, text) => {
+        await bridge.sessions.enqueue(sessionId, 'current_turn', { text });
+        return { kind: 'queued' };
+      },
       setPermissionMode: (sessionId, mode) =>
         bridge.sessions.setPermissionMode(sessionId, mode),
       regenerateTurn: (sessionId, input) =>

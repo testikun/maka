@@ -231,7 +231,9 @@ test('returning to a live conversation settles output accumulated while away', a
         unsubscribe();
         resolve();
       });
-      void window.maka.sessions.steer(sessionId, steering).catch((error) => {
+      void window.maka.sessions
+        .enqueue(sessionId, 'current_turn', { text: steering })
+        .catch((error) => {
         window.clearTimeout(timeout);
         unsubscribe();
         reject(error);

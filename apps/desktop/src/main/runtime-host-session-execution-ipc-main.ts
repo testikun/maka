@@ -275,8 +275,8 @@ export function registerRuntimeHostSessionExecutionIpc(
       try {
         startResult = await deps.client.startTurn(startInput);
       } catch (error) {
-        // The renderer routes text at a session it sees as running to
-        // `sessions:steer`, but its view can lag the Host: another window, a
+        // The renderer routes text at a session it sees as running to the
+        // current-turn message queue, but its view can lag the Host: another window, a
         // Bot, or a Goal continuation may have opened the root Turn first, and
         // that race surfaced here as a session_busy send failure that dropped
         // the user's message (#1954). `turn.message.submit` resolves the race
@@ -344,19 +344,6 @@ export function registerRuntimeHostSessionExecutionIpc(
     },
   );
 
-  ipcMain.handle(
-    "sessions:steer",
-    async (_event, sessionId: string, text: unknown) => {
-      const content = steeringContent(text);
-      await deps.client.submitMessage({
-        sessionId,
-        messageId: newId(),
-        content: { text: content },
-        placement: "current_turn",
-      });
-      return { kind: "queued" as const };
-    },
-  );
   ipcMain.handle(
     "sessions:enqueue",
     async (event, sessionId: string, placement: unknown, value: unknown) => {
@@ -785,17 +772,6 @@ function requiredSequence(value: unknown, label: string): number {
     throw new Error(`Invalid ${label} sequence`);
   }
   return value as number;
-}
-
-function steeringContent(value: unknown): string {
-  if (
-    typeof value !== "string" ||
-    value.trim().length === 0 ||
-    value.length > 128_000
-  ) {
-    throw new Error("Invalid steering text");
-  }
-  return value.trim();
 }
 
 function isTerminalStatus(status: string): boolean {

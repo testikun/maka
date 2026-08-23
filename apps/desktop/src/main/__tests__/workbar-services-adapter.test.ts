@@ -197,7 +197,7 @@ describe('createDesktopWorkbarServices', () => {
         'sessions.abandonSessionCopy',
         'sessions.send',
         'sessions.stop',
-        'sessions.steer',
+        'sessions.enqueue',
         'sessions.setPermissionMode',
         'sessions.regenerateTurn',
         'sessions.respondToSandboxBoundary',
@@ -212,6 +212,11 @@ describe('createDesktopWorkbarServices', () => {
     assert.deepEqual(calls.find((call) => call.name === 'artifacts.readText')?.args, [
       's',
       'a',
+    ]);
+    assert.deepEqual(calls.find((call) => call.name === 'sessions.enqueue')?.args, [
+      'fork',
+      'current_turn',
+      { text: 'more' },
     ]);
     assert.deepEqual(calls.find((call) => call.name === 'inspector.trace')?.args, [
       's',

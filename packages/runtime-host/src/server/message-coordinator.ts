@@ -799,18 +799,18 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     if (
       !retractionResultFits(
         state,
-        state.revision + (queuedEntryCount(state) > 0 ? 1 : 0),
+        state.revision + (state.followup.length > 0 ? 1 : 0),
         MESSAGE_OPERATION_RESULT_MAX_BYTES,
       )
     ) {
       return failure('session_busy', 'Retract result exceeds protocol capacity');
     }
-    const queued = [...state.steering, ...state.followup];
+    const queued = [...state.followup];
     const result = {
       queueRevision: state.revision + (queued.length > 0 ? 1 : 0),
       retracted: queued.map(retractedSnapshot),
     };
-    const retracted = this.#retractQueued(state);
+    const retracted = this.#retractFollowups(state);
     if (retracted.length > 0) this.#mutated(state);
     if (!isDeepStrictEqual(result, { queueRevision: state.revision, retracted })) {
       throw new RuntimeMessageAuthorityInvariantError(
@@ -981,8 +981,11 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     }
     const queued = findQueuedEntry(state, input.entryId);
     if (!queued) {
-      if ([...state.inFlight.values()].some((entry) => entry.entryId === input.entryId)) {
-        return failure('operation_conflict', 'Message entry is already being delivered');
+      if (
+        state.steering.some((entry) => entry.entryId === input.entryId) ||
+        [...state.inFlight.values()].some((entry) => entry.entryId === input.entryId)
+      ) {
+        return failure('operation_conflict', 'Sent steering messages cannot be retracted');
       }
       return failure('not_found', 'Message queue entry does not exist');
     }
@@ -1577,7 +1580,8 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       );
     }
     state.phase = 'closed';
-    const retracted = this.#retractQueued(state);
+    const retracted = this.#retractFollowups(state);
+    this.#discardQueuedSteering(state);
     state.generation += 1;
     this.#mutated(state);
     const result = { queueRevision: state.revision, retracted };
@@ -1585,12 +1589,17 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     return result;
   }
 
-  #retractQueued(state: SessionState): RetractedMessageSnapshot[] {
-    const entries = [...state.steering, ...state.followup];
-    state.steering = [];
+  #retractFollowups(state: SessionState): RetractedMessageSnapshot[] {
+    const entries = state.followup;
     state.followup = [];
     for (const entry of entries) this.#releaseEntry(entry);
     return entries.map(retractedSnapshot);
+  }
+
+  #discardQueuedSteering(state: SessionState): void {
+    const entries = state.steering;
+    state.steering = [];
+    for (const entry of entries) this.#releaseEntry(entry);
   }
 
   #commitTransition(state: SessionState): void {
@@ -1735,13 +1744,9 @@ function findQueuedEntry(
   state: SessionState,
   entryId: string,
 ): { readonly entry: LiveEntry; remove(): void } | undefined {
-  for (const queue of [state.steering, state.followup]) {
-    const index = queue.findIndex((entry) => entry.entryId === entryId);
-    const entry = index === -1 ? undefined : queue[index];
-    if (!entry) continue;
-    return { entry, remove: () => queue.splice(index, 1) };
-  }
-  return undefined;
+  const index = state.followup.findIndex((entry) => entry.entryId === entryId);
+  const entry = index === -1 ? undefined : state.followup[index];
+  return entry ? { entry, remove: () => state.followup.splice(index, 1) } : undefined;
 }
 
 function relocateInlineReferences(
@@ -1934,7 +1939,7 @@ function retractionResultFits(
   queueRevision: number,
   maxBytes: number,
 ): boolean {
-  const retracted = [...state.steering, ...state.followup].map(retractedSnapshot);
+  const retracted = state.followup.map(retractedSnapshot);
   return fitsEncodedByteLimit({ queueRevision, retracted }, maxBytes);
 }
 

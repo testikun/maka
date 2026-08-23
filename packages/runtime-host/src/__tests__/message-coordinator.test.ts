@@ -328,7 +328,7 @@ test('full snapshot preflight rejection leaves queue, receipt, residency, and pu
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-capacity' },
     operationContext(),
   );
-  fixture.coordinator.abandonRootReservation(ROOT);
+  completeActiveRoot(fixture);
   await fixture.coordinator.close();
 });
 
@@ -359,7 +359,7 @@ test('persists a steering message before admitting it to the active Turn queue',
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-durable' },
     operationContext(),
   );
-  fixture.coordinator.abandonRootReservation(ROOT);
+  completeActiveRoot(fixture);
   await fixture.coordinator.close();
 });
 
@@ -408,7 +408,7 @@ test('queue admission rejects content that cannot form a durable follow-up Turn'
     operationContext(),
   );
   assert.equal(retracted.ok, true);
-  fixture.coordinator.abandonRootReservation(ROOT);
+  completeActiveRoot(fixture);
   await fixture.coordinator.close();
 });
 
@@ -531,15 +531,16 @@ test('entry retract removes one queued entry, replays its receipt, and rejects s
     },
     operationContext(),
   );
-  assert.equal(steering.ok, true);
-  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
-  assert.equal(fixture.liveResidencies(), 1);
+  assert.equal(steering.ok, false);
+  if (!steering.ok) assert.equal(steering.error.code, 'operation_conflict');
+  assert.equal(fixture.coordinator.projection(ROOT.sessionId).steering.length, 1);
+  assert.equal(fixture.liveResidencies(), 2);
 
   await fixture.coordinator.handlers['queue.retract'](
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-entry' },
     operationContext(),
   );
-  fixture.coordinator.abandonRootReservation(ROOT);
+  completeActiveRoot(fixture);
   await fixture.coordinator.close();
 });
 
@@ -1041,6 +1042,8 @@ test('submit mutation is visible before its receipt and concurrent retries share
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-submit-cut' },
     operationContext(),
   );
+  const cleanupLeases = owner.pull();
+  owner.ack(cleanupLeases.map((lease) => lease.id));
   owner.release();
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
@@ -1108,6 +1111,8 @@ test('retract mutation is visible while its receipt waits and preserves its exac
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-retract-cut' },
     operationContext(),
   );
+  const remaining = owner.pull();
+  owner.ack(remaining.map((lease) => lease.id));
   owner.release();
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
@@ -1789,6 +1794,8 @@ test('submit retries use keyed receipts and durable proof while old-Epoch rich c
     operationContext(),
   );
   assert.equal(retracted.ok, true);
+  const cleanupLeases = owner.pull();
+  owner.ack(cleanupLeases.map((lease) => lease.id));
   owner.release();
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
@@ -2127,8 +2134,10 @@ test('canonical retry omits redundant display text and empty ordered refs', asyn
   );
   assert.equal(retracted.ok, true);
   if (retracted.ok) {
-    assert.deepEqual(retracted.result.retracted[0]?.content, { text: 'same' });
+    assert.deepEqual(retracted.result.retracted, []);
   }
+  const remaining = owner.pull();
+  owner.ack(remaining.map((lease) => lease.id));
   owner.release();
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
@@ -2360,6 +2369,16 @@ function memoryReceiptStore(
       return snapshot;
     },
   };
+}
+
+function completeActiveRoot(fixture: ReturnType<typeof createFixture>): void {
+  const owner = fixture.coordinator.bindRun(ROOT);
+  const leases = owner.pull();
+  owner.ack(leases.map((lease) => lease.id));
+  owner.release();
+  const batch = fixture.coordinator.beginTerminalTransition(ROOT);
+  assert.equal(batch.sources.length, 0);
+  fixture.coordinator.completeIdle(batch);
 }
 
 function submit(

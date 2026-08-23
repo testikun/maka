@@ -1496,6 +1496,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       return {
         id: leaseId,
         messageId: entry.messageId,
+        eventId: entry.messageId,
         content: normalizeMessageContent(entry.modelContent),
         submittedContentDigest: messageContentDigest(entry.content),
       };

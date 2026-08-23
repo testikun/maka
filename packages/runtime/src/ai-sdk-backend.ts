@@ -4514,7 +4514,7 @@ export class AiSdkBackend implements AgentBackend {
         }
         // Materialize provider content before publishing the durable event.
         // After consumption there must be no fallible gap before ack/injection.
-        const eventId = lease.messageId;
+        const eventId = lease.eventId ?? this.newId();
         const providerContent = await this.appendImageParts(
           scope.imageBudget,
           buildSteeringEnvelope(formatTextWithInlineRefs(lease.content.text, lease.content)),

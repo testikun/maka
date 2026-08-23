@@ -152,6 +152,8 @@ export interface SteeringLease {
   messageId: string;
   /** Ephemeral delivery lease identity used only for ack/nack settlement. */
   id: string;
+  /** Runtime event identity fixed when admission already materialized the message. */
+  eventId?: string;
   content: MessageContent;
   /** Digest of the canonical user submission before host-side preparation. */
   submittedContentDigest?: `sha256:${string}`;

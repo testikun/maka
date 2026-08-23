@@ -384,6 +384,52 @@ test('does not expose steering when its durable admission fails', async () => {
   await fixture.coordinator.close();
 });
 
+test('re-admits a durable steering message after admission persistence loses its queue commit', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const delay = fixture.delaySteeringAdmission(new Error('host stopped after persistence'));
+
+  const interrupted = submit(
+    fixture,
+    'recoverable-steering',
+    'recover after restart',
+    'current_turn',
+  );
+  await delay.started.promise;
+  delay.release.resolve(undefined);
+  await assert.rejects(interrupted, /host stopped after persistence/);
+
+  const restarted = fixture.restart('epoch-2');
+  restarted.reserveRootTurn(ROOT);
+  const recovered = await restarted.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      messageId: 'recoverable-steering',
+      content: { text: 'recover after restart' },
+      placement: 'current_turn',
+    },
+    operationContext(),
+  );
+
+  assert.deepEqual(recovered, {
+    ok: true,
+    result: { disposition: 'steering', queueRevision: 1 },
+  });
+  const owner = restarted.bindRun(ROOT);
+  const leases = owner.pull();
+  assert.deepEqual(
+    leases.map((lease) => ({ messageId: lease.messageId, content: lease.content })),
+    [{ messageId: 'recoverable-steering', content: { text: 'recover after restart' } }],
+  );
+  assert.equal(fixture.steeringAdmissions.length, 1);
+  owner.ack([leases[0]!.id]);
+  owner.release();
+  const batch = restarted.beginTerminalTransition(ROOT);
+  restarted.completeIdle(batch);
+  await restarted.close();
+});
+
 test('queue admission rejects content that cannot form a durable follow-up Turn', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
@@ -2174,6 +2220,10 @@ function createFixture(
     messageId: string;
     content: MessageContent;
   }> = [];
+  const durableSteeringAdmissions = new Map<
+    string,
+    { sessionId: string; turnId: string; messageId: string; content: MessageContent }
+  >();
   let steeringAdmissionDelay:
     | {
         readonly started: ReturnType<typeof deferred<void>>;
@@ -2238,6 +2288,12 @@ function createFixture(
     prepareMessage: (input) => prepareMessage(input),
     commitSteeringAdmission: async (input) => {
       steeringAdmissions.push(structuredClone(input));
+      durableSteeringAdmissions.set(input.messageId, {
+        sessionId: input.sessionId,
+        turnId: input.turnId,
+        messageId: input.messageId,
+        content: structuredClone(input.content),
+      });
       const delay = steeringAdmissionDelay;
       if (!delay) return;
       steeringAdmissionDelay = undefined;
@@ -2258,6 +2314,8 @@ function createFixture(
     root,
     durableProof: {
       readRootTurnSourceMessageReceipt: async (_sessionId, messageId) => receipts.get(messageId),
+      readSteeringAdmission: async (_sessionId, messageId) =>
+        durableSteeringAdmissions.get(messageId),
       readImmutableSteeringMessageProof: async (_sessionId, messageId) => {
         const event = events.find(
           (candidate) =>
@@ -2305,6 +2363,10 @@ function createFixture(
   coordinator = new HostMessageCoordinator(options);
   return {
     coordinator,
+    restart: (hostEpoch: string) => {
+      coordinator = new HostMessageCoordinator({ ...options, hostEpoch });
+      return coordinator;
+    },
     setRootState: (state: HostMessageRootState) => {
       rootState = state;
     },

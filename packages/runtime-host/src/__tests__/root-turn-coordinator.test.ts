@@ -2175,6 +2175,7 @@ test('hosted linked child roots share admission, message, terminal, and stop aut
       durableProof: {
         readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
           stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
+        readSteeringAdmission: async () => undefined,
         readImmutableSteeringMessageProof: (sessionId, messageId) =>
           stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
       },
@@ -4801,6 +4802,7 @@ async function createFailureFixture(options: {
     durableProof: {
       readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
+      readSteeringAdmission: async () => undefined,
       readImmutableSteeringMessageProof: (sessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
     },

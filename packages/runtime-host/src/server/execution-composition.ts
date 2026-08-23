@@ -23,6 +23,7 @@ import {
   NO_REAL_CONNECTION_CODE,
 } from '@maka/core/connection-error-copy';
 import type { RuntimeExecutionConnection } from '@maka/core/llm-connections';
+import { normalizeMessageContent } from '@maka/core/events';
 import { generalizedErrorMessage } from '@maka/core/redaction';
 import { emptyPlanSessionState } from '@maka/core/plan';
 import type { PermissionMode } from '@maka/core/permission';
@@ -464,6 +465,22 @@ export async function createExecutionRuntimeHostComposition(
       durableProof: {
         readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
           stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
+        readSteeringAdmission: async (sessionId, messageId) => {
+          const message = (await stores.sessionStore.readMessages(sessionId)).find(
+            (candidate) =>
+              candidate.type === 'user' &&
+              candidate.id === messageId &&
+              candidate.steeringEventId === messageId,
+          );
+          return message?.type === 'user'
+            ? {
+                sessionId,
+                turnId: message.turnId,
+                messageId,
+                content: normalizeMessageContent(message),
+              }
+            : undefined;
+        },
         readImmutableSteeringMessageProof: (sessionId, messageId) =>
           stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
       },

@@ -157,12 +157,23 @@ export interface HostMessageRootPort {
   ): Promise<HostMessageStopClaim>;
 }
 
-/** Existing durable facts used only to prove an earlier Host Epoch's submit disposition. */
+/** Durable facts used to prove or recover an earlier Host Epoch's submit disposition. */
+export interface DurableSteeringAdmission {
+  readonly sessionId: string;
+  readonly turnId: string;
+  readonly messageId: string;
+  readonly content: MessageContent;
+}
+
 export interface HostMessageDurableProofReader {
   readRootTurnSourceMessageReceipt(
     sessionId: string,
     messageId: string,
   ): Promise<RootTurnSourceMessageReceipt | undefined>;
+  readSteeringAdmission(
+    sessionId: string,
+    messageId: string,
+  ): Promise<DurableSteeringAdmission | undefined>;
   readImmutableSteeringMessageProof(
     sessionId: string,
     messageId: string,
@@ -582,12 +593,27 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
             : failure('operation_conflict', 'Message identity has a different payload');
         }
       }
+      const durableAdmission = isCurrentEpoch
+        ? undefined
+        : await this.#durableProof.readSteeringAdmission(input.sessionId, input.messageId);
+      if (this.#failStopped) {
+        return failure('host_draining', 'Runtime Host message authority has failed');
+      }
+      if (
+        durableAdmission &&
+        (input.placement !== 'current_turn' ||
+          durableAdmission.sessionId !== input.sessionId ||
+          durableAdmission.messageId !== input.messageId ||
+          !messageContentsEqual(durableAdmission.content, payload.content))
+      ) {
+        return failure('operation_conflict', 'Durable steering admission has a different payload');
+      }
       const durableProof = await this.#queryDurableSubmitProof(input, payload);
       if (this.#failStopped) {
         return failure('host_draining', 'Runtime Host message authority has failed');
       }
       if (durableProof) return durableProof;
-      if (!isCurrentEpoch) {
+      if (!isCurrentEpoch && !durableAdmission) {
         return failure(
           'outcome_unknown',
           'Message disposition cannot be proven in this Host Epoch',
@@ -613,6 +639,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
         const rootState = await this.#root.readRootState(input.sessionId);
         if (this.#failStopped) {
           return failure('host_draining', 'Runtime Host message authority has failed');
+        }
+        if (
+          durableAdmission &&
+          (rootState.kind !== 'active' || rootState.turnId !== durableAdmission.turnId)
+        ) {
+          return failure(
+            'outcome_unknown',
+            'Durable steering admission no longer has its active Turn owner',
+          );
         }
         if (rootState.kind === 'idle') {
           const existingState = this.#sessions.get(input.sessionId);
@@ -659,6 +694,32 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           throw new RuntimeMessageAuthorityInvariantError(
             'Root state does not match message reservation',
           );
+        }
+        if (durableAdmission) {
+          const existing = allLiveEntries(state).find(
+            (entry) => entry.messageId === durableAdmission.messageId,
+          );
+          if (existing) {
+            if (existing.disposition !== 'steering') {
+              throw new RuntimeMessageAuthorityInvariantError(
+                'Durable steering admission collided with a non-steering entry',
+              );
+            }
+            const result = { disposition: 'steering', queueRevision: state.revision } as const;
+            try {
+              await this.#commitReceipt(
+                'submit',
+                input.sessionId,
+                input.messageId,
+                payload,
+                result,
+              );
+            } catch (error) {
+              this.#failStop();
+              throw error;
+            }
+            return success(result);
+          }
         }
         if (allLiveEntries(state).length >= MESSAGE_QUEUE_MAX_ENTRIES) {
           return failure('session_busy', 'Message queue capacity is full');
@@ -741,7 +802,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           continue;
         }
         const result = { disposition, queueRevision: candidateRevision + 1 } as const;
-        if (disposition === 'steering') {
+        if (disposition === 'steering' && !durableAdmission) {
           await this.#root.commitSteeringAdmission({
             sessionId: input.sessionId,
             turnId: rootState.turnId,

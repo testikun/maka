@@ -575,6 +575,7 @@ async function createFixture(options: { recoverAdmissions?: boolean } = {}): Pro
     durableProof: {
       readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
+      readSteeringAdmission: async () => undefined,
       readImmutableSteeringMessageProof: (sessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
     },

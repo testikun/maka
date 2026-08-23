@@ -545,6 +545,7 @@ function createMessages(
     durableProof: {
       readRootTurnSourceMessageReceipt: (requestedSessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(requestedSessionId, messageId),
+      readSteeringAdmission: async () => undefined,
       readImmutableSteeringMessageProof: (requestedSessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(requestedSessionId, messageId),
     },

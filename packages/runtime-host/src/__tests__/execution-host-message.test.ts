@@ -311,6 +311,15 @@ test('interrupt atomically retracts queued followup, stops the exact run, and is
         content: { text: FAKE_ASK_USER_QUESTION_PROMPT },
       }),
     );
+    const steeringId = randomUUID();
+    const steeringContent = { text: 'sent before explicit stop' };
+    await second.request('turn.message.submit', {
+      originHostEpoch: host.hostEpoch,
+      sessionId: fixture.sessionId,
+      messageId: steeringId,
+      content: steeringContent,
+      placement: 'current_turn',
+    });
     const followupId = randomUUID();
     const followupContent = {
       text: '<followup>must be withdrawn</followup>',
@@ -359,6 +368,20 @@ test('interrupt atomically retracts queued followup, stops the exact run, and is
     await second.close();
     await fixture.stopHost(host);
 
+    const ledger = await fixture.readTurn(turnId);
+    assert.deepEqual(
+      ledger.userMessages
+        .filter((message) => message.id === steeringId)
+        .map((message) => ({
+          text: message.text,
+          steeringEventId: message.steeringEventId,
+        })),
+      [{ text: steeringContent.text, steeringEventId: steeringId }],
+    );
+    assert.equal(
+      ledger.runtimeEvents.some((event) => event.refs?.providerEventId === steeringId),
+      false,
+    );
     const chain = await fixture.readAdmissionChain();
     assert.equal(chain.length, 1);
     assert.equal(chain[0]?.turnId, turnId);

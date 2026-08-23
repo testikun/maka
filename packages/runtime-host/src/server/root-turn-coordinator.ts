@@ -156,6 +156,7 @@ interface ActiveRootTurn {
   residency: RuntimeHostResidency;
   stopRequested: boolean;
   messageTransitionCommitted: boolean;
+  initialUserMessagesMaterialized: boolean;
 }
 
 export type TurnStartOutcome = OperationOutcome<'turn.start'>;
@@ -1919,6 +1920,19 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     if (unavailableReason) {
       return completedStart(operationUnavailable(unavailableReason));
     }
+    const initialUserMessagesMaterialized = admission.sourceMessages.some(
+      (source) => source.disposition === 'steering',
+    );
+    if (initialUserMessagesMaterialized) {
+      await this.manager.materializeRootSourceMessages({
+        sessionId: input.sessionId,
+        turnId: input.turnId,
+        messages: admission.sourceMessages.map((source) => ({
+          messageId: source.messageId,
+          content: source.content,
+        })),
+      });
+    }
     const { runId } = admission;
     const existingRun = await this.readRunIfPresent(input.sessionId, runId);
     if (replacing && existingRun) {
@@ -2011,6 +2025,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
       residency,
       stopRequested: false,
       messageTransitionCommitted: false,
+      initialUserMessagesMaterialized,
     };
     if (replacing && this.#executions.get(input.sessionId) !== replacing) {
       residency.release();
@@ -2108,6 +2123,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
                 {
                   runId: active.runId,
                   userMessageId: active.userMessageId ?? undefined,
+                  recordInitialUserMessage: !active.initialUserMessagesMaterialized,
                   durability: 'required',
                   onRunStarted: async (startedRunId) => {
                     if (startedRunId !== active.runId) {

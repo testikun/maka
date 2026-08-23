@@ -161,6 +161,7 @@ export interface AgentRunInput {
   commitContinuationStart?: (startedAt: number) => Promise<{ startEventId: string; created: true }>;
   hooks: AgentRunHooks;
   recordSessionMessages?: boolean;
+  recordInitialUserMessage?: boolean;
   invocationId?: string;
   /** Pre-resolved snapshot used by continuations; normal turns derive it from header + input. */
   effectiveOrchestration?: EffectiveOrchestration;
@@ -631,25 +632,27 @@ export class AgentRun {
       const userMessageId = this.input.userMessageId ?? this.input.newId();
       const userMessageTs = this.input.now();
       initialRuntimeEventId = userMessageId;
-      const userMsg: UserMessage = {
-        type: 'user',
-        id: userMessageId,
-        turnId: this.turnId,
-        ts: userMessageTs,
-        text: this.input.userInput.text,
-        ...(this.input.userInput.displayText !== undefined
-          ? { displayText: this.input.userInput.displayText }
-          : {}),
-        ...(this.input.userInput.attachments
-          ? { attachments: this.input.userInput.attachments }
-          : {}),
-        ...(this.input.userInput.quotes ? { quotes: this.input.userInput.quotes } : {}),
-        ...(this.input.userInput.inlineReferences
-          ? { inlineReferences: this.input.userInput.inlineReferences }
-          : {}),
-        ...(this.input.userInput.origin ? { origin: this.input.userInput.origin } : {}),
-      };
-      await this.input.store.appendMessage(this.sessionId, userMsg);
+      if (this.input.recordInitialUserMessage !== false) {
+        const userMsg: UserMessage = {
+          type: 'user',
+          id: userMessageId,
+          turnId: this.turnId,
+          ts: userMessageTs,
+          text: this.input.userInput.text,
+          ...(this.input.userInput.displayText !== undefined
+            ? { displayText: this.input.userInput.displayText }
+            : {}),
+          ...(this.input.userInput.attachments
+            ? { attachments: this.input.userInput.attachments }
+            : {}),
+          ...(this.input.userInput.quotes ? { quotes: this.input.userInput.quotes } : {}),
+          ...(this.input.userInput.inlineReferences
+            ? { inlineReferences: this.input.userInput.inlineReferences }
+            : {}),
+          ...(this.input.userInput.origin ? { origin: this.input.userInput.origin } : {}),
+        };
+        await this.input.store.appendMessage(this.sessionId, userMsg);
+      }
       await this.input.hooks.appendTurnState(this.sessionId, this.turnId, 'running', this.lineage);
       this.lastTs = userMessageTs;
     } else {

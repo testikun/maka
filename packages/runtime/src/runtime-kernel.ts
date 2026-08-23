@@ -176,6 +176,11 @@ export interface RuntimeKernelLike {
     messageId: string;
     content: MessageContent;
   }): Promise<void>;
+  materializeRootSourceMessages?(input: {
+    sessionId: string;
+    turnId: string;
+    messages: readonly { messageId: string; content: MessageContent }[];
+  }): Promise<void>;
   /** Queue a user message for mid-turn injection at the next step boundary. */
   steer(sessionId: string, text: string): QueueEnqueueOutcome;
   /** Queue a user message to open the turn after the current one finishes. */
@@ -224,6 +229,7 @@ export class RuntimeContextCompactError extends Error {
 export interface TurnStartOptions {
   runId?: string;
   userMessageId?: string;
+  recordInitialUserMessage?: boolean;
   durability?: AgentRunDurability;
   /**
    * Resolve turn admission after this Session has registered a pending start
@@ -715,6 +721,7 @@ export class RuntimeKernel implements RuntimeKernelLike {
         userInput: input,
         runId: options.runId,
         userMessageId: options.userMessageId,
+        recordInitialUserMessage: options.recordInitialUserMessage,
         durability: options.durability,
         store: this.deps.store,
         runStore: this.deps.runStore,
@@ -2590,6 +2597,27 @@ export class RuntimeKernel implements RuntimeKernelLike {
       ...structuredClone(input.content),
       steeringEventId: input.messageId,
     });
+  }
+
+  async materializeRootSourceMessages(input: {
+    sessionId: string;
+    turnId: string;
+    messages: readonly { messageId: string; content: MessageContent }[];
+  }): Promise<void> {
+    const existingIds = new Set(
+      (await this.deps.store.readMessages(input.sessionId)).map((message) => message.id),
+    );
+    for (const message of input.messages) {
+      if (existingIds.has(message.messageId)) continue;
+      await this.deps.store.appendMessage(input.sessionId, {
+        type: 'user',
+        id: message.messageId,
+        turnId: input.turnId,
+        ts: this.deps.now(),
+        ...structuredClone(message.content),
+      });
+      existingIds.add(message.messageId);
+    }
   }
 
   hasActiveRuns(sessionId: string): boolean {

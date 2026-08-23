@@ -4825,6 +4825,16 @@ export class SessionManager {
     return commit.call(this.runtimeKernel, input);
   }
 
+  materializeRootSourceMessages(input: {
+    sessionId: string;
+    turnId: string;
+    messages: readonly { messageId: string; content: MessageContent }[];
+  }): Promise<void> {
+    const materialize = this.runtimeKernel.materializeRootSourceMessages;
+    if (!materialize) throw new Error('Runtime root message materialization is unavailable');
+    return materialize.call(this.runtimeKernel, input);
+  }
+
   steer(sessionId: string, text: string): QueueEnqueueOutcome {
     return this.runtimeKernel.steer(sessionId, text);
   }

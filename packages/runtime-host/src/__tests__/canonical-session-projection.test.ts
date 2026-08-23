@@ -145,11 +145,14 @@ test('projects the canonical root lifecycle and the attachment queue from real S
       terminalEventId: terminal.id,
     });
 
-    await messages.handlers['queue.retract'](
-      { originHostEpoch: 'epoch-1', sessionId: session.id, retractId: 'cleanup' },
-      operationContext(),
-    );
-    messages.abandonRootReservation({ sessionId: session.id, turnId: 'turn-1', runId: 'run-1' });
+    const identity = { sessionId: session.id, turnId: 'turn-1', runId: 'run-1' };
+    const owner = messages.bindRun(identity);
+    const leases = owner.pull();
+    owner.ack(leases.map((lease) => lease.id));
+    owner.release();
+    const batch = messages.beginTerminalTransition(identity);
+    assert.equal(batch.sources.length, 0);
+    messages.completeIdle(batch);
     await messages.close();
   });
 });

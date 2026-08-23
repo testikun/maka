@@ -359,12 +359,6 @@ class RuntimeHostMakaSessionDriverImpl implements RuntimeHostMakaSessionDriver {
     return this.#enqueue(text, 'next_turn');
   }
 
-  async takePendingFollowup(): Promise<string | null> {
-    // Runtime Host owns the terminal transition and starts the queued follow-up
-    // atomically. Returning its text here would make the TUI submit it twice.
-    return null;
-  }
-
   async retractQueued(): Promise<string> {
     if (!this.#sessionId) return '';
     const result = await this.#request('queue.retract', {
@@ -855,9 +849,8 @@ class RuntimeHostMakaSessionDriverImpl implements RuntimeHostMakaSessionDriver {
     text: string,
     placement: 'current_turn' | 'next_turn',
   ): Promise<QueueEnqueueOutcome> {
-    const sessionId = this.#sessionId;
-    if (!sessionId) return { kind: 'fallback' };
-    const result = await this.#request('turn.message.submit', {
+    const sessionId = this.#requireSession('submit a message');
+    await this.#request('turn.message.submit', {
       originHostEpoch: this.#connection.hostEpoch,
       sessionId,
       messageId: this.#newId(),
@@ -865,9 +858,8 @@ class RuntimeHostMakaSessionDriverImpl implements RuntimeHostMakaSessionDriver {
       placement,
     });
     // A root Turn can settle between the local projection check and Host
-    // admission. The Host has already started the message in that case, so it
-    // must not be submitted again. Treat it as accepted; the subscription owns
-    // projection of the successor Turn.
+    // admission. The Host atomically starts the message in that case; the
+    // subscription owns projection of the successor Turn.
     return { kind: 'queued' };
   }
 

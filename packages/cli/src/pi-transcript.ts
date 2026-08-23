@@ -112,7 +112,6 @@ export interface MakaPiTranscriptState {
    * into the next turn at the turn boundary, so the text is never dropped.
    * Rendered in the pending bar alongside the mirror.
    */
-  pendingFallback: Array<{ text: string; enqueue: 'steer' | 'queue' }>;
   /** Current non-durable provider retry progress for the activity strip. */
   providerRetry?: ProviderRetryEvent;
 }
@@ -217,7 +216,6 @@ export function createMakaPiTranscriptState(): MakaPiTranscriptState {
     usage: { costUsd: 0, cacheHitInput: 0, cacheMissInput: 0 },
     steering: [],
     followup: [],
-    pendingFallback: [],
   };
 }
 
@@ -344,7 +342,6 @@ export function replaceTranscriptWithStoredMessages(
   // Queues are per-active-run; a switched/reset session has none pending.
   state.steering = [];
   state.followup = [];
-  state.pendingFallback = [];
   for (const msg of messages) {
     if (msg.type === 'token_usage') accumulateUsage(state.usage, msg);
   }
@@ -1453,33 +1450,15 @@ export function renderMakaPiPendingQueue(
   width: number,
   platform: NodeJS.Platform = process.platform,
 ): string[] {
-  if (
-    state.steering.length === 0 &&
-    state.followup.length === 0 &&
-    state.pendingFallback.length === 0
-  ) {
-    return [];
-  }
+  if (state.steering.length === 0 && state.followup.length === 0) return [];
   const safeWidth = Math.max(1, width);
-  const steering = [
-    ...state.steering,
-    ...state.pendingFallback
-      .filter((entry) => entry.enqueue === 'steer')
-      .map((entry) => entry.text),
-  ];
-  const followup = [
-    ...state.followup,
-    ...state.pendingFallback
-      .filter((entry) => entry.enqueue === 'queue')
-      .map((entry) => entry.text),
-  ];
   const lines: string[] = [];
-  for (const text of steering) {
+  for (const text of state.steering) {
     lines.push(
       fitLine(`${ansi.accent('Steering:')} ${ansi.dim(firstLinePreview(text))}`, safeWidth),
     );
   }
-  for (const text of followup) {
+  for (const text of state.followup) {
     lines.push(fitLine(`${ansi.dim('Queued:')} ${ansi.dim(firstLinePreview(text))}`, safeWidth));
   }
   lines.push(

@@ -18,28 +18,41 @@
  */
 
 import type { FollowUpMode, InlineReference } from '@maka/core/events';
+import type { DesktopTranscriptRangeController } from './desktop-transcript-range-store.js';
 
 export interface WorkspaceFileReferencePosition {
   value: string;
   start: number;
 }
 
-export function hasActiveTurnAtSubmit(input: {
-  liveTurn?: { turnId: string; terminal?: boolean };
-  runningTurnIds?: readonly string[];
-}): boolean {
-  if (input.liveTurn?.terminal !== true && input.liveTurn !== undefined) return true;
-  return input.runningTurnIds?.some((turnId) => turnId !== input.liveTurn?.turnId) === true;
-}
-
 export function resolveFollowUpModeAtSubmit(input: {
   requestedMode?: FollowUpMode;
-  hasActiveTurn: boolean;
-}): FollowUpMode | undefined {
-  if (input.requestedMode) return input.requestedMode;
-  // Mid-turn submits always queue; Shift+Enter carries the one-shot steer as
-  // the requested mode.
-  return input.hasActiveTurn ? 'queue' : undefined;
+}): FollowUpMode {
+  // Existing-session text always enters through the Host's atomic message
+  // admission. An idle Host starts a turn; an active Host queues it. Shift+Enter
+  // is the only renderer-owned choice because the user explicitly requested
+  // the current-turn steering lane.
+  return input.requestedMode ?? 'queue';
+}
+
+export async function returnToLatestBeforeSubmit(input: {
+  sessionId: string;
+  activeIdRef: { current: string | undefined };
+  transcriptRangeRef: { current: DesktopTranscriptRangeController | undefined };
+}): Promise<boolean> {
+  const controller = input.transcriptRangeRef.current;
+  if (!controller) return true;
+  let hasNewer = false;
+  try {
+    const range = controller.store.range();
+    hasNewer = range.sessionId === input.sessionId && range.hasNewer;
+  } catch {
+    // An unopened transcript is not a sparse historical view.
+  }
+  if (!hasNewer) return true;
+  await controller.loadLatest();
+  return input.activeIdRef.current === input.sessionId
+    && input.transcriptRangeRef.current === controller;
 }
 
 export function mergeWorkspaceReferences(

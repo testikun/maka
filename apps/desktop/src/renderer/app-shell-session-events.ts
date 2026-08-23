@@ -332,7 +332,6 @@ export function createAppShellSessionEventHandlers(options: {
         break;
       case 'tool_result':
         setInteractionBySession((current) => dequeueInteractionByToolUseId(current, sessionId, event.toolUseId));
-        void refreshMessages(sessionId);
         break;
       case 'error':
         onInteractionChanged?.(sessionId);
@@ -357,13 +356,19 @@ export function createAppShellSessionEventHandlers(options: {
         }
         notifyRunEnded?.({ kind: 'errored', sessionId, body: sessionEventErrorMessage(event, uiLocale) });
         void refreshSessions();
-        void refreshMessages(sessionId, terminalRefreshOptions(before));
+        {
+          const options = terminalRefreshOptions(before);
+          if (options) void refreshMessages(sessionId, options);
+        }
         break;
       case 'abort':
         onInteractionChanged?.(sessionId);
         setInteractionBySession((current) => clearInteractions(current, sessionId));
         void refreshSessions();
-        void refreshMessages(sessionId, terminalRefreshOptions(before));
+        {
+          const options = terminalRefreshOptions(before);
+          if (options) void refreshMessages(sessionId, options);
+        }
         break;
       case 'complete': {
         onInteractionChanged?.(sessionId);
@@ -383,8 +388,6 @@ export function createAppShellSessionEventHandlers(options: {
           // callback remains the fast path, but a remount or interrupted-turn
           // race can no longer strand the final reply in live-only state.
           void handoffAssistantStreaming(sessionId, terminalMessageId, false);
-        } else {
-          void refreshMessages(sessionId);
         }
         break;
       }

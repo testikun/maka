@@ -258,20 +258,7 @@ export function ChatView(props: {
   const copy = conversationCopy.chat;
   // chat survives for the empty-state path; the main message log is driven by
   // `turns` (per @kenji UI-04 turn-grouping projection).
-  const drainingMessageIdsKey = JSON.stringify(
-    props.liveTurn?.steps.flatMap((step) => step.text ? [step.stepId] : []) ?? [],
-  );
-  const drainingMessageIds = useMemo(
-    () => new Set<string>(JSON.parse(drainingMessageIdsKey) as string[]),
-    [drainingMessageIdsKey],
-  );
-  const visibleMessages = useMemo(
-    () => drainingMessageIds.size > 0
-      ? props.messages.filter((message) => !(message.type === 'assistant' && drainingMessageIds.has(message.id)))
-      : props.messages,
-    [drainingMessageIds, props.messages],
-  );
-  const chat = useMemo(() => materializeChat(visibleMessages, locale), [visibleMessages, locale]);
+  const chat = useMemo(() => materializeChat(props.messages, locale), [props.messages, locale]);
   // The projection owns the derived turns, so a turn nothing said anything
   // about keeps its object identity and its memoized TurnView skips — across
   // deltas AND across the message refreshes that fire at every step/tool
@@ -279,7 +266,7 @@ export function ChatView(props: {
   const turns = useTranscriptProjection({
     sessionId: props.activeSession?.id,
     locale,
-    messages: visibleMessages,
+    messages: props.messages,
     liveTurn: props.liveTurn,
     shellRunUpdates: props.shellRunUpdates,
   });

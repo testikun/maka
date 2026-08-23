@@ -35,12 +35,8 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import type { SessionSummary } from '@maka/core/session';
-import type { LiveTurnProjection } from '@maka/ui';
 import type { DesktopTranscriptRangeController } from '../../renderer/desktop-transcript-range-store.js';
 import { createAppShellChatActions } from '../../renderer/app-shell-chat-actions.js';
-import { createAppShellSessionUiStateController } from '../../renderer/app-shell-session-ui-state.js';
-import { settledSessionTransientIds } from '../../renderer/settled-session-transients.js';
 
 function installWindow(maka: unknown): () => void {
   const target = globalThis as unknown as { window?: unknown };
@@ -61,23 +57,6 @@ function installWindow(maka: unknown): () => void {
     } else {
       delete target.window;
     }
-  };
-}
-
-/**
- * The live-turn arm as a real map rather than a black-hole stub: a send that
- * never lands must leave nothing behind, and that cannot be asserted against a
- * no-op setter.
- */
-function createTurnState() {
-  const liveTurnBySession: Record<string, LiveTurnProjection> = {};
-  return {
-    liveTurnBySession,
-    setLiveTurnBySession(updater: (c: Record<string, LiveTurnProjection>) => Record<string, LiveTurnProjection>) {
-      const next = updater({ ...liveTurnBySession });
-      for (const key of Object.keys(liveTurnBySession)) delete liveTurnBySession[key];
-      Object.assign(liveTurnBySession, next);
-    },
   };
 }
 
@@ -103,7 +82,6 @@ function createActionsDeps() {
     setMessages: () => undefined,
     transcriptRangeRef: { current: undefined },
     setNavSelection: () => undefined,
-    setLiveTurnBySession: () => undefined,
     setInteractionBySession: () => undefined,
     showModelSetupToast: () => undefined,
     toastApi: { error: () => undefined, info: () => undefined },
@@ -491,28 +469,6 @@ describe('composer send failure feedback', () => {
     assert.deepEqual(setupToasts, [], 'a stale surface must not be navigated to 设置 · 模型');
   });
 
-  // A send that never reaches the runtime must take its arm with it. A leftover
-  // arm still carries its `unconfirmed` claim, which would make
-  // `settledSessionTransientIds` protect a turn that does not exist — leaving a
-  // Stop button nothing can clear.
-  it('leaves no arm behind when the send never lands', async () => {
-    const turnState = createTurnState();
-    const restoreWindow = installWindow(readinessFailure());
-
-    try {
-      const actions = createAppShellChatActions({
-        ...createActionsDeps(),
-        activeIdRef: { current: 'session-a' },
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
-      });
-      assert.equal(await actions.send('hello'), false);
-    } finally {
-      restoreWindow();
-    }
-
-    assert.deepEqual(turnState.liveTurnBySession, {}, 'the arm must be disarmed');
-  });
-
   it('still answers the surface that is actually waiting', async () => {
     const setupToasts: string[] = [];
     const restoreWindow = installWindow(readinessFailure());
@@ -533,91 +489,30 @@ describe('composer send failure feedback', () => {
   });
 });
 
-/**
- * The bug this guards, as the sequence that actually produced it: send arms the
- * turn, a session list that was already in flight lands still carrying the
- * pre-send status, and the settle reconcile runs against it.
- *
- * Nothing in that list is wrong — the runtime writes `status: 'running'` only at
- * the end of `AgentRun.begin` and announces it to nobody until `onRunStarted`.
- * The list simply predates the answer. Reading it as a settle used to drop the
- * arm, so the first content event rebuilt the projection as `'streamed'` and the
- * prominent "正在处理…" silently became the calm "继续中…".
- *
- * Asserted through the real `send`, the real state controller, and the real
- * settle rule, because the defect lived in how those three compose — each one is
- * individually correct.
- */
-describe('a send in flight versus a stale session list', () => {
-  const sessionId = 'session-a';
-
-  function sendingWindow() {
-    return {
-      sessions: {
-        send: async () => ({
-          ok: true,
-          attachments: [],
-          skillInvocation: { loaded: [], failed: [] },
-        }),
+describe('transcript refresh ownership', () => {
+  it('waits for durable transcript data without republishing the subscription snapshot', async () => {
+    let publications = 0;
+    const controller = {
+      ready: async () => undefined,
+      waitForDurableMessage: async () => true,
+      store: {
+        hasDurableMessage: () => true,
+        snapshot: () => ({ sessionId: 'session-a', messages: [] }),
       },
-    };
-  }
-
-  // The list as it reads before the runtime's `running` write — identical to how
-  // it reads after the turn is over, which is exactly why the status alone
-  // cannot settle anything.
-  const preSendList = [{ id: sessionId, status: 'active', statusUpdatedAt: 100 }] as SessionSummary[];
-
-  async function armViaSend(controller: ReturnType<typeof createAppShellSessionUiStateController>) {
-    const restoreWindow = installWindow(sendingWindow());
-    try {
-      const actions = createAppShellChatActions({
-        ...createActionsDeps(),
-        activeIdRef: { current: sessionId },
-        setLiveTurnBySession: controller.setLiveTurnBySession,
-      });
-      assert.equal(await actions.send('hello'), true);
-    } finally {
-      restoreWindow();
-    }
-    const armed = controller.getState().liveTurnBySession[sessionId];
-    assert.equal(armed?.unconfirmed, true, 'the send must arm an unconfirmed turn');
-    return armed!.turnId;
-  }
-
-  function settle(controller: ReturnType<typeof createAppShellSessionUiStateController>) {
-    return settledSessionTransientIds({
-      activeId: sessionId,
-      sessions: preSendList,
-      liveTurnBySession: controller.getState().liveTurnBySession,
+    } as unknown as DesktopTranscriptRangeController;
+    const actions = createAppShellChatActions({
+      ...createActionsDeps(),
+      activeIdRef: { current: 'session-a' },
+      transcriptRangeRef: { current: controller },
+      setMessages: () => {
+        publications += 1;
+      },
     });
-  }
 
-  it('keeps the armed turn, and settles it once the authority names that turn', async () => {
-    const controller = createAppShellSessionUiStateController();
-    const turnId = await armViaSend(controller);
-
-    assert.deepEqual(settle(controller), [], 'a list older than the answer must not settle the turn');
     assert.equal(
-      controller.getState().liveTurnBySession[sessionId]?.phase,
-      'waiting',
-      'the first-token wait must survive the stale refresh',
+      await actions.refreshMessages('session-a', { requiredAssistantMessageId: 'assistant-a' }),
+      true,
     );
-
-    // `sessions:changed` naming this turn — what `onRunStarted` now emits once
-    // the run has begun. This is the same controller entry point the shell
-    // wires that subscription to.
-    controller.confirmLiveTurn(sessionId, turnId);
-
-    assert.deepEqual(settle(controller), [sessionId], 'an answered turn settles under the plain status rules');
-  });
-
-  it('ignores an answer about a turn other than the one in flight', async () => {
-    const controller = createAppShellSessionUiStateController();
-    await armViaSend(controller);
-
-    controller.confirmLiveTurn(sessionId, 'turn-from-another-client');
-
-    assert.deepEqual(settle(controller), [], 'only this send\'s own turn may release its claim');
+    assert.equal(publications, 0, 'the transcript subscription is the only messages publisher');
   });
 });

@@ -20,7 +20,6 @@
 import { randomUUID } from "node:crypto";
 import type { IpcMainInvokeEvent } from "electron";
 import { MAX_ATTACHMENT_COUNT } from '@maka/core/attachments';
-import { RuntimeHostOperationError } from '@maka/runtime-host/client';
 import { SKILL_INVOCATION_TOKEN_SOURCE } from '@maka/core/skill-invocation-token';
 import {
   type SessionChangedEvent,
@@ -271,32 +270,14 @@ export function registerRuntimeHostSessionExecutionIpc(
           ? { turnOrchestration: command.turnOrchestration }
           : {}),
       };
-      let startResult;
-      try {
-        startResult = await deps.client.startTurn(startInput);
-      } catch (error) {
-        // The renderer routes text at a session it sees as running to the
-        // current-turn message queue, but its view can lag the Host: another window, a
-        // Bot, or a Goal continuation may have opened the root Turn first, and
-        // that race surfaced here as a session_busy send failure that dropped
-        // the user's message (#1954). `turn.message.submit` resolves the race
-        // on the Host: an active session queues the text as steering, an idle
-        // one starts the Turn. Skill and orchestration sends keep the error —
-        // their turn semantics cannot be expressed as a queued message — and
-        // the Desktop composer carries Skills as canonical /skill: tokens in
-        // the text, not as skillIds.
-        if (
-          !(error instanceof RuntimeHostOperationError) ||
-          error.code !== "session_busy" ||
-          (command.skillIds?.length ?? 0) > 0 ||
-          command.turnOrchestration ||
-          new RegExp(SKILL_INVOCATION_TOKEN_SOURCE).test(command.text)
-        ) {
-          throw error;
-        }
+      const isControlInput =
+        (command.skillIds?.length ?? 0) > 0 ||
+        command.turnOrchestration !== undefined ||
+        new RegExp(SKILL_INVOCATION_TOKEN_SOURCE).test(command.text);
+      if (!isControlInput) {
         const submitted = await deps.client.submitMessage({
           sessionId,
-          messageId: newId(),
+          messageId: turnId,
           content: startInput.content,
           placement: "current_turn",
         });
@@ -325,6 +306,7 @@ export function registerRuntimeHostSessionExecutionIpc(
           skillInvocation: emptySkillInvocation,
         };
       }
+      const startResult = await deps.client.startTurn(startInput);
       if (startResult.kind === "blocked") {
         return {
           ok: false as const,

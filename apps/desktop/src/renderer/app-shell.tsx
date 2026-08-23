@@ -104,9 +104,9 @@ import { useNewTaskChoice } from './use-new-task-choice';
 import { NEW_TASK_PENDING_KEY } from './pending-items';
 import { parseDesktopSlashCommand } from './desktop-slash-command';
 import {
-  hasActiveTurnAtSubmit,
   mergeWorkspaceReferences,
   resolveFollowUpModeAtSubmit,
+  returnToLatestBeforeSubmit,
 } from './follow-up-submit-routing';
 import {
   PlanExecutionPanel,
@@ -380,7 +380,6 @@ function AppShellContent({
     setMessageRetryPendingBySession,
     setStopPendingBySession,
     setLiveTurnBySession,
-    confirmLiveTurn,
     setShellRunUpdatesBySession,
     setInteractionBySession,
     setMessageQueueBySession,
@@ -1819,7 +1818,6 @@ function AppShellContent({
     setMessages,
     transcriptRangeRef,
     setNavSelection,
-    setLiveTurnBySession,
     setInteractionBySession,
     onInteractionChanged: markInteractionChanged,
     onExecutionBoundaryChanged: reloadActiveExecutionBoundary,
@@ -1841,7 +1839,6 @@ function AppShellContent({
     clearPendingTurnAction: turnActionRegistry.clearKey,
     openSessionInChat,
     pendingKeyOf,
-    refreshMessages,
     refreshSessions,
     setMessages,
     toastApi,
@@ -1868,7 +1865,6 @@ function AppShellContent({
     messages,
     hasPendingAttachments: () => pendingAttachments.length > 0,
     openSessionInChat,
-    refreshMessages,
     refreshSessions,
     setMessages,
     commitRevisionDraft,
@@ -1909,6 +1905,9 @@ function AppShellContent({
     mode: FollowUpMode,
     metadata?: ComposerSendMetadata,
   ): Promise<boolean> {
+    if (!(await returnToLatestBeforeSubmit({ sessionId, activeIdRef, transcriptRangeRef }))) {
+      return false;
+    }
     const pending = pendingAttachments.length > 0 ? pendingAttachments : undefined;
     const quotes = pendingQuotes.length > 0 ? pendingQuotes : undefined;
     const attachmentItems = pending ? toComposerIngestItems(pending) : [];
@@ -1930,7 +1929,6 @@ function AppShellContent({
       if (pending) clearSubmittedAttachments(pending);
       if (quotes) clearQuotes();
       if (result.kind === 'started') {
-        await refreshMessages(sessionId);
         await refreshSessions();
       }
       return true;
@@ -1956,24 +1954,15 @@ function AppShellContent({
       revision && activeIdRef.current === revision.draftSessionId,
     );
     const slashCommand = parseDesktopSlashCommand(text);
-    // Read the synchronous live-turn store at submit time. React's rendered
-    // `streaming` prop can lag one commit behind a just-started turn, which
-    // previously sent a second root turn and surfaced duplicate session_busy
-    // errors during burst input.
     const sessionId = activeIdRef.current;
     const workspaceFileReferences = mergeWorkspaceReferences(
       text,
       metadata?.workspaceFileReferences,
       sessionId ? retractedWorkspaceReferencesRef.current[sessionId] : undefined,
     );
-    const liveTurn = sessionId ? liveTurnBySessionRef.current[sessionId] : undefined;
-    const runningTurnIds = sessionId
-      ? sessionsRef.current.find((session) => session.id === sessionId)?.runningTurnIds
-      : undefined;
     const followUpAtSubmit = !slashCommand
       ? resolveFollowUpModeAtSubmit({
           requestedMode: metadata?.followUpMode,
-          hasActiveTurn: hasActiveTurnAtSubmit({ liveTurn, runningTurnIds }),
         })
       : undefined;
     if (sessionId && followUpAtSubmit) {
@@ -2292,7 +2281,6 @@ function AppShellContent({
     applyE2eFixture,
     bootstrapSessions,
     clearPendingTurnActionsForSession: turnActionRegistry.clearForSession,
-    confirmLiveTurn,
     clearSessionRendererState,
     createSession,
     handleConnectionEvent,
@@ -2306,7 +2294,6 @@ function AppShellContent({
     projectPickerRequestRef,
     refreshConnections: refreshConnectionProjections,
     refreshMemoryActive,
-    refreshMessages,
     refreshScheduledTasks,
     refreshProjects,
     refreshShellSettings,
@@ -2439,7 +2426,6 @@ function AppShellContent({
     activeSession,
     activeStreamingLive,
     hasInFlightLiveTools,
-    refreshMessages,
     refreshSessions,
     sessionEventHealthBySessionRef,
     setSessionEventHealthBySession,

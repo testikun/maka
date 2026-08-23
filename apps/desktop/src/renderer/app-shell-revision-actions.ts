@@ -93,7 +93,6 @@ export function createAppShellRevisionActions(deps: {
   messages: readonly StoredMessage[];
   hasPendingAttachments: () => boolean;
   openSessionInChat: (sessionId: string, turnId?: string) => void;
-  refreshMessages: (sessionId: string) => Promise<boolean>;
   refreshSessions: () => Promise<DesktopSessionSummary[]>;
   setMessages: MessageListUpdater;
   commitRevisionDraft: (draft: TurnRevisionDraft | null) => void;
@@ -107,7 +106,6 @@ export function createAppShellRevisionActions(deps: {
     messages,
     hasPendingAttachments,
     openSessionInChat,
-    refreshMessages,
     refreshSessions,
     setMessages,
     commitRevisionDraft,
@@ -213,7 +211,6 @@ export function createAppShellRevisionActions(deps: {
     if (activeIdRef.current === revisionSessionId) {
       openSessionInChat(draft.sourceSessionId);
       setMessages([]);
-      await refreshMessages(draft.sourceSessionId).catch(() => false);
     }
     const abandonment = await abandonRevisionCopy(draft);
     const abandoningDraft = abandonment.draft;
@@ -397,7 +394,6 @@ export function createAppShellRevisionActions(deps: {
     if (activeIdRef.current !== draft.sourceSessionId) {
       openSessionInChat(draft.sourceSessionId);
       setMessages([]);
-      await refreshMessages(draft.sourceSessionId).catch(() => false);
     }
     if (cleanupSessionId) {
       await refreshSessions().catch(() => []);

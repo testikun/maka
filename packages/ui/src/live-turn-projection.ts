@@ -81,18 +81,6 @@ export interface LiveTurnProjection {
   terminal?: true;
   /** Steering acknowledged after the current content and awaiting its next provider step. */
   pendingSteering?: LiveSteeringProjection[];
-  /**
-   * Set by `armLiveTurn` and cleared by the first word the authority says about
-   * this turn (`confirmLiveTurn`, or any event carrying the same turnId).
-   *
-   * A client that just sent cannot tell "the authority has not reached my turn
-   * yet" from "my turn is over" by reading session status: it reads the same
-   * before a turn starts and after it ends. So a snapshot taken before the send
-   * landed would retire the arm the send just placed. This bit says the arm is
-   * still waiting for its answer, which is what keeps such a snapshot from
-   * settling it. Dropped for good once the answer arrives.
-   */
-  unconfirmed?: true;
   providerRetry?: ProviderRetryEvent;
   steps: LiveTurnStepProjection[];
 }
@@ -152,27 +140,7 @@ function appendContentKind(
 }
 
 export function armLiveTurn(turnId: string): LiveTurnProjection {
-  return { turnId, phase: 'waiting', steps: [], unconfirmed: true };
-}
-
-/** Drop the `unconfirmed` claim; identity-preserving when there is none. */
-function confirmed(projection: LiveTurnProjection): LiveTurnProjection {
-  if (!projection.unconfirmed) return projection;
-  const { unconfirmed: _unconfirmed, ...rest } = projection;
-  return rest;
-}
-
-/**
- * The authority answered about `turnId`: clear the arm's pending claim so a
- * later snapshot may retire it. A different turn's answer says nothing about
- * this one, so the projection is returned unchanged (same reference).
- */
-export function confirmLiveTurn(
-  current: LiveTurnProjection | undefined,
-  turnId: string,
-): LiveTurnProjection | undefined {
-  if (!current || current.turnId !== turnId) return current;
-  return confirmed(current);
+  return { turnId, phase: 'waiting', steps: [] };
 }
 
 export function applyLiveTurnEvent(
@@ -195,10 +163,10 @@ export function applyLiveTurnEvent(
       ? current
       : { turnId: event.turnId, phase: 'waiting' as const, steps: [] };
     if (liveSteeringMessages(prior).some((message) => message.id === event.messageId)) {
-      return confirmed(prior);
+      return prior;
     }
     return {
-      ...confirmed(prior),
+      ...prior,
       pendingSteering: [
         ...(prior.pendingSteering ?? []),
         {
@@ -213,13 +181,13 @@ export function applyLiveTurnEvent(
     const prior = current?.turnId === event.turnId
       ? current
       : { turnId: event.turnId, phase: 'waiting' as const, steps: [] };
-    return { ...confirmed(prior), providerRetry: event };
+    return { ...prior, providerRetry: event };
   }
   if (event.type === 'error' || event.type === 'abort') {
     if (!current || current.turnId !== event.turnId) return current;
     const steps = terminalizeLiveSteps(current.steps);
     if (steps.length === 0 && liveSteeringMessages(current).length === 0) return undefined;
-    const { providerRetry: _providerRetry, ...withoutRetry } = confirmed(current);
+    const { providerRetry: _providerRetry, ...withoutRetry } = current;
     return { ...withoutRetry, terminal: true, steps };
   }
   if (event.type === 'complete') {
@@ -227,7 +195,7 @@ export function applyLiveTurnEvent(
     if (current.steps.length === 0 && liveSteeringMessages(current).length === 0) {
       return undefined;
     }
-    const { providerRetry: _providerRetry, ...withoutRetry } = confirmed(current);
+    const { providerRetry: _providerRetry, ...withoutRetry } = current;
     return {
       ...withoutRetry,
       terminal: true,
@@ -250,7 +218,7 @@ export function applyLiveTurnEvent(
   const prior = current?.turnId === event.turnId
     ? current
     : { turnId: event.turnId, phase: 'streamed' as const, steps: [] };
-  const { providerRetry: _providerRetry, ...priorWithoutRetry } = confirmed(prior);
+  const { providerRetry: _providerRetry, ...priorWithoutRetry } = prior;
   const messageEvent = event.type === 'thinking_delta'
     || event.type === 'thinking_complete'
     || event.type === 'text_delta'

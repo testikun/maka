@@ -277,7 +277,7 @@ test("marks Runtime Host Branch copies as side conversations", async () => {
 });
 
 test("sends canonical content and uploads owned Attachment bytes through the Host", async () => {
-  const starts: unknown[] = [];
+  const submits: unknown[] = [];
   const uploads: unknown[] = [];
   const changes: unknown[] = [];
   const attachment: AttachmentRef = {
@@ -297,18 +297,9 @@ test("sends canonical content and uploads owned Attachment bytes through the Hos
       uploads.push(input);
       return attachment;
     },
-    startTurn: async (input) => {
-      starts.push(input);
-      return {
-        kind: "started",
-        turn: {
-          sessionId: input.sessionId,
-          turnId: input.turnId,
-          runId: "run-1",
-          status: "running",
-        },
-        skillInvocation: { loaded: [], failed: [], receipts: [] },
-      };
+    submitMessage: async (input) => {
+      submits.push(input);
+      return { disposition: "turn_started", turnId: "turn-1" };
     },
   });
   const ipc = ipcHarness();
@@ -341,10 +332,10 @@ test("sends canonical content and uploads owned Attachment bytes through the Hos
   });
 
   assert.equal((uploads[0] as { content: Uint8Array }).content.byteLength, 5);
-  assert.deepEqual(starts, [
+  assert.deepEqual(submits, [
     {
       sessionId: "session-1",
-      turnId: "turn-1",
+      messageId: "turn-1",
       content: {
         text: "Read @notes.txt",
         attachments: [attachment],
@@ -357,6 +348,7 @@ test("sends canonical content and uploads owned Attachment bytes through the Hos
           },
         ],
       },
+      placement: "current_turn",
     },
   ]);
   assert.deepEqual(result, {
@@ -389,7 +381,7 @@ test("uploads a selected workspace file as a Host-owned Session Artifact", async
   ]);
   assert.ok(approved);
   const uploads: Array<{ content: Uint8Array }> = [];
-  const starts: unknown[] = [];
+  const submits: unknown[] = [];
   const attachment: AttachmentRef = {
     kind: "other",
     name: "notes.txt",
@@ -410,18 +402,9 @@ test("uploads a selected workspace file as a Host-owned Session Artifact", async
           uploads.push(input);
           return attachment;
         },
-        startTurn: async (input) => {
-          starts.push(input);
-          return {
-            kind: "started",
-            turn: {
-              sessionId: input.sessionId,
-              turnId: input.turnId,
-              runId: "run-1",
-              status: "running",
-            },
-            skillInvocation: { loaded: [], failed: [], receipts: [] },
-          };
+        submitMessage: async (input) => {
+          submits.push(input);
+          return { disposition: "turn_started", turnId: "turn-1" };
         },
       }),
       observer: unusedObserver(),
@@ -446,7 +429,7 @@ test("uploads a selected workspace file as a Host-owned Session Artifact", async
     "hello",
   );
   assert.deepEqual(
-    (starts[0] as { content: { attachments: AttachmentRef[] } }).content
+    (submits[0] as { content: { attachments: AttachmentRef[] } }).content
       .attachments,
     [attachment],
   );
@@ -516,7 +499,7 @@ test("forwards explicit Skill invocation to the Host-owned Turn admission", asyn
   });
 });
 
-test("queues a mid-turn send as steering when the Host reports the session busy", async () => {
+test("submits ordinary text through the Host admission authority without starting first", async () => {
   const submits: unknown[] = [];
   const changes: unknown[] = [];
   const ipc = ipcHarness();
@@ -525,11 +508,7 @@ test("queues a mid-turn send as steering when the Host reports the session busy"
       client: executionClient({
         getSession: async () => session(),
         startTurn: async () => {
-          throw new RuntimeHostOperationError(
-            "turn.start",
-            "session_busy",
-            "Session already has an active root Turn",
-          );
+          throw new Error("ordinary text must not call turn.start");
         },
         submitMessage: async (input) => {
           submits.push(input);
@@ -557,7 +536,7 @@ test("queues a mid-turn send as steering when the Host reports the session busy"
   assert.deepEqual(submits, [
     {
       sessionId: "session-1",
-      messageId: "id-1",
+      messageId: "turn-1",
       content: { text: "also check the tests", inlineReferences: [] },
       placement: "current_turn",
     },
@@ -575,7 +554,7 @@ test("queues a mid-turn send as steering when the Host reports the session busy"
   ]);
 });
 
-test("starts the turn from the queued message when the busy race resolves idle", async () => {
+test("starts ordinary text when the Host admission authority finds the session idle", async () => {
   const changes: unknown[] = [];
   const ipc = ipcHarness();
   registerExecutionIpc(
@@ -583,11 +562,7 @@ test("starts the turn from the queued message when the busy race resolves idle",
       client: executionClient({
         getSession: async () => session(),
         startTurn: async () => {
-          throw new RuntimeHostOperationError(
-            "turn.start",
-            "session_busy",
-            "Session already has an active root Turn",
-          );
+          throw new Error("ordinary text must not call turn.start");
         },
         submitMessage: async () => ({
           disposition: "turn_started",

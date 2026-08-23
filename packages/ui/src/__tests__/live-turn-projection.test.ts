@@ -23,7 +23,6 @@ import { encodeToolStepProgress } from '@maka/core/events';
 import {
   applyLiveTurnEvent,
   armLiveTurn,
-  confirmLiveTurn,
   reconcileTerminalLiveTurn,
   settleLiveTurnStep,
   type LiveTurnProjection,
@@ -31,42 +30,6 @@ import {
 import { materializeTurns, overlayLiveTurn, type ToolActivityItem } from '../materialize.js';
 import { redactSecrets } from '../redact.js';
 import { getConversationCopy } from '../conversation-copy.js';
-
-// A client that just sent cannot read "has my turn started" off session status:
-// it is the same before the turn starts and after it ends. The arm carries
-// `unconfirmed` until the authority says something about THAT turn, which is
-// what stops a snapshot taken before the send landed from retiring it.
-describe('the unconfirmed claim an arm carries', () => {
-  it('is set at arm and dropped by an answer naming the same turn', () => {
-    const armed = armLiveTurn('turn-1');
-    assert.equal(armed.unconfirmed, true);
-
-    const confirmed = confirmLiveTurn(armed, 'turn-1');
-    assert.equal(confirmed?.unconfirmed, undefined);
-    assert.equal(confirmed?.turnId, 'turn-1');
-    assert.equal(confirmed?.phase, 'waiting', 'confirming is not the same as streaming');
-  });
-
-  // Another client's turn, or a scheduled task's, says nothing about this send.
-  it('survives an answer that names a different turn', () => {
-    const armed = armLiveTurn('turn-mine');
-
-    assert.equal(confirmLiveTurn(armed, 'turn-theirs'), armed);
-  });
-
-  it('is dropped by the turn\'s own events, not just by an explicit answer', () => {
-    const streamed = applyLiveTurnEvent(armLiveTurn('turn-1'), {
-      type: 'text_delta',
-      id: 'event-1',
-      turnId: 'turn-1',
-      messageId: 'step-1',
-      ts: 100,
-      text: '你',
-    });
-
-    assert.equal(streamed.unconfirmed, undefined);
-  });
-});
 
 describe('provider retry copy', () => {
   it('describes capacity retries without collapsing them into generic unavailability', () => {

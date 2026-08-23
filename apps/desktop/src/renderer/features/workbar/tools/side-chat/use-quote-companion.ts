@@ -21,7 +21,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   activeInteractionFor,
   applyLiveTurnEvent,
-  armLiveTurn,
   reconcileTerminalLiveTurn,
   useMountedRef,
   type InteractionQueues,
@@ -388,13 +387,11 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
             sessionId,
           }),
         onForkCommitted: () => {},
-        // Arm the optimistic live turn right before the send.
         onBeforeSend: () => {
           stopRequestedRef.current = false;
           activeTurnIdRef.current = turnId;
           turnInFlightRef.current = true;
           setTurnInFlight(true);
-          setLiveTurn(armLiveTurn(turnId));
           ownTurnIdsRef.current.add(turnId);
           setOwnTurnTick((tick) => tick + 1);
         },
@@ -512,7 +509,6 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
       turnInFlightRef.current = true;
       setTurnInFlight(true);
       setError(null);
-      setLiveTurn(armLiveTurn(regenerationTurnId));
       ownTurnIdsRef.current.add(regenerationTurnId);
       setOwnTurnTick((tick) => tick + 1);
       try {

@@ -180,8 +180,6 @@ export function useAppShellBootstrapSubscriptions(options: {
   applyE2eFixture: () => Promise<void>;
   bootstrapSessions: () => Promise<void>;
   clearPendingTurnActionsForSession: (sessionId: string) => void;
-  /** Releases a send's pending claim once the authority names that turn. */
-  confirmLiveTurn: (sessionId: string, turnId: string) => void;
   clearSessionRendererState: (sessionId: string) => void;
   createSession: () => Promise<void> | void;
   handleConnectionEvent: (event: ConnectionEvent) => void;
@@ -195,7 +193,6 @@ export function useAppShellBootstrapSubscriptions(options: {
   projectPickerRequestRef: RefBox<number>;
   refreshConnections: () => Promise<void>;
   refreshMemoryActive: (failureContext?: 'load') => Promise<void>;
-  refreshMessages: (sessionId: string) => Promise<boolean>;
   refreshScheduledTasks: (options?: { shouldShowError?: () => boolean }) => Promise<void>;
   refreshProjects: () => Promise<unknown>;
   refreshShellSettings: () => Promise<void>;
@@ -255,12 +252,6 @@ export function useAppShellBootstrapSubscriptions(options: {
   });
   const handleSessionChange = useEffectEvent(
     (event: SessionChangedEvent) => {
-      // The authority has spoken about a specific turn — whether it started,
-      // failed to start, or ended. That confirms the send's arm, and the
-      // session's status becomes readable as an answer about it again.
-      if (event.sessionId && event.turnId) {
-        options.confirmLiveTurn(event.sessionId, event.turnId);
-      }
       void options.refreshSessions();
       if (event.reason === 'created' || event.reason === 'migrated') {
         void options.refreshProjects();
@@ -280,10 +271,6 @@ export function useAppShellBootstrapSubscriptions(options: {
       (event.reason === 'turn-status-change' || event.reason === 'message-appended' || event.reason === 'deleted')
     ) {
       options.clearPendingTurnActionsForSession(event.sessionId);
-    }
-    const changedSessionId = event.sessionId;
-    if (event.reason === 'message-appended' && changedSessionId && changedSessionId === options.activeIdRef.current) {
-      void options.refreshMessages(changedSessionId);
     }
     if (event.reason === 'rebound') {
       const copy = getDesktopConversationCopy(options.uiLocale).actions;
@@ -638,7 +625,6 @@ export function useSessionEventHealthPolling(options: {
   activeSession: SessionSummary | undefined;
   activeStreamingLive: boolean;
   hasInFlightLiveTools: boolean;
-  refreshMessages: (sessionId: string) => Promise<boolean>;
   refreshSessions: () => Promise<SessionSummary[]>;
   sessionEventHealthBySessionRef: RefBox<Record<string, SessionEventStreamSnapshot>>;
   setSessionEventHealthBySession: SessionEventHealthUpdater;
@@ -649,7 +635,6 @@ export function useSessionEventHealthPolling(options: {
     activeSession,
     activeStreamingLive,
     hasInFlightLiveTools,
-    refreshMessages,
     refreshSessions,
     sessionEventHealthBySessionRef,
     setSessionEventHealthBySession,
@@ -672,7 +657,6 @@ export function useSessionEventHealthPolling(options: {
       }));
       if (result.shouldRefresh) {
         void refreshSessions();
-        void refreshMessages(activeId);
       }
     };
     // #1979: a stream nobody expects has nothing to observe — `evaluate` can only

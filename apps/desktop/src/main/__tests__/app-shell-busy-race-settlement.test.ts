@@ -102,7 +102,6 @@ function createActionsDeps() {
     setMessages: () => undefined,
     transcriptRangeRef: { current: undefined },
     setNavSelection: () => undefined,
-    setLiveTurnBySession: () => undefined,
     setInteractionBySession: () => undefined,
     showModelSetupToast: () => undefined,
     toastApi: { error: () => undefined, info: () => undefined },
@@ -119,7 +118,49 @@ function createActionsDeps() {
 const EMPTY_SKILL_INVOCATION = { loaded: [], failed: [], receipts: [] };
 
 describe('busy-raced send settlement', () => {
-  it('a steered send on an existing session disarms its turn and shows no optimistic message', async () => {
+  it('keeps the visible live tail while the Host admits a new message', async () => {
+    const activeIdRef = { current: 'session-a' as string | undefined };
+    const turnState = createTurnState();
+    const visibleTail: LiveTurnProjection = {
+      turnId: 'existing-turn',
+      phase: 'streamed',
+      steps: [
+        {
+          stepId: 'assistant-tail',
+          text: { text: 'still visible', truncated: false, complete: false },
+          tools: [],
+        },
+      ],
+    };
+    turnState.setLiveTurnBySession(() => ({ 'session-a': visibleTail }));
+    const restoreWindow = installWindow({
+      sessions: {
+        send: async (_sessionId: string, command: { turnId: string }) => ({
+          ok: true,
+          steered: true,
+          turnId: command.turnId,
+          attachments: [],
+          inlineReferences: [],
+          skillInvocation: EMPTY_SKILL_INVOCATION,
+        }),
+      },
+    });
+    try {
+      const deps = {
+        ...createActionsDeps(),
+        activeIdRef,
+        setLiveTurnBySession: turnState.setLiveTurnBySession,
+      };
+      const actions = createAppShellChatActions(deps);
+
+      assert.equal(await actions.send('also check the tests'), true);
+      assert.deepEqual(turnState.liveTurnBySession['session-a'], visibleTail);
+    } finally {
+      restoreWindow();
+    }
+  });
+
+  it('a steered send on an existing session shows no optimistic message', async () => {
     const activeIdRef = { current: 'session-a' as string | undefined };
     const turnState = createTurnState();
     const messageState = createMessageState();
@@ -136,12 +177,13 @@ describe('busy-raced send settlement', () => {
       },
     });
     try {
-      const actions = createAppShellChatActions({
+      const deps = {
         ...createActionsDeps(),
         activeIdRef,
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
         setMessages: messageState.setMessages,
-      });
+        setLiveTurnBySession: turnState.setLiveTurnBySession,
+      };
+      const actions = createAppShellChatActions(deps);
       assert.equal(await actions.send('also check the tests'), true);
       assert.equal(turnState.liveTurnBySession['session-a'], undefined);
       assert.deepEqual(messageState.messages, []);
@@ -150,7 +192,7 @@ describe('busy-raced send settlement', () => {
     }
   });
 
-  it('rebinds the unconfirmed arm onto a Host-chosen turn id', async () => {
+  it('does not invent an empty live turn while the Host admits a message', async () => {
     const activeIdRef = { current: 'session-a' as string | undefined };
     const turnState = createTurnState();
     const messageState = createMessageState();
@@ -166,16 +208,15 @@ describe('busy-raced send settlement', () => {
       },
     });
     try {
-      const actions = createAppShellChatActions({
+      const deps = {
         ...createActionsDeps(),
         activeIdRef,
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
         setMessages: messageState.setMessages,
-      });
+        setLiveTurnBySession: turnState.setLiveTurnBySession,
+      };
+      const actions = createAppShellChatActions(deps);
       assert.equal(await actions.send('also check the tests'), true);
-      const live = turnState.liveTurnBySession['session-a'];
-      assert.equal(live?.turnId, 'host-turn');
-      assert.equal(live?.unconfirmed, true);
+      assert.equal(turnState.liveTurnBySession['session-a'], undefined);
       const optimistic = messageState.messages.filter((message) => message.type === 'user');
       assert.equal(optimistic.length, 1);
       assert.equal(optimistic[0]?.turnId, 'host-turn');
@@ -210,14 +251,12 @@ describe('busy-raced send settlement', () => {
       const actions = createAppShellChatActions({
         ...createActionsDeps(),
         activeIdRef,
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
         setMessages: messageState.setMessages,
       });
       assert.equal(await actions.send('also check the tests'), true);
       const live = turnState.liveTurnBySession['session-a'];
       assert.equal(live?.turnId, 'host-turn');
       assert.equal(live?.phase, 'streamed');
-      assert.equal(live?.unconfirmed, undefined);
     } finally {
       restoreWindow();
     }
@@ -255,7 +294,6 @@ describe('busy-raced send settlement', () => {
           if (sessionId !== undefined) activated.push(sessionId);
           activeIdRef.current = sessionId;
         },
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
         setMessages: messageState.setMessages,
       });
       assert.equal(await actions.send('also check the tests'), true);
@@ -293,11 +331,10 @@ describe('busy-raced send settlement', () => {
         setActiveId: (sessionId: string | undefined) => {
           activeIdRef.current = sessionId;
         },
-        setLiveTurnBySession: turnState.setLiveTurnBySession,
         setMessages: messageState.setMessages,
       });
       assert.equal(await actions.send('also check the tests'), true);
-      assert.equal(turnState.liveTurnBySession['session-new']?.turnId, 'host-turn');
+      assert.equal(turnState.liveTurnBySession['session-new'], undefined);
       const optimistic = messageState.messages.filter((message) => message.type === 'user');
       assert.equal(optimistic.length, 1);
       assert.equal(optimistic[0]?.turnId, 'host-turn');

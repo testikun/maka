@@ -50,7 +50,6 @@ test('preserves a Branch copy identity after an ambiguous failure and completes 
       opened.push(sessionId);
     },
     pendingKeyOf: (sessionId, turnId, actionId) => `${sessionId}:${turnId}:${actionId}`,
-    refreshMessages: async () => true,
     refreshSessions: async () => [],
     setMessages: () => undefined,
     toastApi: { info() {}, success() {}, error() {} },

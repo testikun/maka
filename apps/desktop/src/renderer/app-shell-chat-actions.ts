@@ -31,10 +31,8 @@ import type { DesktopSessionSummary } from '../preload/bridge-contract.js';
 import type { UserQuestionResponse } from '@maka/core/user-question';
 import { DEFAULT_SESSION_NAME } from '@maka/core/session-name';
 import {
-  armLiveTurn,
   dequeueInteractionByRequestId,
   type InteractionQueues,
-  type LiveTurnProjection,
   type NavSelection,
 } from '@maka/ui';
 import { messageRefreshErrorMessage } from './app-shell-copy.js';
@@ -65,6 +63,7 @@ import {
   noRealConnectionSetupDescription,
 } from './model-connection-errors.js';
 import type { RefreshMessagesOptions } from './session-message-settlement.js';
+import { returnToLatestBeforeSubmit } from './follow-up-submit-routing.js';
 
 export type { RefreshMessagesOptions };
 
@@ -76,9 +75,6 @@ type ComposerImportOwner = {
 
 type RefBox<T> = { current: T };
 type BooleanRecordUpdater = (updater: (current: Record<string, boolean>) => Record<string, boolean>) => void;
-type LiveTurnRecordUpdater = (
-  updater: (current: Record<string, LiveTurnProjection>) => Record<string, LiveTurnProjection>,
-) => void;
 type MessageListUpdater = (next: StoredMessage[] | ((current: StoredMessage[]) => StoredMessage[])) => void;
 type MessageLoadErrorUpdater = (updater: (current: Record<string, string>) => Record<string, string>) => void;
 type InteractionQueueUpdater = (updater: (current: InteractionQueues) => InteractionQueues) => void;
@@ -146,9 +142,6 @@ export function createAppShellChatActions(deps: {
   setMessages: MessageListUpdater;
   transcriptRangeRef: RefBox<DesktopTranscriptRangeController | undefined>;
   setNavSelection: (selection: NavSelection) => void;
-  /** #646: arm the "正在处理…" indicator locally at send() — the model-wait
-   * window opens before any SessionEvent arrives (turn_started is not one). */
-  setLiveTurnBySession: LiveTurnRecordUpdater;
   setInteractionBySession: InteractionQueueUpdater;
   onInteractionChanged?: (sessionId: string) => void;
   /** A boundary decision settled: the session's execution boundary may have moved. */
@@ -194,7 +187,6 @@ export function createAppShellChatActions(deps: {
     setMessages,
     transcriptRangeRef,
     setNavSelection,
-    setLiveTurnBySession,
     setInteractionBySession,
     onInteractionChanged,
     onExecutionBoundaryChanged,
@@ -265,69 +257,14 @@ export function createAppShellChatActions(deps: {
     setMessages((current) => current.filter((message) => message.id !== `optimistic-user-${turnId}`));
   }
 
-  // #646: open the turn's model-wait window for a session. Armed the moment
-  // send() commits (before the IPC round-trip) so the "正在处理…" indicator
-  // covers the connect-to-first-token gap that has no SessionEvent of its own;
-  // disarmed if the send never reaches the runtime (the catch below). Always
-  // (re)set to `'waiting'`: a fresh send is a new first-token wait, so it must
-  // overwrite any `'streamed'` left by a prior turn whose terminal event was
-  // missed — otherwise the new turn's head would never show the indicator.
-  //
-  // The arm carries `unconfirmed` until the authority names this turn back. The
-  // runtime writes `status: 'running'` only at the END of `AgentRun.begin`, so
-  // every session list refreshed in between still reports the pre-send status —
-  // which is the same status a finished turn leaves behind. Without that bit,
-  // the stale value retires the arm the send just created
-  // (settled-session-transients.ts).
-  function armTurnActive(sessionId: string, turnId: string): void {
-    setLiveTurnBySession((current) => {
-      const active = current[sessionId];
-      if (active?.turnId === turnId && active.phase === 'waiting') return current;
-      return { ...current, [sessionId]: armLiveTurn(turnId) };
-    });
-  }
-
-  function disarmTurnActive(sessionId: string, turnId: string): void {
-    setLiveTurnBySession((current) => {
-      if (current[sessionId]?.turnId !== turnId) return current;
-      const next = { ...current };
-      delete next[sessionId];
-      return next;
-    });
-  }
-
-  // Rename only the exact unconfirmed arm this send created. Host events can
-  // beat the IPC response (main emits the sessions-changed nudge before it
-  // returns), and an authoritative projection that already arrived for the
-  // Host-chosen turn must not be replaced with a fresh waiting arm.
-  function rebindTurnActive(sessionId: string, fromTurnId: string, toTurnId: string): void {
-    setLiveTurnBySession((current) => {
-      const active = current[sessionId];
-      if (!active || active.turnId !== fromTurnId || !active.unconfirmed || active.phase !== 'waiting') {
-        return current;
-      }
-      return { ...current, [sessionId]: armLiveTurn(toTurnId) };
-    });
-  }
-
-  // One interpretation of a successful sessions:send for both the new-chat and
-  // existing-session branches: a busy-raced send can come back `steered` (this
-  // send owns no turn — the steering_message event renders the text) or under
-  // a Host-chosen turnId. Returns the turn the send owns, if any.
-  function settleSendBookkeeping(
-    sessionId: string,
+  // The Host alone decides whether admission starts a turn or steers the
+  // active one. The renderer uses that answer for the optimistic user message;
+  // it never creates a second, empty live-turn claim while awaiting it.
+  function admittedTurnId(
     requestedTurnId: string,
     sendResult: { steered?: true; turnId?: string },
   ): string | undefined {
-    if (sendResult.steered) {
-      disarmTurnActive(sessionId, requestedTurnId);
-      return undefined;
-    }
-    const startedTurnId = sendResult.turnId ?? requestedTurnId;
-    if (startedTurnId !== requestedTurnId) {
-      rebindTurnActive(sessionId, requestedTurnId, startedTurnId);
-    }
-    return startedTurnId;
+    return sendResult.steered ? undefined : sendResult.turnId ?? requestedTurnId;
   }
 
   async function send(
@@ -400,7 +337,6 @@ export function createAppShellChatActions(deps: {
         if (newChatPermissionChoice) clearNewChatPermissionChoice();
         optimisticSessionId = session.id;
         optimisticTurnId = turnId;
-        armTurnActive(session.id, turnId);
         const attachmentItems =
           pending && pending.length > 0
             ? toComposerIngestItems(pending)
@@ -433,12 +369,11 @@ export function createAppShellChatActions(deps: {
               session.id,
             );
           }
-          disarmTurnActive(session.id, turnId);
           await discardUnsentSession();
           return false;
         }
         unsentSessionId = undefined;
-        const settledTurnId = settleSendBookkeeping(session.id, turnId, sendResult);
+        const settledTurnId = admittedTurnId(turnId, sendResult);
         if (settledTurnId !== undefined) optimisticTurnId = settledTurnId;
         options.onSessionResolved?.(session.id);
         if (newChatOwner && isNewChatSendSurfaceActive(newChatOwner)) {
@@ -471,26 +406,9 @@ export function createAppShellChatActions(deps: {
         return true;
       }
       const sessionId = initialSessionId;
-      const transcript = transcriptRangeRef.current;
-      if (transcript) {
-        let hasNewer = false;
-        try {
-          const range = transcript.store.range();
-          hasNewer = range.sessionId === sessionId && range.hasNewer;
-        } catch {
-          // An unopened transcript is not a sparse historical view.
-        }
-        if (hasNewer) {
-          await transcript.loadLatest();
-          if (activeIdRef.current !== sessionId || transcriptRangeRef.current !== transcript) {
-            return false;
-          }
-          setMessages([...transcript.store.snapshot().messages]);
-        }
-      }
+      if (!(await returnToLatestBeforeSubmit({ sessionId, activeIdRef, transcriptRangeRef }))) return false;
       optimisticSessionId = sessionId;
       optimisticTurnId = turnId;
-      armTurnActive(sessionId, turnId);
       const attachmentItems =
         pending && pending.length > 0
           ? toComposerIngestItems(pending)
@@ -523,10 +441,9 @@ export function createAppShellChatActions(deps: {
             sessionId,
           );
         }
-        disarmTurnActive(sessionId, turnId);
         return false;
       }
-      const startedTurnId = settleSendBookkeeping(sessionId, turnId, sendResult);
+      const startedTurnId = admittedTurnId(turnId, sendResult);
       options.onSessionResolved?.(sessionId);
       if (startedTurnId === undefined) return true;
       optimisticTurnId = startedTurnId;
@@ -555,11 +472,6 @@ export function createAppShellChatActions(deps: {
       if (optimisticSessionId && optimisticTurnId) {
         removeOptimisticUserMessage(optimisticSessionId, optimisticTurnId);
       }
-      // The turn never reached the runtime — close the model-wait window so the
-      // "正在处理…" indicator doesn't hang after a failed send. Nothing else has
-      // to be undone: the arm was the only claim the send made, and no
-      // subscribeChanges event would reconcile a turn that never started.
-      if (optimisticSessionId && optimisticTurnId) disarmTurnActive(optimisticSessionId, optimisticTurnId);
       // Which surface is allowed to hear about this failure. The id alone is
       // not it: `selectNavigation` never clears `activeId` (nav-selection.ts),
       // so a user who left for 扩展 → 技能 mid-flight still "is" session A by
@@ -679,18 +591,13 @@ export function createAppShellChatActions(deps: {
       if (activeIdRef.current !== sessionId || transcriptRangeRef.current !== controller) {
         return false;
       }
-      const range = controller.store;
-      const snapshot = range.snapshot();
-      if (snapshot.sessionId !== sessionId) return false;
-      const next = [...snapshot.messages];
-      setMessages(next);
       setMessageLoadErrorBySession((current) => {
         if (!current[sessionId]) return current;
         const updated = { ...current };
         delete updated[sessionId];
         return updated;
       });
-      return requiredMessageId === undefined || range.hasDurableMessage(requiredMessageId);
+      return requiredMessageId === undefined || controller.store.hasDurableMessage(requiredMessageId);
     } catch (error) {
       if (activeIdRef.current === sessionId) {
         const message = messageRefreshErrorMessage(error, uiLocale);

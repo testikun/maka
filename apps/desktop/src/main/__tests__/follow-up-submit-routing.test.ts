@@ -20,54 +20,28 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 import {
-  hasActiveTurnAtSubmit,
   mergeWorkspaceReferences,
   resolveFollowUpModeAtSubmit,
 } from '../../renderer/follow-up-submit-routing.js';
 
 describe('follow-up submit routing', () => {
-  it('uses the synchronous turn arm before React publishes streaming state', () => {
-    assert.equal(
-      hasActiveTurnAtSubmit({
-        liveTurn: { turnId: 'turn-1' },
-        runningTurnIds: [],
-      }),
-      true,
-    );
-  });
-
-  it('ignores a terminal projection whose only running id is the same turn', () => {
-    assert.equal(
-      hasActiveTurnAtSubmit({
-        liveTurn: { turnId: 'turn-1', terminal: true },
-        runningTurnIds: ['turn-1'],
-      }),
-      false,
-    );
-  });
-
   it('routes burst input through the selected follow-up lane', () => {
     assert.equal(
-      resolveFollowUpModeAtSubmit({
-        hasActiveTurn: true,
-      }),
+      resolveFollowUpModeAtSubmit({}),
       'queue',
     );
     assert.equal(
       resolveFollowUpModeAtSubmit({
         requestedMode: 'steer',
-        hasActiveTurn: true,
       }),
       'steer',
     );
   });
 
-  it('starts a normal turn only when no active-turn witness exists', () => {
+  it('lets the Host admit an ordinary existing-session message without a liveness guess', () => {
     assert.equal(
-      resolveFollowUpModeAtSubmit({
-        hasActiveTurn: false,
-      }),
-      undefined,
+      resolveFollowUpModeAtSubmit({}),
+      'queue',
     );
   });
 

@@ -54,7 +54,6 @@ export function createAppShellTurnActions(deps: {
   clearPendingTurnAction: (key: string) => void;
   openSessionInChat: (sessionId: string, turnId?: string) => void;
   pendingKeyOf: (sessionId: string, turnId: string, actionId: TurnFooterActionMeta['id']) => string;
-  refreshMessages: (sessionId: string) => Promise<boolean>;
   refreshSessions: () => Promise<DesktopSessionSummary[]>;
   setMessages: MessageListUpdater;
   toastApi: ToastApi;
@@ -66,7 +65,6 @@ export function createAppShellTurnActions(deps: {
     clearPendingTurnAction,
     openSessionInChat,
     pendingKeyOf,
-    refreshMessages,
     refreshSessions,
     setMessages,
     toastApi,
@@ -107,7 +105,6 @@ export function createAppShellTurnActions(deps: {
         if (activeIdRef.current === sessionId) {
           openSessionInChat(newSession.id);
           setMessages([]);
-          await refreshMessages(newSession.id);
           toastApi.success(copy.branchCreatedTitle, copy.branchCreatedDescription(newSession.name));
         }
         await refreshSessions();

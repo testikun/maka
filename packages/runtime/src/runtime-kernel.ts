@@ -175,7 +175,18 @@ export interface RuntimeKernelLike {
     runId: string;
     messageId: string;
     content: MessageContent;
+    admittedAt?: number;
   }): Promise<void>;
+  materializeSteeringAdmissions?(
+    admissions: readonly {
+      sessionId: string;
+      turnId: string;
+      runId: string;
+      messageId: string;
+      content: MessageContent;
+      admittedAt: number;
+    }[],
+  ): Promise<void>;
   materializeRootSourceMessages?(input: {
     sessionId: string;
     turnId: string;
@@ -2585,6 +2596,7 @@ export class RuntimeKernel implements RuntimeKernelLike {
     runId: string;
     messageId: string;
     content: MessageContent;
+    admittedAt?: number;
   }): Promise<void> {
     if (!this.hasActiveRun(input.sessionId, input.runId, input.turnId)) {
       throw new Error('Steering admission no longer matches the active root Turn');
@@ -2593,10 +2605,42 @@ export class RuntimeKernel implements RuntimeKernelLike {
       type: 'user',
       id: input.messageId,
       turnId: input.turnId,
-      ts: this.deps.now(),
+      ts: input.admittedAt ?? this.deps.now(),
       ...structuredClone(input.content),
       steeringEventId: input.messageId,
     });
+  }
+
+  async materializeSteeringAdmissions(
+    admissions: readonly {
+      sessionId: string;
+      turnId: string;
+      runId: string;
+      messageId: string;
+      content: MessageContent;
+      admittedAt: number;
+    }[],
+  ): Promise<void> {
+    const idsBySession = new Map<string, Set<string>>();
+    for (const admission of admissions) {
+      let existingIds = idsBySession.get(admission.sessionId);
+      if (!existingIds) {
+        existingIds = new Set(
+          (await this.deps.store.readMessages(admission.sessionId)).map((message) => message.id),
+        );
+        idsBySession.set(admission.sessionId, existingIds);
+      }
+      if (existingIds.has(admission.messageId)) continue;
+      await this.deps.store.appendMessage(admission.sessionId, {
+        type: 'user',
+        id: admission.messageId,
+        turnId: admission.turnId,
+        ts: admission.admittedAt,
+        ...structuredClone(admission.content),
+        steeringEventId: admission.messageId,
+      });
+      existingIds.add(admission.messageId);
+    }
   }
 
   async materializeRootSourceMessages(input: {

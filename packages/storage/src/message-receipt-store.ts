@@ -21,6 +21,11 @@ import { resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import type { DatabaseSync } from 'node:sqlite';
 import {
+  messageContentsEqual,
+  normalizeMessageContent,
+  type MessageContent,
+} from '@maka/core/events';
+import {
   acquireOperationalStateDatabase,
   type OperationalStateDatabaseLease,
 } from './operational-state-store.js';
@@ -43,6 +48,17 @@ export interface MessageOperationReceipt {
   readonly result: unknown;
 }
 
+export interface PendingSteeringAdmission {
+  readonly sessionId: string;
+  readonly turnId: string;
+  readonly runId: string;
+  readonly messageId: string;
+  readonly content: MessageContent;
+  readonly modelContent: MessageContent;
+  readonly initiatingConnectionId: string;
+  readonly admittedAt: number;
+}
+
 export interface MessageReceiptStore {
   beginHostEpoch(hostEpoch: string): Promise<void>;
   read(
@@ -58,6 +74,9 @@ export interface MessageReceiptStore {
     operationId: string,
     receipt: MessageOperationReceipt,
   ): Promise<MessageOperationReceipt>;
+  commitPendingSteering(admission: PendingSteeringAdmission): Promise<PendingSteeringAdmission>;
+  listPendingSteering(): Promise<readonly PendingSteeringAdmission[]>;
+  settlePendingSteering(sessionId: string, messageIds: readonly string[]): Promise<void>;
 }
 
 interface StoredMessageOperationReceipt {
@@ -171,6 +190,69 @@ class SqliteMessageReceiptStore implements ClosableMessageReceiptStore {
         return existing;
       }
       return stored;
+    });
+  }
+
+  async commitPendingSteering(
+    admission: PendingSteeringAdmission,
+  ): Promise<PendingSteeringAdmission> {
+    const stored = normalizePendingSteeringAdmission(admission);
+    return this.#lease.transaction('write', () => {
+      const inserted = this.#lease.database
+        .prepare(`
+          INSERT OR IGNORE INTO core_pending_steering_admissions(
+            session_id, turn_id, run_id, message_id, content_json, model_content_json,
+            initiating_connection_id, admitted_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        .run(
+          stored.sessionId,
+          stored.turnId,
+          stored.runId,
+          stored.messageId,
+          JSON.stringify(stored.content),
+          JSON.stringify(stored.modelContent),
+          stored.initiatingConnectionId,
+          stored.admittedAt,
+        );
+      if (inserted.changes !== 0) return stored;
+      const existing = readPendingSteeringAdmission(
+        this.#lease.database,
+        stored.sessionId,
+        stored.messageId,
+      );
+      if (!existing || !samePendingSteeringAdmission(existing, stored)) {
+        throw new Error('Pending steering admission identity conflict');
+      }
+      return existing;
+    });
+  }
+
+  async listPendingSteering(): Promise<readonly PendingSteeringAdmission[]> {
+    return this.#lease.database
+      .prepare(`
+        SELECT session_id, turn_id, run_id, message_id, content_json, model_content_json,
+          initiating_connection_id, admitted_at
+        FROM core_pending_steering_admissions
+        ORDER BY sequence
+      `)
+      .all()
+      .map(decodePendingSteeringAdmissionRow);
+  }
+
+  async settlePendingSteering(sessionId: string, messageIds: readonly string[]): Promise<void> {
+    assertSafeId(sessionId, 'Invalid Session identity');
+    const uniqueMessageIds = [...new Set(messageIds)];
+    if (uniqueMessageIds.length === 0) return;
+    for (const messageId of uniqueMessageIds) {
+      assertSafeId(messageId, 'Invalid Message identity');
+    }
+    this.#lease.transaction('write', () => {
+      const statement = this.#lease.database.prepare(`
+        DELETE FROM core_pending_steering_admissions
+        WHERE session_id = ? AND message_id = ?
+      `);
+      for (const messageId of uniqueMessageIds) statement.run(sessionId, messageId);
     });
   }
 
@@ -289,6 +371,98 @@ function decodeStoredReceipt(
     throw new Error('Invalid message operation receipt');
   }
   return record as unknown as StoredMessageOperationReceipt;
+}
+
+interface PendingSteeringAdmissionRow {
+  readonly session_id?: unknown;
+  readonly turn_id?: unknown;
+  readonly run_id?: unknown;
+  readonly message_id?: unknown;
+  readonly content_json?: unknown;
+  readonly model_content_json?: unknown;
+  readonly initiating_connection_id?: unknown;
+  readonly admitted_at?: unknown;
+}
+
+function normalizePendingSteeringAdmission(
+  admission: PendingSteeringAdmission,
+): PendingSteeringAdmission {
+  assertSafeId(admission.sessionId, 'Invalid Session identity');
+  assertSafeId(admission.turnId, 'Invalid Turn identity');
+  assertSafeId(admission.runId, 'Invalid Run identity');
+  assertSafeId(admission.messageId, 'Invalid Message identity');
+  assertSafeId(admission.initiatingConnectionId, 'Invalid Connection identity');
+  if (!Number.isSafeInteger(admission.admittedAt) || admission.admittedAt < 0) {
+    throw new Error('Invalid steering admission timestamp');
+  }
+  const normalized = Object.freeze({
+    ...admission,
+    content: normalizeMessageContent(admission.content),
+    modelContent: normalizeMessageContent(admission.modelContent),
+  });
+  if (Buffer.byteLength(JSON.stringify(normalized), 'utf8') > RECEIPT_MAX_BYTES) {
+    throw new Error('Pending steering admission exceeds size limit');
+  }
+  return normalized;
+}
+
+function decodePendingSteeringAdmissionRow(
+  row: PendingSteeringAdmissionRow,
+): PendingSteeringAdmission {
+  if (
+    typeof row.session_id !== 'string' ||
+    typeof row.turn_id !== 'string' ||
+    typeof row.run_id !== 'string' ||
+    typeof row.message_id !== 'string' ||
+    typeof row.content_json !== 'string' ||
+    typeof row.model_content_json !== 'string' ||
+    typeof row.initiating_connection_id !== 'string' ||
+    typeof row.admitted_at !== 'number'
+  ) {
+    throw new Error('Invalid SQLite pending steering admission');
+  }
+  return normalizePendingSteeringAdmission({
+    sessionId: row.session_id,
+    turnId: row.turn_id,
+    runId: row.run_id,
+    messageId: row.message_id,
+    content: JSON.parse(row.content_json),
+    modelContent: JSON.parse(row.model_content_json),
+    initiatingConnectionId: row.initiating_connection_id,
+    admittedAt: row.admitted_at,
+  });
+}
+
+function readPendingSteeringAdmission(
+  db: DatabaseSync,
+  sessionId: string,
+  messageId: string,
+): PendingSteeringAdmission | undefined {
+  const row = db
+    .prepare(`
+      SELECT session_id, turn_id, run_id, message_id, content_json, model_content_json,
+        initiating_connection_id, admitted_at
+      FROM core_pending_steering_admissions
+      WHERE session_id = ? AND message_id = ?
+    `)
+    .get(sessionId, messageId) as PendingSteeringAdmissionRow | undefined;
+  return row ? decodePendingSteeringAdmissionRow(row) : undefined;
+}
+
+function samePendingSteeringAdmission(
+  left: PendingSteeringAdmission,
+  right: PendingSteeringAdmission,
+): boolean {
+  return (
+    left.sessionId === right.sessionId &&
+    left.turnId === right.turnId &&
+    left.runId === right.runId &&
+    left.messageId === right.messageId &&
+    left.initiatingConnectionId === right.initiatingConnectionId &&
+    left.admittedAt === right.admittedAt &&
+    messageContentsEqual(left.content, right.content) &&
+    messageContentsEqual(left.modelContent, right.modelContent)
+  );
 }
 
 function assertSafeId(value: string, message: string): void {

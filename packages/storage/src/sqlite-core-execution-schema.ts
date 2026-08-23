@@ -19,7 +19,7 @@
 
 import type { DatabaseSync } from 'node:sqlite';
 
-export const SQLITE_CORE_EXECUTION_SCHEMA_VERSION = 4;
+export const SQLITE_CORE_EXECUTION_SCHEMA_VERSION = 5;
 
 export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
   db.exec(`
@@ -131,6 +131,22 @@ export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
         REFERENCES core_message_host_epochs(host_epoch)
         ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS core_pending_steering_admissions (
+      sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id TEXT NOT NULL,
+      turn_id TEXT NOT NULL,
+      run_id TEXT NOT NULL,
+      message_id TEXT NOT NULL,
+      content_json TEXT NOT NULL,
+      model_content_json TEXT NOT NULL,
+      initiating_connection_id TEXT NOT NULL,
+      admitted_at INTEGER NOT NULL CHECK (admitted_at >= 0),
+      UNIQUE (session_id, message_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS core_pending_steering_session_order
+      ON core_pending_steering_admissions(session_id, sequence);
 
     CREATE TABLE IF NOT EXISTS core_shell_runs (
       session_id TEXT NOT NULL,

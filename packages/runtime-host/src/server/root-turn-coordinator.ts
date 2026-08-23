@@ -63,6 +63,7 @@ import {
   isSessionNotFoundError,
   normalizeRootTurnAdmissionPayload,
   type ExecutionStoresWriter,
+  type PendingSteeringAdmission,
   type RootTurnAdmission,
 } from '@maka/storage/execution-stores';
 import type {
@@ -79,6 +80,7 @@ import type { HostInteractionCoordinator } from './interaction-coordinator.js';
 import {
   type HostMessageRootState,
   type HostMessagePreparationInput,
+  type HostMessageRecoveryBatch,
   type HostMessageSessionHeader,
   type HostMessageStartInput,
   type HostMessageStopClaim,
@@ -872,14 +874,15 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     } = {},
   ): Promise<void> {
     return this.runCommand(async () => {
-      const declared = await this.sessionAdmission.run(identity.sessionId, (lease) =>
-        this.declareStopFence(
+      const declared = await this.sessionAdmission.run(identity.sessionId, async (lease) => {
+        await this.messages.prepareStopFence(identity);
+        return this.declareStopFence(
           identity,
           () => this.messages.commitStopFence(identity),
           lease,
           input,
-        ),
-      );
+        );
+      });
       await declared?.deliverStop();
       await declared?.active.startSettled.promise;
       const disposition = await this.sessionAdmission.run(identity.sessionId, (lease) =>
@@ -904,7 +907,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     } = {},
   ): Promise<void> {
     return this.runCommand(async () => {
-      const declared = await this.sessionAdmission.run(sessionId, (lease) => {
+      const declared = await this.sessionAdmission.run(sessionId, async (lease) => {
         const active = this.#executions.get(sessionId);
         if (!active) return undefined;
         const identity = {
@@ -912,6 +915,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
           turnId: active.turnId,
           runId: active.runId,
         };
+        await this.messages.prepareStopFence(identity);
         return this.declareStopFence(
           identity,
           () => this.messages.commitStopFence(identity),
@@ -1086,12 +1090,85 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     });
   }
 
+  startRecoveredSteering(
+    input: HostMessageRecoveryBatch,
+    admissionLease: SessionAdmissionLease,
+  ): Promise<{ readonly turnId: string } | { readonly error: string }> {
+    return this.runCommand(async () => {
+      if (this.#executions.has(input.sessionId)) {
+        throw new RuntimeMessageAuthorityInvariantError(
+          'Pending steering recovery attempted to replace a live root Turn',
+        );
+      }
+      const reservation = this.reserveRootTurn(input.sessionId);
+      if (!reservation) return { error: 'Another root Turn is being admitted' };
+      try {
+        const header = await this.stores.sessionStore.readHeaderSnapshot(input.sessionId);
+        const unavailableReason = runtimeHostExternalTurnUnavailableReason(header);
+        if (unavailableReason) return { error: unavailableReason };
+        await this.clientCapabilities?.bindConfirmedFollowup(
+          input.sessionId,
+          input.initiatingConnectionId,
+        );
+        if (!this.beginRootAdmission(reservation)) {
+          return { error: 'Root Turn reservation is no longer current' };
+        }
+        await this.prepareFreshAgentGraphEpoch(header);
+        const turnId = randomUUID();
+        const admitted = await this.rootAdmissionOwner.admitRootTurn({
+          sessionId: input.sessionId,
+          turnId,
+          proposedRunId: randomUUID(),
+          proposedUserMessageId: randomUUID(),
+          execution: {
+            kind: 'external_message',
+            inputDigest: messageContentDigest(input.submittedContent),
+          },
+          normalizedInput: input.content,
+          sourceMessages: input.sources,
+          admittedAt: Date.now(),
+        });
+        if (admitted.kind !== 'admitted') {
+          throw new RuntimeMessageAuthorityInvariantError(
+            'Recovered steering root Turn identity already existed',
+          );
+        }
+        const disposition = await this.prepareAdmittedTurn(
+          {
+            sessionId: input.sessionId,
+            turnId,
+            content: admitted.admission.normalizedInput,
+          },
+          admitted.admission,
+          this.acquireRecoveryResidency,
+          admissionLease,
+          undefined,
+          undefined,
+          reservation,
+        );
+        if (disposition.kind !== 'await_start') {
+          throw new RuntimeMessageAuthorityInvariantError(
+            'Recovered steering root Turn did not reserve execution',
+          );
+        }
+        return { turnId };
+      } finally {
+        this.releaseRootReservation(reservation);
+      }
+    });
+  }
+
+  materializeSteeringAdmissions(admissions: readonly PendingSteeringAdmission[]): Promise<void> {
+    return this.runCommand(() => this.manager.materializeSteeringAdmissions(admissions));
+  }
+
   commitSteeringAdmission(input: {
     readonly sessionId: string;
     readonly turnId: string;
     readonly runId: string;
     readonly messageId: string;
     readonly content: MessageContent;
+    readonly admittedAt: number;
   }): Promise<void> {
     return this.runCommand(() => this.manager.commitSteeringAdmission(input));
   }
@@ -1990,7 +2067,6 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     try {
       this.messages.reserveRootTurn(messageIdentity);
       messageReserved = true;
-      await this.messages.recoverRootTurn(messageIdentity);
       await this.continuity.holdTerminalPublication(
         input.sessionId,
         input.turnId,
@@ -2280,6 +2356,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
         runId: active.runId,
       };
       await this.interactions.assertTerminalFence(identity, lease);
+      await this.messages.prepareTerminalTransition(identity);
       const batch = this.messages.beginTerminalTransition(identity);
       await this.continuity.publishTerminalProjection(
         sessionId,
@@ -2363,6 +2440,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
         'Fresh follow-up root Turn did not reserve execution',
       );
     }
+    await this.messages.settleAdmittedRootSources(batch);
   }
 
   private async deliverRuntimeStopIntent(

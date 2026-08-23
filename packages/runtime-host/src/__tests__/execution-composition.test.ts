@@ -259,6 +259,110 @@ test('production recovery preserves legacy Automation history and closes an orph
   });
 });
 
+test('production startup recovers steering admitted before an interrupted Run lost its queue', async () => {
+  await withCompositionRoot(async ({ root, owner }) => {
+    const stores = await openInteractiveExecutionStoresForWrite(owner.lease);
+    const session = await stores.sessionStore.create({
+      cwd: root,
+      llmConnectionSlug: 'fake',
+      model: 'fake-model',
+      permissionMode: 'ask',
+    });
+    const admitted = await stores.agentRunStore.admitRootTurn({
+      sessionId: session.id,
+      turnId: 'interrupted-turn',
+      proposedRunId: 'interrupted-run',
+      proposedUserMessageId: 'initial-message',
+      execution: { kind: 'external_message' },
+      previousRootTurnId: null,
+      normalizedInput: { text: 'initial request' },
+      sourceMessages: [],
+      admittedAt: 10,
+    });
+    assert.equal(admitted.kind, 'admitted');
+    await stores.sessionStore.appendMessage(session.id, {
+      type: 'user',
+      id: 'initial-message',
+      turnId: 'interrupted-turn',
+      ts: 10,
+      text: 'initial request',
+    });
+    await stores.agentRunStore.createRun({
+      runId: 'interrupted-run',
+      invocationId: 'interrupted-run',
+      sessionId: session.id,
+      turnId: 'interrupted-turn',
+      status: 'created',
+      backendKind: 'fake',
+      llmConnectionSlug: 'fake',
+      modelId: 'fake-model',
+      cwd: root,
+      permissionMode: 'ask',
+      createdAt: 10,
+      updatedAt: 10,
+    });
+    await stores.agentRunStore.appendEvent(session.id, 'interrupted-run', {
+      type: 'run_started',
+      id: 'interrupted-run-started',
+      sessionId: session.id,
+      turnId: 'interrupted-turn',
+      runId: 'interrupted-run',
+      ts: 11,
+    });
+    await stores.agentRunStore.updateRun(session.id, 'interrupted-run', {
+      status: 'running',
+      updatedAt: 11,
+    });
+    await stores.messageReceiptStore.commitPendingSteering({
+      sessionId: session.id,
+      turnId: 'interrupted-turn',
+      runId: 'interrupted-run',
+      messageId: 'admitted-steering',
+      content: { text: 'durable steering' },
+      modelContent: { text: 'durable steering' },
+      initiatingConnectionId: 'crashed-client',
+      admittedAt: 12,
+    });
+    await stores.sessionStore.appendMessage(session.id, {
+      type: 'user',
+      id: 'admitted-steering',
+      turnId: 'interrupted-turn',
+      ts: 12,
+      text: 'durable steering',
+      steeringEventId: 'admitted-steering',
+    });
+
+    const composition = await createExecutionRuntimeHostComposition(
+      compositionContext(owner),
+      {},
+      { primaryBackendFactory: (context) => new FakeBackend(context) },
+    );
+    try {
+      await composition.recover();
+      const admissions = await stores.agentRunStore.listRootTurnAdmissionsForRecovery(session.id);
+      assert.equal(admissions.length, 2);
+      const [source] = admissions[1]?.sourceMessages ?? [];
+      assert.equal(source?.messageId, 'admitted-steering');
+      assert.deepEqual(source?.content, { text: 'durable steering' });
+      assert.equal(source?.placement, 'current_turn');
+      assert.equal(source?.disposition, 'steering');
+      assert.equal((await stores.messageReceiptStore.listPendingSteering()).length, 0);
+      assert.equal(
+        (await stores.agentRunStore.readRun(session.id, 'interrupted-run')).status,
+        'failed',
+      );
+      assert.deepEqual(
+        (await stores.sessionStore.readMessages(session.id))
+          .filter((message) => message.type === 'user')
+          .map((message) => message.id),
+        ['initial-message', 'admitted-steering'],
+      );
+    } finally {
+      await composition.close();
+    }
+  });
+});
+
 test('composition drain preserves usage admission until active Runtime work settles', async () => {
   await withCompositionRoot(async ({ owner }) => {
     const composition = await createExecutionRuntimeHostComposition(compositionContext(owner));

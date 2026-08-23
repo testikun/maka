@@ -4819,10 +4819,26 @@ export class SessionManager {
     runId: string;
     messageId: string;
     content: MessageContent;
+    admittedAt?: number;
   }): Promise<void> {
     const commit = this.runtimeKernel.commitSteeringAdmission;
     if (!commit) throw new Error('Runtime steering admission authority is unavailable');
     return commit.call(this.runtimeKernel, input);
+  }
+
+  materializeSteeringAdmissions(
+    admissions: readonly {
+      sessionId: string;
+      turnId: string;
+      runId: string;
+      messageId: string;
+      content: MessageContent;
+      admittedAt: number;
+    }[],
+  ): Promise<void> {
+    const materialize = this.runtimeKernel.materializeSteeringAdmissions;
+    if (!materialize) throw new Error('Runtime steering materialization is unavailable');
+    return materialize.call(this.runtimeKernel, admissions);
   }
 
   materializeRootSourceMessages(input: {

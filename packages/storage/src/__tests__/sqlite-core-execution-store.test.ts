@@ -392,6 +392,35 @@ describe('SQLite core execution stores', () => {
     });
   });
 
+  test('persists pending steering across Host Epochs until it is settled', async () => {
+    await withRoot(async (root) => {
+      const admission = {
+        sessionId: 'session-1',
+        turnId: 'turn-1',
+        runId: 'run-1',
+        messageId: 'message-1',
+        content: { text: 'submitted' },
+        modelContent: { text: 'prepared' },
+        initiatingConnectionId: 'connection-1',
+        admittedAt: 123,
+      } as const;
+      const store = createSqliteMessageReceiptStore(root);
+      await store.beginHostEpoch('epoch-1');
+      assert.deepEqual(await store.commitPendingSteering(admission), admission);
+      store.close();
+
+      const reopened = createSqliteMessageReceiptStore(root);
+      try {
+        await reopened.beginHostEpoch('epoch-2');
+        assert.deepEqual(await reopened.listPendingSteering(), [admission]);
+        await reopened.settlePendingSteering('session-1', ['message-1']);
+        assert.deepEqual(await reopened.listPendingSteering(), []);
+      } finally {
+        reopened.close();
+      }
+    });
+  });
+
   test('persists interaction request and outcome', async () => {
     await withRoot(async (root) => {
       const capability = trackControlDirectory(

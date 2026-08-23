@@ -344,15 +344,16 @@ test('persists a steering message before admitting it to the active Turn queue',
   );
 
   assert.equal(accepted.ok && accepted.result.disposition, 'steering');
-  assert.deepEqual(fixture.steeringAdmissions, [
-    {
-      sessionId: ROOT.sessionId,
-      turnId: ROOT.turnId,
-      runId: ROOT.runId,
-      messageId: 'durable-steering',
-      content: { text: 'persist before queueing' },
-    },
-  ]);
+  assert.equal(fixture.steeringAdmissions.length, 1);
+  const [{ admittedAt, ...admission }] = fixture.steeringAdmissions;
+  assert.equal(typeof admittedAt, 'number');
+  assert.deepEqual(admission, {
+    sessionId: ROOT.sessionId,
+    turnId: ROOT.turnId,
+    runId: ROOT.runId,
+    messageId: 'durable-steering',
+    content: { text: 'persist before queueing' },
+  });
   assert.equal(fixture.coordinator.projection(ROOT.sessionId).steering.length, 1);
 
   await fixture.coordinator.handlers['queue.retract'](
@@ -360,6 +361,25 @@ test('persists a steering message before admitting it to the active Turn queue',
     operationContext(),
   );
   completeActiveRoot(fixture);
+  await fixture.coordinator.close();
+});
+
+test('terminal transition settles steering after durable provider consumption', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const owner = fixture.coordinator.bindRun(ROOT);
+  assert.equal((await submit(fixture, 'consumed-steering', 'consume me', 'current_turn')).ok, true);
+  assert.equal(fixture.pendingSteeringCount(), 1);
+
+  const [lease] = owner.pull();
+  assert.ok(lease);
+  fixture.events.push(steeringEvent('consumed-steering', { text: 'consume me' }));
+  owner.ack([lease.id]);
+  owner.release();
+  await fixture.coordinator.prepareTerminalTransition(ROOT);
+
+  assert.equal(fixture.pendingSteeringCount(), 0);
+  fixture.coordinator.completeIdle(fixture.coordinator.beginTerminalTransition(ROOT));
   await fixture.coordinator.close();
 });
 
@@ -382,46 +402,6 @@ test('does not expose steering when its durable admission fails', async () => {
 
   fixture.coordinator.abandonRootReservation(ROOT);
   await fixture.coordinator.close();
-});
-
-test('re-admits a durable steering message after admission persistence loses its queue commit', async () => {
-  const fixture = createFixture();
-  fixture.coordinator.reserveRootTurn(ROOT);
-  const delay = fixture.delaySteeringAdmission(new Error('host stopped after persistence'));
-
-  const interrupted = submit(
-    fixture,
-    'recoverable-steering',
-    'recover after restart',
-    'current_turn',
-  );
-  await delay.started.promise;
-  delay.release.resolve(undefined);
-  await assert.rejects(interrupted, /host stopped after persistence/);
-
-  const restarted = fixture.restart('epoch-2');
-  restarted.reserveRootTurn(ROOT);
-  await restarted.recoverRootTurn(ROOT);
-
-  assert.deepEqual(
-    restarted.projection(ROOT.sessionId).steering.map((entry) => ({
-      messageId: entry.messageId,
-      content: entry.content,
-    })),
-    [{ messageId: 'recoverable-steering', content: { text: 'recover after restart' } }],
-  );
-  const owner = restarted.bindRun(ROOT);
-  const leases = owner.pull();
-  assert.deepEqual(
-    leases.map((lease) => ({ messageId: lease.messageId, content: lease.content })),
-    [{ messageId: 'recoverable-steering', content: { text: 'recover after restart' } }],
-  );
-  assert.equal(fixture.steeringAdmissions.length, 1);
-  owner.ack([leases[0]!.id]);
-  owner.release();
-  const batch = restarted.beginTerminalTransition(ROOT);
-  restarted.completeIdle(batch);
-  await restarted.close();
 });
 
 test('queue admission rejects content that cannot form a durable follow-up Turn', async () => {
@@ -1709,8 +1689,11 @@ test('administrative drain preserves accepted entries until the terminal stop fe
     fixture.coordinator.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
     ['follow-drain'],
   );
+  assert.equal(fixture.pendingSteeringCount(), 1);
 
   owner.release();
+  await fixture.coordinator.prepareTerminalTransition(ROOT);
+  assert.equal(fixture.pendingSteeringCount(), 0);
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   assert.deepEqual(batch.sources, []);
   assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
@@ -2244,6 +2227,7 @@ function createFixture(
     runId: string;
     messageId: string;
     content: MessageContent;
+    admittedAt: number;
   }> = [];
   const durableSteeringAdmissions = new Map<
     string,
@@ -2334,6 +2318,20 @@ function createFixture(
       };
     },
   };
+  const receiptStore = memoryReceiptStore(
+    operationReceipts,
+    async (operation, operationId) => {
+      const delay = receiptDelays.get(`${operation}:${operationId}`);
+      if (!delay) return;
+      receiptDelays.delete(`${operation}:${operationId}`);
+      delay.started.resolve(undefined);
+      await delay.release.promise;
+      if (delay.error) throw delay.error;
+    },
+    () => {
+      receiptReads += 1;
+    },
+  );
   const options: HostMessageCoordinatorOptions = {
     hostEpoch: 'epoch-1',
     root,
@@ -2341,10 +2339,6 @@ function createFixture(
       readRootTurnSourceMessageReceipt: async (_sessionId, messageId) => receipts.get(messageId),
       readSteeringAdmission: async (_sessionId, messageId) =>
         durableSteeringAdmissions.get(messageId),
-      listSteeringAdmissions: async (sessionId, turnId) =>
-        [...durableSteeringAdmissions.values()].filter(
-          (admission) => admission.sessionId === sessionId && admission.turnId === turnId,
-        ),
       readImmutableSteeringMessageProof: async (_sessionId, messageId) => {
         const event = events.find(
           (candidate) =>
@@ -2356,20 +2350,7 @@ function createFixture(
         return event ? { event } : undefined;
       },
     },
-    receipts: memoryReceiptStore(
-      operationReceipts,
-      async (operation, operationId) => {
-        const delay = receiptDelays.get(`${operation}:${operationId}`);
-        if (!delay) return;
-        receiptDelays.delete(`${operation}:${operationId}`);
-        delay.started.resolve(undefined);
-        await delay.release.promise;
-        if (delay.error) throw delay.error;
-      },
-      () => {
-        receiptReads += 1;
-      },
-    ),
+    receipts: receiptStore,
     sessionAdmission: new SessionAdmissionGate(),
     acquireResidency: () => {
       liveResidencies += 1;
@@ -2406,6 +2387,7 @@ function createFixture(
     events,
     receipts,
     steeringAdmissions,
+    pendingSteeringCount: () => receiptStore.pendingSteeringCount(),
     delaySteeringAdmission: (error?: Error) => {
       const delay = { started: deferred<void>(), release: deferred<void>(), error };
       steeringAdmissionDelay = delay;
@@ -2441,9 +2423,10 @@ function memoryReceiptStore(
   receipts: Map<string, MessageOperationReceipt>,
   beforeCommit?: (operation: string, operationId: string) => Promise<void>,
   onRead?: () => void,
-): MessageReceiptStore {
+): MessageReceiptStore & { pendingSteeringCount(): number } {
   const key = (hostEpoch: string, operation: string, sessionId: string, operationId: string) =>
     `${hostEpoch}:${operation}:${sessionId}:${operationId}`;
+  const pending = new Map<string, Parameters<MessageReceiptStore['commitPendingSteering']>[0]>();
   return {
     beginHostEpoch: async () => undefined,
     read: async (hostEpoch, operation, sessionId, operationId) => {
@@ -2459,6 +2442,19 @@ function memoryReceiptStore(
       receipts.set(receiptKey, snapshot);
       return snapshot;
     },
+    commitPendingSteering: async (admission) => {
+      const admissionKey = `${admission.sessionId}:${admission.messageId}`;
+      const existing = pending.get(admissionKey);
+      if (existing) return existing;
+      const snapshot = structuredClone(admission);
+      pending.set(admissionKey, snapshot);
+      return snapshot;
+    },
+    listPendingSteering: async () => [...pending.values()],
+    settlePendingSteering: async (sessionId, messageIds) => {
+      for (const messageId of messageIds) pending.delete(`${sessionId}:${messageId}`);
+    },
+    pendingSteeringCount: () => pending.size,
   };
 }
 

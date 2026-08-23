@@ -118,6 +118,7 @@ export type {
   MessageOperationReceipt,
   MessageReceiptOperation,
   MessageReceiptStore,
+  PendingSteeringAdmission,
 } from './message-receipt-store.js';
 export type {
   ProbeSessionRemovalResult,
@@ -555,6 +556,11 @@ async function createExecutionStoresForWrite<K extends StorageRootKind, E extend
         run(() =>
           messageReceiptStore.commit(hostEpoch, operation, sessionId, operationId, receipt),
         ),
+      commitPendingSteering: (admission) =>
+        run(() => messageReceiptStore.commitPendingSteering(admission)),
+      listPendingSteering: () => run(() => messageReceiptStore.listPendingSteering()),
+      settlePendingSteering: (sessionId, messageIds) =>
+        run(() => messageReceiptStore.settlePendingSteering(sessionId, messageIds)),
     },
   };
   freezeExecutionStoresFacade(stores);

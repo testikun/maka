@@ -453,6 +453,10 @@ export async function createExecutionRuntimeHostComposition(
         requireRootCoordinator(rootCoordinator).claimStopFence(input, commitQueueFence, admission),
       startFromMessage: (input, admission) =>
         requireRootCoordinator(rootCoordinator).startFromMessage(input, admission),
+      startRecoveredSteering: (input, admission) =>
+        requireRootCoordinator(rootCoordinator).startRecoveredSteering(input, admission),
+      materializeSteeringAdmissions: (admissions) =>
+        requireRootCoordinator(rootCoordinator).materializeSteeringAdmissions(admissions),
       prepareMessage: (input) => requireRootCoordinator(rootCoordinator).prepareMessage(input),
       commitSteeringAdmission: (input) =>
         requireRootCoordinator(rootCoordinator).commitSteeringAdmission(input),
@@ -481,21 +485,6 @@ export async function createExecutionRuntimeHostComposition(
               }
             : undefined;
         },
-        listSteeringAdmissions: async (sessionId, turnId) =>
-          (await stores.sessionStore.readMessages(sessionId)).flatMap((message) =>
-            message.type === 'user' &&
-            message.turnId === turnId &&
-            message.steeringEventId === message.id
-              ? [
-                  {
-                    sessionId,
-                    turnId,
-                    messageId: message.id,
-                    content: normalizeMessageContent(message),
-                  },
-                ]
-              : [],
-          ),
         readImmutableSteeringMessageProof: (sessionId, messageId) =>
           stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
       },
@@ -1503,6 +1492,7 @@ export async function createExecutionRuntimeHostComposition(
               ),
             );
             await coordinator.recover();
+            await messages.recoverPendingAfterHostRestart();
             rootRecoveryCompleted = true;
           },
         },

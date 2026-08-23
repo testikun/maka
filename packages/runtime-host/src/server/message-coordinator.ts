@@ -38,6 +38,7 @@ import {
   type ImmutableSteeringMessageProof,
   type MessageReceiptOperation,
   type MessageReceiptStore,
+  type PendingSteeringAdmission,
   type RootTurnSourceMessage,
   type RootTurnSourceMessageReceipt,
 } from '@maka/storage/execution-stores';
@@ -106,6 +107,14 @@ export interface HostMessageStartInput {
   readonly initiatingConnectionId: string;
 }
 
+export interface HostMessageRecoveryBatch {
+  readonly sessionId: string;
+  readonly content: MessageContent;
+  readonly submittedContent: MessageContent;
+  readonly sources: readonly RootTurnSourceMessage[];
+  readonly initiatingConnectionId: string;
+}
+
 export interface HostMessagePreparationInput {
   readonly sessionId: string;
   readonly turnId: string;
@@ -137,6 +146,11 @@ export interface HostMessageRootPort {
     input: HostMessageStartInput,
     admission: SessionAdmissionLease,
   ): Promise<{ readonly turnId: string } | { readonly error: string }>;
+  startRecoveredSteering?(
+    input: HostMessageRecoveryBatch,
+    admission: SessionAdmissionLease,
+  ): Promise<{ readonly turnId: string } | { readonly error: string }>;
+  materializeSteeringAdmissions?(admissions: readonly PendingSteeringAdmission[]): Promise<void>;
   prepareMessage(
     input: HostMessagePreparationInput,
   ): Promise<
@@ -149,6 +163,7 @@ export interface HostMessageRootPort {
     readonly runId: string;
     readonly messageId: string;
     readonly content: MessageContent;
+    readonly admittedAt: number;
   }): Promise<void>;
   claimStop(
     input: Omit<TurnInterruptInput, 'originHostEpoch' | 'interruptId'>,
@@ -174,10 +189,6 @@ export interface HostMessageDurableProofReader {
     sessionId: string,
     messageId: string,
   ): Promise<DurableSteeringAdmission | undefined>;
-  listSteeringAdmissions(
-    sessionId: string,
-    turnId: string,
-  ): Promise<readonly DurableSteeringAdmission[]>;
   readImmutableSteeringMessageProof(
     sessionId: string,
     messageId: string,
@@ -281,6 +292,7 @@ interface SessionState {
   reservedRoot?: RuntimeMessageRunIdentity;
   run?: BoundRun;
   transition?: TerminalTransition;
+  steeringDiscardPreparedFor?: RuntimeMessageRunIdentity;
   stopFence?: {
     readonly identity: RuntimeMessageRunIdentity;
     readonly result: QueueFenceResult;
@@ -425,73 +437,74 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     state.phase = 'open';
   }
 
-  async recoverRootTurn(identity: RuntimeMessageRunIdentity): Promise<void> {
-    const state = this.#requireState(identity.sessionId);
-    if (!state.reservedRoot || !sameRun(state.reservedRoot, identity) || state.run) {
-      throw new RuntimeMessageAuthorityInvariantError(
-        'Steering recovery requires the exact reserved root Turn',
-      );
+  async recoverPendingAfterHostRestart(): Promise<void> {
+    const bySession = new Map<string, PendingSteeringAdmission[]>();
+    for (const admission of await this.#receipts.listPendingSteering()) {
+      const admissions = bySession.get(admission.sessionId);
+      if (admissions) admissions.push(admission);
+      else bySession.set(admission.sessionId, [admission]);
     }
-    const admissions = await this.#durableProof.listSteeringAdmissions(
-      identity.sessionId,
-      identity.turnId,
-    );
-    let changed = false;
-    const liveMessageIds = new Set(allLiveEntries(state).map((entry) => entry.messageId));
-    for (const admission of admissions) {
-      if (
-        admission.sessionId !== identity.sessionId ||
-        admission.turnId !== identity.turnId ||
-        liveMessageIds.has(admission.messageId)
-      ) {
-        continue;
-      }
-      const consumed = await this.#durableProof.readImmutableSteeringMessageProof(
-        identity.sessionId,
-        admission.messageId,
-      );
-      if (consumed) continue;
-      if (allLiveEntries(state).length >= MESSAGE_QUEUE_MAX_ENTRIES) {
-        throw new RuntimeMessageAuthorityInvariantError(
-          'Durable steering recovery exceeds message queue capacity',
+    for (const [sessionId, durable] of bySession) {
+      await this.#sessionAdmission.run(sessionId, async (admissionLease) => {
+        const pending: PendingSteeringAdmission[] = [];
+        const settled: string[] = [];
+        for (const candidate of durable) {
+          const source = await this.#durableProof.readRootTurnSourceMessageReceipt(
+            sessionId,
+            candidate.messageId,
+          );
+          const consumed = source
+            ? undefined
+            : await this.#durableProof.readImmutableSteeringMessageProof(
+                sessionId,
+                candidate.messageId,
+              );
+          if (source || consumed) settled.push(candidate.messageId);
+          else pending.push(candidate);
+        }
+        if (settled.length > 0) {
+          await this.#receipts.settlePendingSteering(sessionId, settled);
+        }
+        if (pending.length === 0) return;
+        const header = await this.#root.readSessionHeader(sessionId);
+        if (!header || header.isArchived || header.unavailableReason) {
+          throw new RuntimeMessageAuthorityInvariantError(
+            'Pending steering recovery found an unavailable Session',
+          );
+        }
+        if ((await this.#root.readRootState(sessionId)).kind !== 'idle') {
+          throw new RuntimeMessageAuthorityInvariantError(
+            'Pending steering recovery requires an idle root after interrupted Run recovery',
+          );
+        }
+        if (!this.#root.materializeSteeringAdmissions || !this.#root.startRecoveredSteering) {
+          throw new RuntimeMessageAuthorityInvariantError(
+            'Pending steering recovery authority is unavailable',
+          );
+        }
+        await this.#root.materializeSteeringAdmissions(pending);
+        const sources = pending.map(pendingSteeringSource);
+        const started = await this.#root.startRecoveredSteering(
+          {
+            sessionId,
+            content: aggregateMessageContent(pending.map((entry) => entry.modelContent)),
+            submittedContent: aggregateMessageContent(pending.map((entry) => entry.content)),
+            sources,
+            initiatingConnectionId: pending[0]!.initiatingConnectionId,
+          },
+          admissionLease,
         );
-      }
-      const initiatingConnectionId = `recovery-${this.#hostEpoch}`;
-      const prepared = await this.#root.prepareMessage({
-        sessionId: identity.sessionId,
-        turnId: identity.turnId,
-        content: admission.content,
-        placement: 'current_turn',
-        initiatingConnectionId,
+        if ('error' in started) {
+          throw new RuntimeMessageAuthorityInvariantError(
+            `Unable to recover pending steering: ${started.error}`,
+          );
+        }
+        await this.#receipts.settlePendingSteering(
+          sessionId,
+          pending.map((entry) => entry.messageId),
+        );
       });
-      if (prepared.kind === 'rejected') {
-        throw new RuntimeMessageAuthorityInvariantError(
-          `Durable steering recovery could not prepare ${admission.messageId}: ${prepared.error}`,
-        );
-      }
-      const entryId = this.#createId();
-      if (!isEntityId(entryId)) {
-        throw new RuntimeMessageAuthorityInvariantError(
-          'Recovered message entry identity is not encodable',
-        );
-      }
-      const residency = this.#acquireResidency();
-      state.steering.push({
-        entryId,
-        messageId: admission.messageId,
-        content: normalizeMessageContent(admission.content),
-        modelContent: normalizeMessageContent(prepared.content),
-        initiatingConnectionId,
-        placement: 'current_turn',
-        disposition: 'steering',
-        generation: state.generation,
-        residency,
-        state: 'queued',
-      });
-      liveMessageIds.add(admission.messageId);
-      changed = true;
     }
-    if (changed) this.#mutated(state);
   }
 
   abandonRootReservation(identity: RuntimeMessageRunIdentity): void {
@@ -509,6 +522,22 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     state.stopFence = undefined;
     state.phase = 'closed';
     this.#maybeReclaim(identity.sessionId, state);
+  }
+
+  async prepareTerminalTransition(identity: RuntimeMessageRunIdentity): Promise<void> {
+    const consumed: string[] = [];
+    for (const pending of await this.#receipts.listPendingSteering()) {
+      if (pending.sessionId !== identity.sessionId) continue;
+      const proof = await this.#durableProof.readImmutableSteeringMessageProof(
+        identity.sessionId,
+        pending.messageId,
+      );
+      if (proof) consumed.push(pending.messageId);
+    }
+    if (consumed.length > 0) {
+      await this.#receipts.settlePendingSteering(identity.sessionId, consumed);
+    }
+    if (this.#draining) await this.prepareStopFence(identity);
   }
 
   beginTerminalTransition(identity: RuntimeMessageRunIdentity): RootFollowupBatch {
@@ -565,6 +594,13 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     };
   }
 
+  async settleAdmittedRootSources(batch: RootFollowupBatch): Promise<void> {
+    await this.#receipts.settlePendingSteering(
+      batch.sessionId,
+      batch.sources.map((source) => source.messageId),
+    );
+  }
+
   commitNextRoot(batch: RootFollowupBatch, identity: RuntimeMessageRunIdentity): void {
     const state = this.#requireTransition(batch);
     if (identity.sessionId !== batch.sessionId) {
@@ -592,6 +628,27 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
 
   beginDrain(): void {
     this.#draining = true;
+  }
+
+  async prepareStopFence(identity: RuntimeMessageRunIdentity): Promise<void> {
+    const state = this.#sessions.get(identity.sessionId);
+    // A root handoff can durably replace or release this identity before a concurrent
+    // administrative Stop reaches the Session lane. The authoritative fence
+    // commit still rejects a genuine mismatch if the Stop disposition needs it.
+    if (!state?.reservedRoot || !sameRun(state.reservedRoot, identity)) return;
+    if (state.steeringDiscardPreparedFor) {
+      if (!sameRun(state.steeringDiscardPreparedFor, identity)) {
+        throw new RuntimeMessageAuthorityInvariantError(
+          'Steering discard preparation belongs to another root Turn',
+        );
+      }
+      return;
+    }
+    await this.#receipts.settlePendingSteering(
+      identity.sessionId,
+      [...state.steering, ...state.inFlight.values()].map((entry) => entry.messageId),
+    );
+    state.steeringDiscardPreparedFor = { ...identity };
   }
 
   commitStopFence(identity: RuntimeMessageRunIdentity): QueueFenceResult {
@@ -876,12 +933,23 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
         }
         const result = { disposition, queueRevision: candidateRevision + 1 } as const;
         if (disposition === 'steering' && !durableAdmission) {
-          await this.#root.commitSteeringAdmission({
+          const pending = await this.#receipts.commitPendingSteering({
             sessionId: input.sessionId,
             turnId: rootState.turnId,
             runId: rootState.runId,
             messageId: input.messageId,
             content: payload.content,
+            modelContent: prepared.content,
+            initiatingConnectionId,
+            admittedAt: Date.now(),
+          });
+          await this.#root.commitSteeringAdmission({
+            sessionId: pending.sessionId,
+            turnId: pending.turnId,
+            runId: pending.runId,
+            messageId: pending.messageId,
+            content: pending.content,
+            admittedAt: pending.admittedAt,
           });
         }
         const residency = this.#acquireResidency();
@@ -1176,12 +1244,23 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       }
       return failure('not_found', 'Message queue entry does not exist');
     }
-    await this.#root.commitSteeringAdmission({
+    const pending = await this.#receipts.commitPendingSteering({
       sessionId: input.sessionId,
       turnId: rootState.turnId,
       runId: rootState.runId,
       messageId: entry.messageId,
       content: entry.content,
+      modelContent: entry.modelContent,
+      initiatingConnectionId: entry.initiatingConnectionId,
+      admittedAt: Date.now(),
+    });
+    await this.#root.commitSteeringAdmission({
+      sessionId: pending.sessionId,
+      turnId: pending.turnId,
+      runId: pending.runId,
+      messageId: pending.messageId,
+      content: pending.content,
+      admittedAt: pending.admittedAt,
     });
     state.followup.splice(index, 1);
     state.steering.push({ ...entry, placement: 'current_turn', disposition: 'steering' });
@@ -1407,6 +1486,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           deferred.resolve(result);
           return { kind: 'receipt' as const, result: deferred.promise };
         }
+        await this.prepareStopFence(rootState);
         let fence: QueueFenceResult | undefined;
         const stopFence = await this.#root.claimStopFence(
           { sessionId: input.sessionId, turnId: input.turnId, runId: input.runId },
@@ -1716,6 +1796,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
         'Stop fence does not match the reserved root Turn',
       );
     }
+    if (
+      !this.#failStopped &&
+      (state.steering.length !== 0 || state.inFlight.size !== 0) &&
+      (!state.steeringDiscardPreparedFor || !sameRun(state.steeringDiscardPreparedFor, identity))
+    ) {
+      throw new RuntimeMessageAuthorityInvariantError(
+        'Stop fence cannot discard steering before durable settlement',
+      );
+    }
     if (!interruptResultFits(this.#project(state), identity)) {
       throw new RuntimeMessageAuthorityInvariantError(
         'Stop fence interrupt result exceeds protocol capacity',
@@ -1756,6 +1845,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     state.followup.splice(0, transition.entries.length);
     state.transition = undefined;
     state.reservedRoot = undefined;
+    state.steeringDiscardPreparedFor = undefined;
     state.stopFence = undefined;
   }
 
@@ -1999,6 +2089,16 @@ function sourceFromEntry(entry: LiveEntry): RootFollowupSource {
     submittedContentDigest: messageContentDigest(entry.content),
     placement: entry.placement,
     disposition: entry.disposition,
+  };
+}
+
+function pendingSteeringSource(entry: PendingSteeringAdmission): RootTurnSourceMessage {
+  return {
+    messageId: entry.messageId,
+    content: normalizeMessageContent(entry.modelContent),
+    submittedContentDigest: messageContentDigest(entry.content),
+    placement: 'current_turn',
+    disposition: 'steering',
   };
 }
 

@@ -2267,7 +2267,7 @@ test("rehydrates pending interactions and publishes answer acknowledgements", as
   await observer.close();
 });
 
-test("projects Host queue revisions and newly delivered steering messages", async () => {
+test("projects Host queue revisions without synthesizing transcript messages", async () => {
   const events = new AsyncFrameQueue();
   const observer = new RuntimeHostSessionObserver({
     client: {
@@ -2325,11 +2325,11 @@ test("projects Host queue revisions and newly delivered steering messages", asyn
       },
     }),
   });
-  await waitFor(() => target.events.length === 3);
+  await waitFor(() => target.events.length === 2);
 
   assert.deepEqual(
     target.events.map((event) => event.type),
-    ["queue_update", "steering_message", "queue_update"],
+    ["queue_update", "queue_update"],
   );
   assert.deepEqual(target.events[0], {
     type: "queue_update",
@@ -2343,12 +2343,15 @@ test("projects Host queue revisions and newly delivered steering messages", asyn
     followupEntries: [],
   });
   assert.deepEqual(target.events[1], {
-    type: "steering_message",
-    id: "host-queue:host-1:2:entry-1",
+    type: "queue_update",
+    id: "host-queue:host-1:2",
     turnId: "turn-1",
-    messageId: "message-steer",
     ts: 90,
-    content: { text: "Change direction" },
+    queueRevision: 2,
+    steering: ["Change direction"],
+    followup: [],
+    steeringEntries: [{ ...queued, state: "in_flight" }],
+    followupEntries: [],
   });
   await observer.close();
 });

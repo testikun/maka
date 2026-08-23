@@ -546,6 +546,7 @@ function createMessages(
       readRootTurnSourceMessageReceipt: (requestedSessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(requestedSessionId, messageId),
       readSteeringAdmission: async () => undefined,
+      listSteeringAdmissions: async () => [],
       readImmutableSteeringMessageProof: (requestedSessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(requestedSessionId, messageId),
     },

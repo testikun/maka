@@ -174,6 +174,10 @@ export interface HostMessageDurableProofReader {
     sessionId: string,
     messageId: string,
   ): Promise<DurableSteeringAdmission | undefined>;
+  listSteeringAdmissions(
+    sessionId: string,
+    turnId: string,
+  ): Promise<readonly DurableSteeringAdmission[]>;
   readImmutableSteeringMessageProof(
     sessionId: string,
     messageId: string,
@@ -419,6 +423,75 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     }
     state.reservedRoot = { ...identity };
     state.phase = 'open';
+  }
+
+  async recoverRootTurn(identity: RuntimeMessageRunIdentity): Promise<void> {
+    const state = this.#requireState(identity.sessionId);
+    if (!state.reservedRoot || !sameRun(state.reservedRoot, identity) || state.run) {
+      throw new RuntimeMessageAuthorityInvariantError(
+        'Steering recovery requires the exact reserved root Turn',
+      );
+    }
+    const admissions = await this.#durableProof.listSteeringAdmissions(
+      identity.sessionId,
+      identity.turnId,
+    );
+    let changed = false;
+    const liveMessageIds = new Set(allLiveEntries(state).map((entry) => entry.messageId));
+    for (const admission of admissions) {
+      if (
+        admission.sessionId !== identity.sessionId ||
+        admission.turnId !== identity.turnId ||
+        liveMessageIds.has(admission.messageId)
+      ) {
+        continue;
+      }
+      const consumed = await this.#durableProof.readImmutableSteeringMessageProof(
+        identity.sessionId,
+        admission.messageId,
+      );
+      if (consumed) continue;
+      if (allLiveEntries(state).length >= MESSAGE_QUEUE_MAX_ENTRIES) {
+        throw new RuntimeMessageAuthorityInvariantError(
+          'Durable steering recovery exceeds message queue capacity',
+        );
+      }
+      const initiatingConnectionId = `recovery-${this.#hostEpoch}`;
+      const prepared = await this.#root.prepareMessage({
+        sessionId: identity.sessionId,
+        turnId: identity.turnId,
+        content: admission.content,
+        placement: 'current_turn',
+        initiatingConnectionId,
+      });
+      if (prepared.kind === 'rejected') {
+        throw new RuntimeMessageAuthorityInvariantError(
+          `Durable steering recovery could not prepare ${admission.messageId}: ${prepared.error}`,
+        );
+      }
+      const entryId = this.#createId();
+      if (!isEntityId(entryId)) {
+        throw new RuntimeMessageAuthorityInvariantError(
+          'Recovered message entry identity is not encodable',
+        );
+      }
+      const residency = this.#acquireResidency();
+      state.steering.push({
+        entryId,
+        messageId: admission.messageId,
+        content: normalizeMessageContent(admission.content),
+        modelContent: normalizeMessageContent(prepared.content),
+        initiatingConnectionId,
+        placement: 'current_turn',
+        disposition: 'steering',
+        generation: state.generation,
+        residency,
+        state: 'queued',
+      });
+      liveMessageIds.add(admission.messageId);
+      changed = true;
+    }
+    if (changed) this.#mutated(state);
   }
 
   abandonRootReservation(identity: RuntimeMessageRunIdentity): void {
@@ -1103,6 +1176,13 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       }
       return failure('not_found', 'Message queue entry does not exist');
     }
+    await this.#root.commitSteeringAdmission({
+      sessionId: input.sessionId,
+      turnId: rootState.turnId,
+      runId: rootState.runId,
+      messageId: entry.messageId,
+      content: entry.content,
+    });
     state.followup.splice(index, 1);
     state.steering.push({ ...entry, placement: 'current_turn', disposition: 'steering' });
     this.#mutated(state);

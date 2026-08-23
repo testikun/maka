@@ -481,6 +481,21 @@ export async function createExecutionRuntimeHostComposition(
               }
             : undefined;
         },
+        listSteeringAdmissions: async (sessionId, turnId) =>
+          (await stores.sessionStore.readMessages(sessionId)).flatMap((message) =>
+            message.type === 'user' &&
+            message.turnId === turnId &&
+            message.steeringEventId === message.id
+              ? [
+                  {
+                    sessionId,
+                    turnId,
+                    messageId: message.id,
+                    content: normalizeMessageContent(message),
+                  },
+                ]
+              : [],
+          ),
         readImmutableSteeringMessageProof: (sessionId, messageId) =>
           stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
       },

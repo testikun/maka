@@ -1990,6 +1990,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     try {
       this.messages.reserveRootTurn(messageIdentity);
       messageReserved = true;
+      await this.messages.recoverRootTurn(messageIdentity);
       await this.continuity.holdTerminalPublication(
         input.sessionId,
         input.turnId,

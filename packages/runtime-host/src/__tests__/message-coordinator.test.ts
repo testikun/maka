@@ -401,21 +401,15 @@ test('re-admits a durable steering message after admission persistence loses its
 
   const restarted = fixture.restart('epoch-2');
   restarted.reserveRootTurn(ROOT);
-  const recovered = await restarted.handlers['turn.message.submit'](
-    {
-      originHostEpoch: 'epoch-1',
-      sessionId: ROOT.sessionId,
-      messageId: 'recoverable-steering',
-      content: { text: 'recover after restart' },
-      placement: 'current_turn',
-    },
-    operationContext(),
-  );
+  await restarted.recoverRootTurn(ROOT);
 
-  assert.deepEqual(recovered, {
-    ok: true,
-    result: { disposition: 'steering', queueRevision: 1 },
-  });
+  assert.deepEqual(
+    restarted.projection(ROOT.sessionId).steering.map((entry) => ({
+      messageId: entry.messageId,
+      content: entry.content,
+    })),
+    [{ messageId: 'recoverable-steering', content: { text: 'recover after restart' } }],
+  );
   const owner = restarted.bindRun(ROOT);
   const leases = owner.pull();
   assert.deepEqual(
@@ -892,6 +886,37 @@ test('entry promote moves a follow-up into the steering queue', async () => {
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
   assert.equal(fixture.liveResidencies(), 0);
+});
+
+test('entry promote durably admits the message before making it non-retractable', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const delay = fixture.delaySteeringAdmission(new Error('durable promotion failed'));
+
+  const promotion = fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      promoteId: 'promote-durable',
+    },
+    operationContext(),
+  );
+  await delay.started.promise;
+  assert.deepEqual(
+    fixture.coordinator.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
+    ['promoted-followup'],
+  );
+  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
+  delay.release.resolve(undefined);
+  await assert.rejects(promotion, /durable promotion failed/);
+
+  assert.deepEqual(
+    fixture.coordinator.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
+    ['promoted-followup'],
+  );
+  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
 });
 
 test('entry promote requires an active Turn', async () => {
@@ -2316,6 +2341,10 @@ function createFixture(
       readRootTurnSourceMessageReceipt: async (_sessionId, messageId) => receipts.get(messageId),
       readSteeringAdmission: async (_sessionId, messageId) =>
         durableSteeringAdmissions.get(messageId),
+      listSteeringAdmissions: async (sessionId, turnId) =>
+        [...durableSteeringAdmissions.values()].filter(
+          (admission) => admission.sessionId === sessionId && admission.turnId === turnId,
+        ),
       readImmutableSteeringMessageProof: async (_sessionId, messageId) => {
         const event = events.find(
           (candidate) =>

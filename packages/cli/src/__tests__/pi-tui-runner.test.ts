@@ -1969,7 +1969,7 @@ describe('Maka Pi TUI runner', () => {
     terminal.input('\x1b');
     terminal.input('\x1b');
     await waitFor(() => terminal.progressStates.at(-1) === false);
-    // Interrupt refills the editor with the cleared queue; clear it before /exit.
+    // Sent steering stays in the transcript and is not restored to the editor.
     terminal.input('\x03');
     terminal.input('/exit');
     terminal.input('\r');
@@ -6511,17 +6511,9 @@ class SteeringTurnDriver implements MakaSessionDriver {
     return { kind: 'queued' };
   }
 
-  async takePendingFollowup(): Promise<string | null> {
-    if (this.followup.length === 0) return null;
-    const joined = this.followup.join('\n\n');
-    this.followup = [];
-    return joined;
-  }
-
   async retractQueued(): Promise<string> {
     this.retractCalls += 1;
-    const joined = [...this.steering, ...this.followup].join('\n\n');
-    this.steering = [];
+    const joined = this.followup.join('\n\n');
     this.followup = [];
     this.emitQueueUpdate();
     return joined;
@@ -6563,11 +6555,7 @@ class SteeringTurnDriver implements MakaSessionDriver {
   }
 }
 
-/**
- * A driver whose enqueues hit the no-live-owner `fallback` outcome for the
- * first N calls (configurable, default forever) while the turn parks until
- * `endTurn()` — the begin-window shape behind review finding N2.
- */
+/** A driver whose active turn parks until stop releases it. */
 class SlowStopDriver implements MakaSessionDriver {
   stopCalls = 0;
   readonly prompts: string[] = [];

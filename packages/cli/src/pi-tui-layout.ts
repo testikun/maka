@@ -109,7 +109,7 @@ export class MakaActivityStripComponent implements Component {
   }
 }
 
-/** The pending-queue bar (Steering:/Queued:) rendered just above the editor. */
+/** The pending follow-up queue rendered just above the editor. */
 export class MakaPendingQueueComponent implements Component {
   constructor(private readonly state: MakaPiTranscriptState) {}
 

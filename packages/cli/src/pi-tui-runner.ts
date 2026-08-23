@@ -281,11 +281,13 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
   const tui = new TuiMainScreen(terminal);
   const state = createMakaPiTranscriptState();
   let transcriptLastUsedModel: string | undefined;
-  const rememberTranscriptModel = (messages: readonly StoredMessage[]): void => {
+  let transcriptMessageIds = new Set<string>();
+  const rememberTranscript = (messages: readonly StoredMessage[]): void => {
     transcriptLastUsedModel = latestAssistantModelId(messages);
+    transcriptMessageIds = new Set(messages.map((message) => message.id));
   };
   const replaceTranscript = (messages: readonly StoredMessage[]): void => {
-    rememberTranscriptModel(messages);
+    rememberTranscript(messages);
     replaceTranscriptWithStoredMessages(state, messages);
   };
   let cwd = input.cwd;
@@ -540,8 +542,21 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
         requestRender();
         return;
       }
-      rememberTranscriptModel(messages);
-      if (hydrateToolsWithStoredMessages(state, turnId, messages)) {
+      const newSteeringMessages = messages.filter(
+        (message): message is Extract<StoredMessage, { type: 'user' }> =>
+          message.type === 'user' &&
+          message.turnId === turnId &&
+          message.steeringEventId !== undefined &&
+          !transcriptMessageIds.has(message.id),
+      );
+      rememberTranscript(messages);
+      for (const message of newSteeringMessages) {
+        appendUserPrompt(state, message.displayText ?? message.text);
+      }
+      if (
+        newSteeringMessages.length > 0 ||
+        hydrateToolsWithStoredMessages(state, turnId, messages)
+      ) {
         shellRunElapsedTicker.sync();
         requestRender();
       }

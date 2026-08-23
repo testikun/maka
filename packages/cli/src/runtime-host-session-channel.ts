@@ -572,6 +572,11 @@ export class RuntimeHostSessionChannel {
   }
 
   #accept(frame: SubscriptionFrame): void {
+    if (frame.kind === 'subscription.transcript_advanced') {
+      const turnId = this.snapshot.rootTurn?.turnId;
+      if (turnId) this.#onTranscriptSettlement(turnId);
+      return;
+    }
     if (frame.kind === 'subscription.session_domain_changed') {
       if (frame.domain === 'runtime_resource') {
         for (const resource of frame.resources) {

@@ -52,6 +52,7 @@ import type {
   MakaSessionRewindResult,
   MakaSessionSwitchOptions,
   MakaSessionSwitchResult,
+  MakaTranscriptReplacementReason,
   RewindTarget,
   SessionResumeAvailability,
 } from '../session-driver.js';
@@ -1959,7 +1960,7 @@ describe('Maka Pi TUI runner', () => {
     terminal.input('also handle Y');
     terminal.input('\r');
     await waitFor(() => driver.steered.length === 1);
-    await delay(0);
+    await waitFor(() => plainTerminalOutput(terminal.screenOutput()).includes('also handle Y'));
     assert.deepEqual(driver.steered, ['also handle Y']);
     assert.equal(
       plainTerminalOutput(terminal.screenOutput()).includes('Steering: also handle Y'),
@@ -2222,10 +2223,7 @@ describe('Maka Pi TUI runner', () => {
     await waitFor(() => terminal.progressStates.at(-1) === false);
     // Only the followup that was still queued comes back into the editor; the
     // consumed steering text must not be resurrected from the stale mirror.
-    await waitFor(() => {
-      const screen = plainTerminalOutput(terminal.screenOutput());
-      return screen.includes('still queued') && !screen.includes('already consumed');
-    });
+    await waitFor(() => editorInputText(terminal) === 'still queued');
 
     terminal.input('\x03'); // clear the refilled draft
     terminal.input('/exit');
@@ -6435,6 +6433,14 @@ class SteeringTurnDriver implements MakaSessionDriver {
   readonly steered: string[] = [];
   readonly queuedMessages: string[] = [];
   readonly turnOrchestrations: Array<MakaPreparePromptOptions['turnOrchestration']> = [];
+  readonly transcriptListeners = new Set<
+    (
+      sessionId: string,
+      turnId: string,
+      messages: StoredMessage[],
+      reason: MakaTranscriptReplacementReason,
+    ) => void
+  >();
   retractCalls = 0;
   rewindTargets: RewindTarget[] = [];
   private steering: string[] = [];
@@ -6497,10 +6503,33 @@ class SteeringTurnDriver implements MakaSessionDriver {
     yield { type: 'complete', id: 'event-complete', turnId, ts: 2, stopReason: 'user_stop' };
   }
 
+  subscribeTranscriptReplacements(
+    listener: (
+      sessionId: string,
+      turnId: string,
+      messages: StoredMessage[],
+      reason: MakaTranscriptReplacementReason,
+    ) => void,
+  ): () => void {
+    this.transcriptListeners.add(listener);
+    return () => this.transcriptListeners.delete(listener);
+  }
+
   async steer(text: string): Promise<QueueEnqueueOutcome> {
     this.steered.push(text);
     this.steering.push(text);
     this.emitQueueUpdate();
+    const message: Extract<StoredMessage, { type: 'user' }> = {
+      type: 'user',
+      id: `steering-${this.steered.length}`,
+      turnId: 'turn-1',
+      ts: this.steered.length,
+      text,
+      steeringEventId: `steering-${this.steered.length}`,
+    };
+    for (const listener of this.transcriptListeners) {
+      listener(this.getSessionId(), 'turn-1', [message], 'reconcile');
+    }
     return { kind: 'queued' };
   }
 

@@ -44,7 +44,11 @@ import {
   createRuntimeHostMakaSessionDriver,
   type RuntimeHostMakaSessionDriverInput,
 } from '../runtime-host-session-driver.js';
-import { SkillInvocationBlockedError, type MakaAttachedSessionTurn } from '../session-driver.js';
+import {
+  SkillInvocationBlockedError,
+  type MakaAttachedSessionTurn,
+  type MakaTranscriptReplacementReason,
+} from '../session-driver.js';
 import { WAIT_BUDGET_MS } from './tui-terminal-mock.js';
 
 describe('Runtime Host Maka Session driver', () => {
@@ -548,6 +552,46 @@ describe('Runtime Host Maka Session driver', () => {
       ts: 50,
       startOffset: 5,
       text: ' world',
+    });
+  });
+
+  test('publishes a durable transcript advance while the active turn is still running', async () => {
+    const attached = new FakeSubscription(continuitySnapshot(), Promise.resolve([]));
+    const durableMessages = [userMessage('turn-1', 'Steer now')];
+    const refresh = new FakeSubscription(
+      continuitySnapshot(),
+      Promise.resolve(durableMessages),
+      'subscription-2',
+    );
+    const connection = new FakeConnection([attached, refresh]);
+    const driver = createRuntimeHostMakaSessionDriver({
+      connection: connection.value,
+      cwd: '/tmp',
+      llmConnectionSlug: 'openai-main',
+      model: 'gpt-5',
+    });
+    await driver.switchSession('session-1');
+    const replacement = deferred<{
+      messages: readonly StoredMessage[];
+      reason: MakaTranscriptReplacementReason;
+    }>();
+    driver.subscribeTranscriptReplacements!((_sessionId, _turnId, messages, reason) =>
+      replacement.resolve({ messages, reason }),
+    );
+
+    attached.push({
+      kind: 'subscription.transcript_advanced',
+      hostEpoch: 'host-1',
+      subscriptionId: 'subscription-1',
+      sequence: 1,
+      sessionId: 'session-1',
+      throughSequence: 0,
+    });
+
+    await waitFor(() => connection.openedSubscriptions === 2);
+    assert.deepEqual(await replacement.promise, {
+      messages: durableMessages,
+      reason: 'reconcile',
     });
   });
 

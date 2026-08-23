@@ -196,7 +196,7 @@ export interface WorkbarAttachmentsService {
 }
 
 export type SideChatSendResult =
-  | { ok: true }
+  | { ok: true; turnId: string; steered?: true }
   | { ok: false; reason?: string };
 
 export interface SideChatSessionPort {

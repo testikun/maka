@@ -27,7 +27,9 @@ export interface WorkspaceFileReferencePosition {
 
 export function resolveFollowUpModeAtSubmit(input: {
   requestedMode?: FollowUpMode;
-}): FollowUpMode {
+  requiresTurnStart?: boolean;
+}): FollowUpMode | undefined {
+  if (input.requiresTurnStart) return undefined;
   // Existing-session text always enters through the Host's atomic message
   // admission. An idle Host starts a turn; an active Host queues it. Shift+Enter
   // is the only renderer-owned choice because the user explicitly requested

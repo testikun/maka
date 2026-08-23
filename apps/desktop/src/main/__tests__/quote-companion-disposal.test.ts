@@ -92,6 +92,20 @@ afterEach(async () => {
 });
 
 describe('quote companion disposal fencing', () => {
+  it('returns the Host-owned turn identity after message admission', async () => {
+    const defaults = createFakeWorkbarServices();
+    const sideChat = {
+      ...defaults.sideChat,
+      send: async () => ({ ok: true as const, turnId: 'host-turn' }),
+    };
+
+    assert.deepEqual(await performCompanionTurn(turnDeps(sideChat)), {
+      status: 'sent',
+      forkId: 'side-chat-existing-fork',
+      turnId: 'host-turn',
+    });
+  });
+
   it('does not start a send when the panel was disposed after fork setup', async () => {
     let sends = 0;
     let armed = 0;
@@ -100,7 +114,7 @@ describe('quote companion disposal fencing', () => {
       ...defaults.sideChat,
       send: async () => {
         sends += 1;
-        return { ok: true as const };
+        return { ok: true as const, turnId: 'host-turn' };
       },
     };
 
@@ -119,7 +133,7 @@ describe('quote companion disposal fencing', () => {
   });
 
   it('does not consume quotes or report success when disposal wins the send race', async () => {
-    const pendingSend = deferred<{ ok: true }>();
+    const pendingSend = deferred<{ ok: true; turnId: string }>();
     let disposed = false;
     let consumed = 0;
     const defaults = createFakeWorkbarServices();
@@ -137,7 +151,7 @@ describe('quote companion disposal fencing', () => {
     );
 
     disposed = true;
-    pendingSend.resolve({ ok: true });
+    pendingSend.resolve({ ok: true, turnId: 'host-turn' });
 
     assert.deepEqual(await turn, { status: 'disposed' });
     assert.equal(consumed, 0);
@@ -158,7 +172,7 @@ describe('quote companion disposal fencing', () => {
       },
       send: async () => {
         sends += 1;
-        return { ok: true as const };
+        return { ok: true as const, turnId: 'host-turn' };
       },
     };
     const turn = performCompanionTurn(

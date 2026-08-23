@@ -273,7 +273,7 @@ export async function ensureCompanionFork(
 }
 
 export type CompanionTurnResult =
-  | { status: 'sent'; forkId: string }
+  | { status: 'sent'; forkId: string; turnId?: string }
   | { status: 'disposed' }
   | { status: 'error'; code: CompanionErrorCode };
 
@@ -286,7 +286,7 @@ export interface PerformCompanionTurnDeps extends EnsureCompanionForkDeps {
   attachmentItems?: WorkbarIngestInput[];
   /** Fired once a fork is ready, so the caller can commit it. */
   onForkCommitted: (session: SessionSummary) => void;
-  /** Fired right before the send — the caller arms the optimistic live turn here. */
+  /** Fired right before the send so the caller can close same-frame retries. */
   onBeforeSend: (forkId: string) => void;
   /** Fired ONLY after `send` is accepted, so a failed send keeps the staged
    *  quotes (and draft) in place for a retry. */
@@ -325,7 +325,7 @@ export async function performCompanionTurn(
     if (createdForkId) scheduleCompanionCleanup(deps, createdForkId);
     return { status: 'disposed' };
   }
-  let result: { ok: true } | { ok: false; reason?: string };
+  let result: { ok: true; turnId: string; steered?: true } | { ok: false; reason?: string };
   try {
     result = await deps.api.send(forkId, {
       type: 'send',
@@ -346,7 +346,11 @@ export async function performCompanionTurn(
     return { status: 'error', code: 'send_rejected' };
   }
   deps.onQuotesConsumed();
-  return { status: 'sent', forkId };
+  return {
+    status: 'sent',
+    forkId,
+    ...(!result.steered ? { turnId: result.turnId } : {}),
+  };
 }
 
 export function isCompanionTurnTerminal(event: SessionEvent): boolean {

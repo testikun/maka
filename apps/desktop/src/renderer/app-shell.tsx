@@ -40,6 +40,7 @@ import type { OrchestrationMode } from '@maka/core/orchestration';
 import type { ChatDefaultPermissionMode } from '@maka/core/settings';
 import type { SlashCommandIdForSurface } from '@maka/core/slash-command-catalog';
 import type { UiLocale, UiLocalePreference } from '@maka/core/ui-locale';
+import { SKILL_INVOCATION_TOKEN_SOURCE } from '@maka/core/skill-invocation-token';
 import { collapseSessionRevisions } from '@maka/core/session-revisions';
 import { isLinkedSubagentSession } from '@maka/core/session';
 import { resolveUiLocale } from '@maka/core/ui-locale';
@@ -1963,6 +1964,8 @@ function AppShellContent({
     const followUpAtSubmit = !slashCommand
       ? resolveFollowUpModeAtSubmit({
           requestedMode: metadata?.followUpMode,
+          requiresTurnStart:
+            revisionSend || new RegExp(SKILL_INVOCATION_TOKEN_SOURCE).test(text),
         })
       : undefined;
     if (sessionId && followUpAtSubmit) {

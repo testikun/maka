@@ -77,29 +77,23 @@ test('remounting a live surface leaves accumulated output settled', async ({
     ),
   ).toBe(0);
 
-  await liveBubble.evaluate((element) => {
-    const observed = { texts: [] as string[] };
-    (window as typeof window & { __makaStreamingRemountObserved?: typeof observed })
-      .__makaStreamingRemountObserved = observed;
-    new MutationObserver(() => {
-      observed.texts.push(element.textContent ?? '');
-    }).observe(element, { childList: true, characterData: true, subtree: true });
-  });
+  const bubbleBeforeRewrite = await liveBubble.elementHandle();
+  expect(bubbleBeforeRewrite).not.toBeNull();
 
   const steering = 'trigger rewrite after returning to this conversation';
   await steerActiveTurn(composer, steering);
   const finalText = 'prefix <redacted> NEW streamed after the remount';
   await expect(liveBubble).toContainText(finalText);
-
-  const observed = await page.evaluate(() => (
-    window as typeof window & {
-      __makaStreamingRemountObserved?: {
-        texts: string[];
-      };
-    }
-  ).__makaStreamingRemountObserved);
-  expect(observed?.texts.some((text) => text.includes('<redacted>') && !text.includes(finalText)))
-    .toBe(true);
+  await expect(liveBubble).not.toContainText(accumulatedOutput);
+  // React may batch the one rewrite delta into its final redacted paint. The
+  // product invariant is that the live answer survives as the same DOM node,
+  // not that an intermediate frame is always observable.
+  expect(
+    await liveBubble.evaluate(
+      (element, before) => element.isSameNode(before),
+      bubbleBeforeRewrite,
+    ),
+  ).toBe(true);
 });
 
 test('keeps a completed reply after an interrupted turn and conversation remount', async ({

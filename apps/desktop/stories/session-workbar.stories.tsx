@@ -709,7 +709,7 @@ function bridge(options: {
       branchFromTurn: async () => SIDE_CHAT_SESSION,
       cleanupSessionCopy: async () => undefined,
       abandonSessionCopy: async () => undefined,
-      send: async () => ({ ok: true }),
+      send: async (_sessionId, command) => ({ ok: true, turnId: command.turnId }),
       stop: async () => undefined,
       steer: async () => ({ kind: 'queued' }),
       setPermissionMode: async (_sessionId, mode) => ({

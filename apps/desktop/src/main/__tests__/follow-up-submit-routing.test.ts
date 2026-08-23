@@ -45,6 +45,14 @@ describe('follow-up submit routing', () => {
     );
   });
 
+  it('keeps revision and Skill control input on the turn-start path', () => {
+    assert.equal(resolveFollowUpModeAtSubmit({ requiresTurnStart: true }), undefined);
+    assert.equal(
+      resolveFollowUpModeAtSubmit({ requestedMode: 'steer', requiresTurnStart: true }),
+      undefined,
+    );
+  });
+
   it('restores workspace references after queued text returns to the draft', () => {
     assert.deepEqual(
       mergeWorkspaceReferences(

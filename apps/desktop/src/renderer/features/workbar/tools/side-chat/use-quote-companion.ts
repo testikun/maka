@@ -202,6 +202,11 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
       });
     unsubscribeRef.current = sideChat.subscribeEvents(forkId, (event: SessionEvent) => {
       if (!mountedRef.current) return;
+      if (turnInFlightRef.current && activeTurnIdRef.current === null && event.turnId) {
+        activeTurnIdRef.current = event.turnId;
+        ownTurnIdsRef.current.add(event.turnId);
+        setOwnTurnTick((tick) => tick + 1);
+      }
       const effect = companionRunEventEffect(
         event,
         activeTurnIdRef.current,
@@ -389,15 +394,18 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
         onForkCommitted: () => {},
         onBeforeSend: () => {
           stopRequestedRef.current = false;
-          activeTurnIdRef.current = turnId;
+          activeTurnIdRef.current = null;
           turnInFlightRef.current = true;
           setTurnInFlight(true);
-          ownTurnIdsRef.current.add(turnId);
-          setOwnTurnTick((tick) => tick + 1);
         },
         onQuotesConsumed: () => onQuotesConsumed(quoteSnapshot),
       });
       if (result.status === 'sent') {
+        if (activeTurnIdRef.current === null && result.turnId) {
+          activeTurnIdRef.current = result.turnId;
+          ownTurnIdsRef.current.add(result.turnId);
+          setOwnTurnTick((tick) => tick + 1);
+        }
         setHasContent(true);
         // Surface the just-sent user message immediately, and reflect any
         // automatic connection/model rebound in the read-only model label.

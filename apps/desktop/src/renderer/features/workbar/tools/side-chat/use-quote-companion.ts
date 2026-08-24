@@ -156,6 +156,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
   const stopRequestedRef = useRef(false);
   const activeTurnIdRef = useRef<string | null>(null);
   const submittingMessageIdRef = useRef<string | null>(null);
+  const submittingEventsRef = useRef<SessionEvent[]>([]);
   const turnInFlightRef = useRef(false);
   const settlingTurnIdsRef = useRef<Set<string>>(new Set());
   const onForkVisibilityChangeRef = useRef(onForkVisibilityChange);
@@ -188,6 +189,73 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
   const mountedRef = useMountedRef();
   const dismissalGuardRef = useRef(createCompanionDismissalGuard());
 
+  const applyOwnedEvent = useCallback(
+    (forkId: string, event: SessionEvent) => {
+      const effect = companionRunEventEffect(
+        event,
+        activeTurnIdRef.current,
+        stopRequestedRef.current,
+        localeRef.current,
+      );
+      if (effect.kind === 'ignore') return;
+
+      setInteractions((current) => applyCompanionInteractionEvent(current, forkId, event));
+      setLiveTurn((prev) => applyLiveTurnEvent(prev, event, localeRef.current));
+      if (effect.error !== undefined) setError(effect.error);
+      if (effect.terminal && event.turnId && !settlingTurnIdsRef.current.has(event.turnId)) {
+        const settledTurnId = event.turnId;
+        settlingTurnIdsRef.current.add(settledTurnId);
+        void sideChat.readSettledMessages(forkId, {
+          ...(requiredAssistantMessageId(liveTurnRef.current)
+            ? {
+                requiredAssistantMessageId: requiredAssistantMessageId(liveTurnRef.current),
+              }
+            : {}),
+        })
+          .then(({ messages: next }) => {
+            if (!mountedRef.current || activeTurnIdRef.current !== settledTurnId) return;
+            setAllMessages((current) => mergeSettledMessages(current, next));
+            setLiveTurn((prev) => (prev ? reconcileTerminalLiveTurn(prev, next) : prev));
+            activeTurnIdRef.current = null;
+            submittingMessageIdRef.current = null;
+            submittingEventsRef.current = [];
+            turnInFlightRef.current = false;
+            stopRequestedRef.current = false;
+            setTurnInFlight(false);
+          })
+          .catch(() => {
+            if (!mountedRef.current || activeTurnIdRef.current !== settledTurnId) return;
+            activeTurnIdRef.current = null;
+            submittingMessageIdRef.current = null;
+            submittingEventsRef.current = [];
+            turnInFlightRef.current = false;
+            stopRequestedRef.current = false;
+            setTurnInFlight(false);
+            setError((current) => current ?? copyRef.current.errors.settlementFailed);
+          })
+          .finally(() => {
+            settlingTurnIdsRef.current.delete(settledTurnId);
+          });
+      }
+    },
+    [mountedRef, sideChat],
+  );
+
+  const bindSubmittingTurn = useCallback(
+    (forkId: string, turnId: string) => {
+      activeTurnIdRef.current = turnId;
+      submittingMessageIdRef.current = null;
+      ownTurnIdsRef.current.add(turnId);
+      setOwnTurnTick((tick) => tick + 1);
+      const buffered = submittingEventsRef.current;
+      submittingEventsRef.current = [];
+      for (const event of buffered) {
+        if (event.turnId === turnId) applyOwnedEvent(forkId, event);
+      }
+    },
+    [applyOwnedEvent],
+  );
+
   // Subscribe to the fork's event stream + load its transcript. Called
   // synchronously the moment the fork is committed, BEFORE the run starts, so
   // no boundary request / complete can be missed (the stream has no replay).
@@ -212,61 +280,14 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
               (entry) => entry.messageId === submittingMessageId,
             ) === true));
       if (admitsSubmittingMessage) {
-        activeTurnIdRef.current = event.turnId;
-        submittingMessageIdRef.current = null;
-        ownTurnIdsRef.current.add(event.turnId);
-        setOwnTurnTick((tick) => tick + 1);
+        bindSubmittingTurn(forkId, event.turnId);
+      } else if (submittingMessageId !== null && activeTurnIdRef.current === null) {
+        submittingEventsRef.current.push(event);
+        return;
       }
-      const effect = companionRunEventEffect(
-        event,
-        activeTurnIdRef.current,
-        stopRequestedRef.current,
-        localeRef.current,
-      );
-      if (effect.kind === 'ignore') return;
-
-      // Interaction queue (so a boundary expansion surfaces) + live stream.
-      setInteractions((current) => applyCompanionInteractionEvent(current, forkId, event));
-      setLiveTurn((prev) => applyLiveTurnEvent(prev, event, localeRef.current));
-      if (effect.error !== undefined) setError(effect.error);
-      if (effect.terminal && event.turnId && !settlingTurnIdsRef.current.has(event.turnId)) {
-        const settledTurnId = event.turnId;
-        settlingTurnIdsRef.current.add(settledTurnId);
-        // Settlement: wait for the assistant message to persist before handing
-        // off from the live projection, then reconcile (shared with the main chat)
-        // so the finished exchange never flickers away.
-        void sideChat.readSettledMessages(forkId, {
-          ...(requiredAssistantMessageId(liveTurnRef.current)
-                ? {
-                    requiredAssistantMessageId: requiredAssistantMessageId(liveTurnRef.current),
-                  }
-            : {}),
-          })
-          .then(({ messages: next }) => {
-            if (!mountedRef.current || activeTurnIdRef.current !== settledTurnId) return;
-            setAllMessages((current) => mergeSettledMessages(current, next));
-            setLiveTurn((prev) => (prev ? reconcileTerminalLiveTurn(prev, next) : prev));
-            activeTurnIdRef.current = null;
-            submittingMessageIdRef.current = null;
-            turnInFlightRef.current = false;
-            stopRequestedRef.current = false;
-            setTurnInFlight(false);
-          })
-          .catch(() => {
-            if (!mountedRef.current || activeTurnIdRef.current !== settledTurnId) return;
-            activeTurnIdRef.current = null;
-            submittingMessageIdRef.current = null;
-            turnInFlightRef.current = false;
-            stopRequestedRef.current = false;
-            setTurnInFlight(false);
-            setError((current) => current ?? copyRef.current.errors.settlementFailed);
-          })
-          .finally(() => {
-            settlingTurnIdsRef.current.delete(settledTurnId);
-          });
-      }
+      applyOwnedEvent(forkId, event);
     });
-  }, [mountedRef, sideChat]);
+  }, [applyOwnedEvent, bindSubmittingTurn, mountedRef, sideChat]);
 
   const commitFork = useCallback(
     (session: SessionSummary) => {
@@ -406,8 +427,9 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
         onForkCommitted: () => {},
         onBeforeSend: () => {
           stopRequestedRef.current = false;
-          activeTurnIdRef.current = turnId;
+          activeTurnIdRef.current = null;
           submittingMessageIdRef.current = turnId;
+          submittingEventsRef.current = [];
           turnInFlightRef.current = true;
           setTurnInFlight(true);
         },
@@ -415,10 +437,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
       });
       if (result.status === 'sent') {
         if (turnInFlightRef.current && result.turnId) {
-          activeTurnIdRef.current = result.turnId;
-          submittingMessageIdRef.current = null;
-          ownTurnIdsRef.current.add(result.turnId);
-          setOwnTurnTick((tick) => tick + 1);
+          bindSubmittingTurn(result.forkId, result.turnId);
         }
         setHasContent(true);
         // Surface the just-sent user message immediately, and reflect any
@@ -452,6 +471,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
         setError(byCode[result.code]);
         activeTurnIdRef.current = null;
         submittingMessageIdRef.current = null;
+        submittingEventsRef.current = [];
         turnInFlightRef.current = false;
         setTurnInFlight(false);
         setLiveTurn(undefined);
@@ -468,6 +488,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
       ensureFork,
       mountedRef,
       sideChat,
+      bindSubmittingTurn,
     ],
   );
 

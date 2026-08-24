@@ -2200,7 +2200,7 @@ function queuedSteeringSnapshot(entry: LiveEntry): SteeringMessageSnapshot {
  * Queue position, not origin: an entry in the followup queue is a next-turn
  * message by definition, including a steering entry the run never pulled and
  * the terminal transition folded ahead of the followups. Where the message was
- * originally aimed stays on `disposition` and on the durable
+ * originally aimed stays on `submittedPlacement` and on the durable
  * {@link sourceFromEntry} record. Reporting a folded entry as `current_turn`
  * here makes the projection fail its own wire decode, which takes the Host
  * down through the session continuity snapshot (#3530).

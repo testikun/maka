@@ -175,3 +175,73 @@ test('a late terminal event cannot claim a pending steered companion message', a
   assert.equal(companion().liveTurn?.turnId, 'successor-turn');
   assert.equal(companion().streaming, true);
 });
+
+test('replays a new Host turn that starts before its send result arrives', async () => {
+  const { root } = installReactRenderer();
+  const pendingSend = deferred<{ ok: true; turnId: string }>();
+  let eventHandler: ((event: SessionEvent) => void) | undefined;
+  const defaults = createFakeWorkbarServices();
+  const services: WorkbarServices = createFakeWorkbarServices({
+    sideChat: {
+      ...defaults.sideChat,
+      listTurns: async (): Promise<TurnRecord[]> => [
+        { turnId: 'source-turn', status: 'completed', partialOutputRetained: false },
+      ],
+      branchFromTurn: async () => fork,
+      subscribeEvents: (_sessionId, handler) => {
+        eventHandler = handler;
+        return () => undefined;
+      },
+      send: () => pendingSend.promise,
+    },
+  });
+
+  await act(async () => {
+    root.render(
+      createElement(
+        WorkbarServicesProvider,
+        { services },
+        createElement(Probe),
+      ),
+    );
+  });
+  assert.equal(companion().companionSession?.id, fork.id);
+
+  let sendResult: Promise<boolean> | undefined;
+  await act(async () => {
+    sendResult = companion().send('first question');
+    await Promise.resolve();
+  });
+  assert.ok(eventHandler);
+
+  await act(async () => {
+    eventHandler?.({
+      type: 'text_delta',
+      id: 'early-text',
+      messageId: 'assistant-message',
+      turnId: 'host-root-turn',
+      ts: 1,
+      text: 'early answer',
+    });
+    eventHandler?.({
+      type: 'complete',
+      id: 'early-complete',
+      turnId: 'host-root-turn',
+      ts: 2,
+      stopReason: 'end_turn',
+    });
+  });
+  assert.equal(companion().liveTurn, undefined);
+  assert.equal(companion().processing, true);
+
+  await act(async () => {
+    pendingSend.resolve({ ok: true, turnId: 'host-root-turn' });
+    assert.equal(await sendResult, true);
+    await Promise.resolve();
+  });
+
+  assert.equal(companion().liveTurn?.turnId, 'host-root-turn');
+  assert.equal(companion().liveTurn?.steps[0]?.text?.text, 'early answer');
+  assert.equal(companion().streaming, false);
+  assert.equal(companion().processing, false);
+});

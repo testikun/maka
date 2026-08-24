@@ -868,6 +868,33 @@ describe('Maka Pi TUI transcript', () => {
     assert.doesNotMatch(rendered, /internal context/);
   });
 
+  test('renders one user row for a steering identity in either durable and event arrival order', () => {
+    const durableFirst = createMakaPiTranscriptState();
+    appendUserPrompt(durableFirst, 'same steering', 'steering-identity');
+    applyMakaSessionEventToTranscript(
+      durableFirst,
+      event({
+        type: 'steering_message',
+        messageId: 'steering-identity',
+        content: { text: 'same steering' },
+      }),
+    );
+
+    const eventFirst = createMakaPiTranscriptState();
+    applyMakaSessionEventToTranscript(
+      eventFirst,
+      event({
+        type: 'steering_message',
+        messageId: 'steering-identity',
+        content: { text: 'same steering' },
+      }),
+    );
+    appendUserPrompt(eventFirst, 'same steering', 'steering-identity');
+
+    assert.deepEqual(durableFirst.entries, [{ kind: 'user', text: 'same steering' }]);
+    assert.deepEqual(eventFirst.entries, [{ kind: 'user', text: 'same steering' }]);
+  });
+
   test('shows failed-open compact diagnostics before success diagnostics', () => {
     const state = createMakaPiTranscriptState();
 

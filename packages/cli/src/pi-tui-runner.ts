@@ -551,7 +551,7 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
       );
       rememberTranscript(messages);
       for (const message of newSteeringMessages) {
-        appendUserPrompt(state, message.displayText ?? message.text);
+        appendUserPrompt(state, message.displayText ?? message.text, message.id);
       }
       if (
         newSteeringMessages.length > 0 ||

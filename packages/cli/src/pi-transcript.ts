@@ -75,6 +75,8 @@ export interface MakaPiUsageSummary {
 
 export interface MakaPiTranscriptState {
   entries: MakaPiTranscriptEntry[];
+  /** Stable identities of durable/live user rows already represented in entries. */
+  renderedUserMessageIds: Set<string>;
   pendingInteraction?: MakaPiPendingInteraction;
   queuedInteractions: MakaPiPendingInteraction[];
   /**
@@ -197,6 +199,7 @@ export interface MakaPiTranscriptMetadata {
 export function createMakaPiTranscriptState(): MakaPiTranscriptState {
   return {
     entries: [],
+    renderedUserMessageIds: new Set(),
     queuedInteractions: [],
     expandAllTools: false,
     expandAllThinking: false,
@@ -227,7 +230,15 @@ function accumulateUsage(
   usage.contextRemaining = msg.contextRemaining;
 }
 
-export function appendUserPrompt(state: MakaPiTranscriptState, text: string): void {
+export function appendUserPrompt(
+  state: MakaPiTranscriptState,
+  text: string,
+  messageId?: string,
+): void {
+  if (messageId) {
+    if (state.renderedUserMessageIds.has(messageId)) return;
+    state.renderedUserMessageIds.add(messageId);
+  }
   state.entries.push({ kind: 'user', text });
 }
 
@@ -314,6 +325,9 @@ export function replaceTranscriptWithStoredMessages(
   messages: readonly StoredMessage[],
 ): void {
   state.entries = foldStoredShellRunChildren(storedMessagesToTranscriptEntries(messages));
+  state.renderedUserMessageIds = new Set(
+    messages.flatMap((message) => (message.type === 'user' ? [message.id] : [])),
+  );
   clearPendingInteractions(state);
   state.expandAllTools = false;
   state.expandAllThinking = false;
@@ -693,7 +707,7 @@ export function applyMakaSessionEventToTranscript(
 
     case 'steering_message':
       // A user interjection injected mid-turn; render it in place as a user turn.
-      appendUserPrompt(state, event.content.displayText ?? event.content.text);
+      appendUserPrompt(state, event.content.displayText ?? event.content.text, event.messageId);
       break;
 
     case 'queue_update':

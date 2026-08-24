@@ -1962,6 +1962,7 @@ describe('Maka Pi TUI runner', () => {
     await waitFor(() => driver.steered.length === 1);
     await waitFor(() => plainTerminalOutput(terminal.screenOutput()).includes('also handle Y'));
     assert.deepEqual(driver.steered, ['also handle Y']);
+    assert.equal(plainTerminalOutput(terminal.screenOutput()).split('also handle Y').length - 1, 1);
     assert.equal(
       plainTerminalOutput(terminal.screenOutput()).includes('Steering: also handle Y'),
       false,
@@ -6530,6 +6531,14 @@ class SteeringTurnDriver implements MakaSessionDriver {
     for (const listener of this.transcriptListeners) {
       listener(this.getSessionId(), 'turn-1', [message], 'reconcile');
     }
+    this.pendingEvents.push({
+      type: 'steering_message',
+      id: message.id,
+      turnId: message.turnId,
+      ts: message.ts,
+      messageId: message.id,
+      content: { text },
+    });
     return { kind: 'queued' };
   }
 

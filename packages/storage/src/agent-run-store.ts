@@ -95,6 +95,7 @@ export interface RootTurnSourceMessage {
   messageId: string;
   content: MessageContent;
   submittedContentDigest?: `sha256:${string}`;
+  submittedPlacement?: 'current_turn' | 'next_turn';
   placement: 'current_turn' | 'next_turn';
   disposition: 'steering' | 'followup' | 'turn_started';
 }
@@ -1653,11 +1654,19 @@ function normalizeRootTurnSourceMessages(value: unknown): readonly RootTurnSourc
         'placement',
         'disposition',
         ...(Object.hasOwn(item, 'submittedContentDigest') ? ['submittedContentDigest'] : []),
+        ...(Object.hasOwn(item, 'submittedPlacement') ? ['submittedPlacement'] : []),
       ])
     ) {
       throw new Error(`Invalid root turn source message at index ${index}`);
     }
-    const { messageId, content, submittedContentDigest, placement, disposition } = item;
+    const {
+      messageId,
+      content,
+      submittedContentDigest,
+      submittedPlacement,
+      placement,
+      disposition,
+    } = item;
     if (
       typeof messageId !== 'string' ||
       !isSafeId(messageId) ||
@@ -1667,6 +1676,9 @@ function normalizeRootTurnSourceMessages(value: unknown): readonly RootTurnSourc
         disposition !== 'turn_started') ||
       (disposition === 'steering' && placement !== 'current_turn') ||
       (disposition === 'followup' && placement !== 'next_turn') ||
+      (submittedPlacement !== undefined &&
+        submittedPlacement !== 'current_turn' &&
+        submittedPlacement !== 'next_turn') ||
       (submittedContentDigest !== undefined && !isSha256Digest(submittedContentDigest))
     ) {
       throw new Error(`Invalid root turn source message at index ${index}`);
@@ -1683,6 +1695,7 @@ function normalizeRootTurnSourceMessages(value: unknown): readonly RootTurnSourc
         MAX_ATTACHMENT_COUNT,
       ),
       ...(submittedContentDigest !== undefined ? { submittedContentDigest } : {}),
+      ...(submittedPlacement !== undefined ? { submittedPlacement } : {}),
       placement,
       disposition,
     });
@@ -1710,6 +1723,7 @@ function rootTurnAdmissionPayloadsEqual(
         source.placement === other.placement &&
         source.disposition === other.disposition &&
         source.submittedContentDigest === other.submittedContentDigest &&
+        source.submittedPlacement === other.submittedPlacement &&
         messageContentsEqual(source.content, other.content)
       );
     })

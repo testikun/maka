@@ -82,7 +82,7 @@ export interface HostedExecutionObserver {
 
 export interface HostedExecutionStopInput {
   readonly execution: HostedExecutionRef;
-  readonly source?: 'stop_button' | 'graph_supervisor';
+  readonly source?: 'stop_button' | 'graph_supervisor' | 'host_shutdown';
   readonly mode?: BackendStopMode;
 }
 

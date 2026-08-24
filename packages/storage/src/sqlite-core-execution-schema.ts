@@ -19,7 +19,7 @@
 
 import type { DatabaseSync } from 'node:sqlite';
 
-export const SQLITE_CORE_EXECUTION_SCHEMA_VERSION = 5;
+export const SQLITE_CORE_EXECUTION_SCHEMA_VERSION = 6;
 
 export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
   db.exec(`
@@ -132,7 +132,7 @@ export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
         ON DELETE CASCADE
     );
 
-    CREATE TABLE IF NOT EXISTS core_pending_steering_admissions (
+    CREATE TABLE IF NOT EXISTS core_message_admissions (
       sequence INTEGER PRIMARY KEY AUTOINCREMENT,
       session_id TEXT NOT NULL,
       turn_id TEXT NOT NULL,
@@ -140,13 +140,25 @@ export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
       message_id TEXT NOT NULL,
       content_json TEXT NOT NULL,
       model_content_json TEXT NOT NULL,
-      initiating_connection_id TEXT NOT NULL,
+      submitted_placement TEXT NOT NULL CHECK (submitted_placement IN ('current_turn', 'next_turn')),
+      placement TEXT NOT NULL CHECK (placement IN ('current_turn', 'next_turn')),
+      disposition TEXT NOT NULL CHECK (disposition IN ('steering', 'followup')),
+      queue_order INTEGER,
       admitted_at INTEGER NOT NULL CHECK (admitted_at >= 0),
       UNIQUE (session_id, message_id)
     );
 
-    CREATE INDEX IF NOT EXISTS core_pending_steering_session_order
-      ON core_pending_steering_admissions(session_id, sequence);
+    CREATE INDEX IF NOT EXISTS core_message_admissions_session_order
+      ON core_message_admissions(session_id, sequence);
+
+    CREATE TABLE IF NOT EXISTS core_message_admission_settlements (
+      session_id TEXT NOT NULL,
+      message_id TEXT NOT NULL,
+      settlement TEXT NOT NULL CHECK (settlement IN ('retracted')),
+      submitted_placement TEXT CHECK (submitted_placement IN ('current_turn', 'next_turn')),
+      submitted_content_digest TEXT,
+      PRIMARY KEY (session_id, message_id)
+    );
 
     CREATE TABLE IF NOT EXISTS core_shell_runs (
       session_id TEXT NOT NULL,
@@ -159,6 +171,25 @@ export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
     CREATE INDEX IF NOT EXISTS core_shell_runs_session_order
       ON core_shell_runs(session_id, started_at, shell_run_id);
   `);
+  discardLegacyPendingSteeringAdmissions(db);
+  ensureColumn(
+    db,
+    'core_message_admissions',
+    'submitted_placement',
+    "TEXT CHECK (submitted_placement IN ('current_turn', 'next_turn'))",
+  );
+  db.exec(
+    'UPDATE core_message_admissions SET submitted_placement = placement WHERE submitted_placement IS NULL',
+  );
+  ensureColumn(db, 'core_message_admissions', 'queue_order', 'INTEGER');
+  db.exec('UPDATE core_message_admissions SET queue_order = sequence WHERE queue_order IS NULL');
+  ensureColumn(
+    db,
+    'core_message_admission_settlements',
+    'submitted_placement',
+    "TEXT CHECK (submitted_placement IN ('current_turn', 'next_turn'))",
+  );
+  ensureColumn(db, 'core_message_admission_settlements', 'submitted_content_digest', 'TEXT');
   ensureColumn(
     db,
     'core_agent_runs',
@@ -186,6 +217,13 @@ export function migrateSqliteCoreExecutionDatabase(db: DatabaseSync): void {
     CREATE INDEX IF NOT EXISTS core_agent_runs_model_call_high_water
       ON core_agent_runs(session_id, latest_model_call_sequence, run_id)
       WHERE latest_model_call_sequence IS NOT NULL;
+  `);
+}
+
+function discardLegacyPendingSteeringAdmissions(db: DatabaseSync): void {
+  db.exec(`
+    DROP INDEX IF EXISTS core_pending_steering_session_order;
+    DROP TABLE IF EXISTS core_pending_steering_admissions;
   `);
 }
 

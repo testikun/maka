@@ -57,6 +57,7 @@ import type {
   AgentGraphOperatorProvisionRequest,
   AgentGraphOperatorProvisionResult,
 } from '@maka/core/agent-graph-topology';
+import type { PendingMessageAdmission } from './message-receipt-store.js';
 
 import type {
   CreateSandboxBoundaryRequest,
@@ -309,6 +310,10 @@ export interface SessionAuthorityStore extends SessionStore {
   subscribeTranscriptChanges(listener: (sessionId: string) => void): () => void;
   /** Wait until the SQLite authority is ready for cross-domain transactions. */
   ready(): Promise<void>;
+  commitMessageAdmission(
+    admission: PendingMessageAdmission,
+    transcriptMessage?: StoredMessage,
+  ): Promise<PendingMessageAdmission>;
   /** Atomically create a Session from already-converted Maka raw messages. */
   createImportedSession(
     input: CreateSessionInput,
@@ -855,6 +860,22 @@ class SqliteSessionStore implements SessionAuthorityStore {
       projectSessionCatalogMessages(messages),
     );
     for (const listener of this.transcriptChangeListeners) listener(sessionId);
+  }
+
+  async commitMessageAdmission(
+    admission: PendingMessageAdmission,
+    transcriptMessage?: StoredMessage,
+  ): Promise<PendingMessageAdmission> {
+    await this.ensureReady();
+    const committed = await this.metadata.commitMessageAdmission(
+      admission,
+      transcriptMessage,
+      transcriptMessage ? projectSessionCatalogMessages([transcriptMessage]) : undefined,
+    );
+    if (transcriptMessage) {
+      for (const listener of this.transcriptChangeListeners) listener(admission.sessionId);
+    }
+    return committed;
   }
 
   subscribeTranscriptChanges(listener: (sessionId: string) => void): () => void {

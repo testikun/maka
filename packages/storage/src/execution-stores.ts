@@ -118,7 +118,7 @@ export type {
   MessageOperationReceipt,
   MessageReceiptOperation,
   MessageReceiptStore,
-  PendingSteeringAdmission,
+  PendingMessageAdmission,
 } from './message-receipt-store.js';
 export type {
   ProbeSessionRemovalResult,
@@ -422,6 +422,8 @@ async function createExecutionStoresForWrite<K extends StorageRootKind, E extend
         run(() => sessionStore.appendMessage(sessionId, message)),
       appendMessages: (sessionId, messages) =>
         run(() => sessionStore.appendMessages(sessionId, messages)),
+      commitMessageAdmission: (admission, transcriptMessage) =>
+        run(() => sessionStore.commitMessageAdmission(admission, transcriptMessage)),
       subscribeTranscriptChanges: (listener) => sessionStore.subscribeTranscriptChanges(listener),
       updateHeader: (sessionId, patch) => run(() => sessionStore.updateHeader(sessionId, patch)),
       updateHeaderVersioned: (sessionId, patch, expectedRevision) =>
@@ -556,11 +558,17 @@ async function createExecutionStoresForWrite<K extends StorageRootKind, E extend
         run(() =>
           messageReceiptStore.commit(hostEpoch, operation, sessionId, operationId, receipt),
         ),
-      commitPendingSteering: (admission) =>
-        run(() => messageReceiptStore.commitPendingSteering(admission)),
-      listPendingSteering: () => run(() => messageReceiptStore.listPendingSteering()),
-      settlePendingSteering: (sessionId, messageIds) =>
-        run(() => messageReceiptStore.settlePendingSteering(sessionId, messageIds)),
+      readMessageAdmission: (sessionId, messageId) =>
+        run(() => messageReceiptStore.readMessageAdmission(sessionId, messageId)),
+      readMessageSettlement: (sessionId, messageId) =>
+        run(() => messageReceiptStore.readMessageSettlement(sessionId, messageId)),
+      listPendingMessages: () => run(() => messageReceiptStore.listPendingMessages()),
+      commitMessageOrder: (sessionId, messageIds) =>
+        run(() => messageReceiptStore.commitMessageOrder(sessionId, messageIds)),
+      commitMessageRetractions: (sessionId, messageIds) =>
+        run(() => messageReceiptStore.commitMessageRetractions(sessionId, messageIds)),
+      garbageCollectMessageAdmissions: (sessionId, messageIds) =>
+        run(() => messageReceiptStore.garbageCollectMessageAdmissions(sessionId, messageIds)),
     },
   };
   freezeExecutionStoresFacade(stores);

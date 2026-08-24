@@ -21,9 +21,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { MessageContent } from '@maka/core/events';
 import type { RuntimeEvent } from '@maka/core/runtime-event';
+import { messageContentDigest } from '@maka/storage/message-content-digest';
 import type {
   MessageOperationReceipt,
   MessageReceiptStore,
+  PendingMessageAdmission,
   RootTurnSourceMessageReceipt,
 } from '@maka/storage/execution-stores';
 import {
@@ -40,7 +42,6 @@ import {
   type HostMessageRootPort,
   type HostMessageRootState,
 } from '../server/message-coordinator.js';
-import { messageContentDigest } from '../server/message-content-digest.js';
 import { SessionAdmissionGate } from '../server/session-admission-gate.js';
 
 const ROOT = { sessionId: 'session-1', turnId: 'turn-1', runId: 'run-1' } as const;
@@ -189,7 +190,7 @@ test('invalidates the canonical projection after each observable queue mutation'
   await fixture.coordinator.close();
 });
 
-test('partitions a mixed-Client follow-up queue across root handoffs', async () => {
+test('aggregates accepted followups under the durable Session execution contract', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
   const owner = fixture.coordinator.bindRun(ROOT);
@@ -216,49 +217,26 @@ test('partitions a mixed-Client follow-up queue across root handoffs', async () 
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   assert.deepEqual(
     batch.sources.map((source) => source.messageId),
-    ['steering-from-b'],
+    ['steering-from-b', 'followup-from-c'],
   );
-  assert.equal(batch.initiatingConnectionId, 'connection-b');
 
   fixture.coordinator.commitNextRoot(batch, {
     sessionId: ROOT.sessionId,
     turnId: 'turn-2',
     runId: 'run-2',
   });
-  assert.equal(fixture.liveResidencies(), 1);
-  const nextOwner = fixture.coordinator.bindRun({
-    sessionId: ROOT.sessionId,
-    turnId: 'turn-2',
-    runId: 'run-2',
-  });
-  nextOwner.release();
-  const secondBatch = fixture.coordinator.beginTerminalTransition({
-    sessionId: ROOT.sessionId,
-    turnId: 'turn-2',
-    runId: 'run-2',
-  });
-  assert.deepEqual(
-    secondBatch.sources.map((source) => source.messageId),
-    ['followup-from-c'],
-  );
-  assert.equal(secondBatch.initiatingConnectionId, 'connection-c');
-  fixture.coordinator.commitNextRoot(secondBatch, {
-    sessionId: ROOT.sessionId,
-    turnId: 'turn-3',
-    runId: 'run-3',
-  });
   assert.equal(fixture.liveResidencies(), 0);
   const finalOwner = fixture.coordinator.bindRun({
     sessionId: ROOT.sessionId,
-    turnId: 'turn-3',
-    runId: 'run-3',
+    turnId: 'turn-2',
+    runId: 'run-2',
   });
   finalOwner.release();
   fixture.coordinator.completeIdle(
     fixture.coordinator.beginTerminalTransition({
       sessionId: ROOT.sessionId,
-      turnId: 'turn-3',
-      runId: 'run-3',
+      turnId: 'turn-2',
+      runId: 'run-2',
     }),
   );
   await fixture.coordinator.close();
@@ -354,6 +332,10 @@ test('persists a steering message before admitting it to the active Turn queue',
     runId: ROOT.runId,
     messageId: 'durable-steering',
     content: { text: 'persist before queueing' },
+    modelContent: { text: 'persist before queueing' },
+    submittedPlacement: 'current_turn',
+    placement: 'current_turn',
+    disposition: 'steering',
   });
   assert.equal(fixture.coordinator.projection(ROOT.sessionId).steering.length, 1);
 
@@ -370,7 +352,7 @@ test('terminal transition settles steering after durable provider consumption', 
   fixture.coordinator.reserveRootTurn(ROOT);
   const owner = fixture.coordinator.bindRun(ROOT);
   assert.equal((await submit(fixture, 'consumed-steering', 'consume me', 'current_turn')).ok, true);
-  assert.equal(fixture.pendingSteeringCount(), 1);
+  assert.equal(fixture.pendingAdmissionCount(), 1);
 
   const [lease] = owner.pull();
   assert.ok(lease);
@@ -379,7 +361,7 @@ test('terminal transition settles steering after durable provider consumption', 
   owner.release();
   await fixture.coordinator.prepareTerminalTransition(ROOT);
 
-  assert.equal(fixture.pendingSteeringCount(), 0);
+  assert.equal(fixture.pendingAdmissionCount(), 0);
   fixture.coordinator.completeIdle(fixture.coordinator.beginTerminalTransition(ROOT));
   await fixture.coordinator.close();
 });
@@ -477,6 +459,30 @@ test('pull crosses the retract commit cut and only queued entries are retracted'
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   fixture.coordinator.completeIdle(batch);
   assert.equal(fixture.liveResidencies(), 0);
+});
+
+test('durable retraction failure leaves the live queue unchanged', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'follow-1', 'later', 'next_turn');
+  fixture.failNextRetraction(new Error('settlement failed'));
+
+  await assert.rejects(
+    fixture.coordinator.handlers['queue.retract'](
+      {
+        originHostEpoch: 'epoch-1',
+        sessionId: ROOT.sessionId,
+        retractId: 'failed-retraction',
+      },
+      operationContext(),
+    ),
+    /settlement failed/,
+  );
+  assert.deepEqual(
+    fixture.coordinator.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
+    ['follow-1'],
+  );
+  assert.equal(fixture.pendingAdmissionCount(), 1);
 });
 
 test('entry retract removes one queued entry, replays its receipt, and rejects stale targets', async () => {
@@ -869,6 +875,43 @@ test('entry promote moves a follow-up into the steering queue', async () => {
   assert.equal(fixture.liveResidencies(), 0);
 });
 
+test('an unconsumed promoted Message enters its successor as materialized steering', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const owner = fixture.coordinator.bindRun(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const [entry] = fixture.coordinator.projection(ROOT.sessionId).followup;
+  assert.ok(entry);
+  const promoted = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entry.entryId,
+      promoteId: 'promote-unconsumed',
+    },
+    operationContext(),
+  );
+  assert.equal(promoted.ok, true);
+
+  owner.release();
+  const batch = fixture.coordinator.beginTerminalTransition(ROOT);
+  assert.deepEqual(batch.sources, [
+    {
+      messageId: 'promoted-followup',
+      content: { text: 'send this now' },
+      submittedContentDigest: messageContentDigest({ text: 'send this now' }),
+      submittedPlacement: 'next_turn',
+      placement: 'current_turn',
+      disposition: 'steering',
+    },
+  ]);
+  fixture.coordinator.commitNextRoot(batch, {
+    sessionId: ROOT.sessionId,
+    turnId: 'turn-2',
+    runId: 'run-2',
+  });
+});
+
 test('entry promote durably admits the message before making it non-retractable', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
@@ -918,7 +961,7 @@ test('retract settles a failed promotion so restart cannot recover it', async ()
   await delay.started.promise;
   delay.release.resolve(undefined);
   await assert.rejects(promotion, /durable promotion failed/);
-  assert.equal(fixture.pendingSteeringCount(), 1);
+  assert.equal(fixture.pendingAdmissionCount(), 1);
 
   const retracted = await fixture.coordinator.handlers['queue.entry.retract'](
     {
@@ -930,7 +973,36 @@ test('retract settles a failed promotion so restart cannot recover it', async ()
     operationContext(),
   );
   assert.equal(retracted.ok, true);
-  assert.equal(fixture.pendingSteeringCount(), 0);
+  assert.equal(fixture.pendingAdmissionCount(), 0);
+
+  const restarted = fixture.restart('epoch-2');
+  const retried = await restarted.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      messageId: 'promoted-followup',
+      content: { text: 'send this now' },
+      placement: 'next_turn',
+    },
+    operationContext(),
+  );
+  assert.equal(retried.ok, false);
+  if (!retried.ok) assert.equal(retried.error.code, 'operation_conflict');
+  const reusedInCurrentEpoch = await restarted.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-2',
+      sessionId: ROOT.sessionId,
+      messageId: 'promoted-followup',
+      content: { text: 'send this now' },
+      placement: 'next_turn',
+    },
+    operationContext(),
+  );
+  assert.equal(reusedInCurrentEpoch.ok, false);
+  if (!reusedInCurrentEpoch.ok) {
+    assert.equal(reusedInCurrentEpoch.error.code, 'operation_conflict');
+  }
+  assert.equal(fixture.pendingAdmissionCount(), 0);
 });
 
 test('failed promotion retry reuses the durable admission timestamp', async () => {
@@ -964,7 +1036,43 @@ test('failed promotion retry reuses the durable admission timestamp', async () =
   assert.equal(retry.ok, true);
 });
 
-test('restart recovers only the first contiguous initiating-client batch', async () => {
+test('old-Epoch retry retains the original placement after promoted provider consumption', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const owner = fixture.coordinator.bindRun(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const [entry] = fixture.coordinator.projection(ROOT.sessionId).followup;
+  assert.ok(entry);
+  const promoted = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entry.entryId,
+      promoteId: 'promote-for-provider',
+    },
+    operationContext(),
+  );
+  assert.equal(promoted.ok, true);
+  const [lease] = owner.pull();
+  assert.ok(lease);
+  fixture.events.push(
+    steeringEvent('promoted-followup', { text: 'send this now' }, { text: 'send this now' }),
+  );
+  owner.ack([lease.id]);
+  await fixture.coordinator.prepareTerminalTransition(ROOT);
+
+  const retried = await submit(
+    { ...fixture, coordinator: fixture.restart('epoch-2') },
+    'promoted-followup',
+    'send this now',
+    'next_turn',
+    'epoch-1',
+  );
+  assert.equal(retried.ok, false);
+  if (!retried.ok) assert.equal(retried.error.code, 'outcome_unknown');
+});
+
+test('restart recovers every admission under the durable Session execution contract', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
   await fixture.coordinator.handlers['turn.message.submit'](
@@ -993,16 +1101,81 @@ test('restart recovers only the first contiguous initiating-client batch', async
   await restarted.recoverPendingAfterHostRestart();
 
   assert.equal(fixture.recoveredBatches.length, 1);
-  assert.equal(fixture.recoveredBatches[0]?.initiatingConnectionId, 'connection-b');
   assert.deepEqual(
     fixture.recoveredBatches[0]?.sources.map((source) => source.messageId),
-    ['steering-b'],
+    ['steering-b', 'steering-a'],
   );
+  assert.deepEqual(restarted.projection(ROOT.sessionId).followup, []);
+  assert.equal(fixture.pendingAdmissionCount(), 0);
+});
+
+test('restart preserves durable reorder and promotion priority', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'followup-a', 'A', 'next_turn');
+  await submit(fixture, 'followup-b', 'B', 'next_turn');
+  await submit(fixture, 'steering-c', 'C', 'current_turn');
+  await submit(fixture, 'followup-d', 'D', 'next_turn');
+  await submit(fixture, 'followup-e', 'E', 'next_turn');
+  const entries = new Map(
+    fixture.coordinator
+      .projection(ROOT.sessionId)
+      .followup.map((entry) => [entry.messageId, entry]),
+  );
+  const entryA = entries.get('followup-a');
+  const entryB = entries.get('followup-b');
+  const entryD = entries.get('followup-d');
+  const entryE = entries.get('followup-e');
+  assert.ok(entryA && entryB && entryD && entryE);
+
+  const reordered = await fixture.coordinator.handlers['queue.entries.reorder'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryIds: [entryB.entryId, entryA.entryId, entryE.entryId, entryD.entryId],
+      reorderId: 'reorder-before-restart',
+    },
+    operationContext(),
+  );
+  assert.equal(reordered.ok, true);
+  const promoted = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entryB.entryId,
+      promoteId: 'promote-before-restart',
+    },
+    operationContext(),
+  );
+  assert.equal(promoted.ok, true);
+  const promotedAgain = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entryA.entryId,
+      promoteId: 'promote-again-before-restart',
+    },
+    operationContext(),
+  );
+  assert.equal(promotedAgain.ok, true);
+
+  fixture.setRootState({ kind: 'idle' });
+  await fixture.restart('epoch-2').recoverPendingAfterHostRestart();
   assert.deepEqual(
-    restarted.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
-    ['steering-a'],
+    fixture.recoveredBatches[0]?.sources.map((source) => [
+      source.messageId,
+      source.submittedPlacement,
+      source.placement,
+      source.disposition,
+    ]),
+    [
+      ['steering-c', undefined, 'current_turn', 'steering'],
+      ['followup-b', 'next_turn', 'current_turn', 'steering'],
+      ['followup-a', 'next_turn', 'current_turn', 'steering'],
+      ['followup-e', undefined, 'next_turn', 'followup'],
+      ['followup-d', undefined, 'next_turn', 'followup'],
+    ],
   );
-  assert.equal(fixture.pendingSteeringCount(), 1);
 });
 
 test('entry promote requires an active Turn', async () => {
@@ -1795,13 +1968,16 @@ test('administrative drain preserves accepted entries until the terminal stop fe
     fixture.coordinator.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
     ['follow-drain'],
   );
-  assert.equal(fixture.pendingSteeringCount(), 1);
+  assert.equal(fixture.pendingAdmissionCount(), 2);
 
   owner.release();
   await fixture.coordinator.prepareTerminalTransition(ROOT);
-  assert.equal(fixture.pendingSteeringCount(), 1);
+  assert.equal(fixture.pendingAdmissionCount(), 2);
   await fixture.coordinator.commitStopFence(ROOT);
-  assert.equal(fixture.pendingSteeringCount(), 0);
+  assert.equal(fixture.pendingAdmissionCount(), 2);
+  fixture.setExplicitStopProof(true);
+  await fixture.coordinator.prepareTerminalTransition(ROOT);
+  assert.equal(fixture.pendingAdmissionCount(), 0);
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   assert.deepEqual(batch.sources, []);
   assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
@@ -2337,10 +2513,6 @@ function createFixture(
     content: MessageContent;
     admittedAt: number;
   }> = [];
-  const durableSteeringAdmissions = new Map<
-    string,
-    { sessionId: string; turnId: string; messageId: string; content: MessageContent }
-  >();
   let steeringAdmissionDelay:
     | {
         readonly started: ReturnType<typeof deferred<void>>;
@@ -2359,7 +2531,13 @@ function createFixture(
   >();
   const stopClaimed = deferred<void>();
   const terminal = deferred<TurnSnapshot>();
+  let explicitStopProof = false;
   let coordinator: HostMessageCoordinator;
+  let receiptStore!: MessageReceiptStore & {
+    commitAdmission(admission: PendingMessageAdmission): Promise<PendingMessageAdmission>;
+    failNextRetraction(error: Error): void;
+    pendingAdmissionCount(): number;
+  };
   const root: HostMessageRootPort = {
     readSessionHeader: async () => {
       rootReads += 1;
@@ -2403,20 +2581,19 @@ function createFixture(
       return { turnId };
     },
     prepareMessage: (input) => prepareMessage(input),
-    commitSteeringAdmission: async (input) => {
-      steeringAdmissions.push(structuredClone(input));
-      durableSteeringAdmissions.set(input.messageId, {
-        sessionId: input.sessionId,
-        turnId: input.turnId,
-        messageId: input.messageId,
-        content: structuredClone(input.content),
-      });
+    commitMessageAdmission: async (input, materializeTranscript) => {
       const delay = steeringAdmissionDelay;
-      if (!delay) return;
-      steeringAdmissionDelay = undefined;
-      delay.started.resolve(undefined);
-      await delay.release.promise;
-      if (delay.error) throw delay.error;
+      if (materializeTranscript && delay) {
+        steeringAdmissionDelay = undefined;
+        delay.started.resolve(undefined);
+        await delay.release.promise;
+        if (delay.error) throw delay.error;
+      }
+      const committed = await receiptStore.commitAdmission(input);
+      if (materializeTranscript) {
+        steeringAdmissions.push(structuredClone(input));
+      }
+      return committed;
     },
     claimStop: async (_input, commitQueueFence) => {
       commitQueueFence();
@@ -2427,8 +2604,7 @@ function createFixture(
     },
   };
   const recoveredBatches: HostMessageRecoveryBatch[] = [];
-  root.materializeSteeringAdmissions = async () => undefined;
-  root.startRecoveredSteering = async (input) => {
+  root.startRecoveredMessages = async (input) => {
     recoveredBatches.push(structuredClone(input));
     rootState = {
       kind: 'active',
@@ -2439,7 +2615,7 @@ function createFixture(
     coordinator.reserveRootTurn(rootState);
     return { turnId: 'recovered-turn' };
   };
-  const receiptStore = memoryReceiptStore(
+  receiptStore = memoryReceiptStore(
     operationReceipts,
     async (operation, operationId) => {
       const delay = receiptDelays.get(`${operation}:${operationId}`);
@@ -2458,8 +2634,6 @@ function createFixture(
     root,
     durableProof: {
       readRootTurnSourceMessageReceipt: async (_sessionId, messageId) => receipts.get(messageId),
-      readSteeringAdmission: async (_sessionId, messageId) =>
-        durableSteeringAdmissions.get(messageId),
       readImmutableSteeringMessageProof: async (_sessionId, messageId) => {
         const event = events.find(
           (candidate) =>
@@ -2470,6 +2644,7 @@ function createFixture(
         );
         return event ? { event } : undefined;
       },
+      readExplicitStopProof: async () => explicitStopProof,
     },
     receipts: receiptStore,
     sessionAdmission: new SessionAdmissionGate(),
@@ -2501,6 +2676,9 @@ function createFixture(
     setRootState: (state: HostMessageRootState) => {
       rootState = state;
     },
+    setExplicitStopProof: (value: boolean) => {
+      explicitStopProof = value;
+    },
     setMessagePreparation: (prepare: NonNullable<HostMessageRootPort['prepareMessage']>) => {
       prepareMessage = prepare;
     },
@@ -2509,7 +2687,8 @@ function createFixture(
     receipts,
     steeringAdmissions,
     recoveredBatches,
-    pendingSteeringCount: () => receiptStore.pendingSteeringCount(),
+    pendingAdmissionCount: () => receiptStore.pendingAdmissionCount(),
+    failNextRetraction: (error: Error) => receiptStore.failNextRetraction(error),
     delaySteeringAdmission: (error?: Error) => {
       const delay = { started: deferred<void>(), release: deferred<void>(), error };
       steeringAdmissionDelay = delay;
@@ -2545,10 +2724,25 @@ function memoryReceiptStore(
   receipts: Map<string, MessageOperationReceipt>,
   beforeCommit?: (operation: string, operationId: string) => Promise<void>,
   onRead?: () => void,
-): MessageReceiptStore & { pendingSteeringCount(): number } {
+): MessageReceiptStore & {
+  commitAdmission(admission: PendingMessageAdmission): Promise<PendingMessageAdmission>;
+  failNextRetraction(error: Error): void;
+  pendingAdmissionCount(): number;
+} {
   const key = (hostEpoch: string, operation: string, sessionId: string, operationId: string) =>
     `${hostEpoch}:${operation}:${sessionId}:${operationId}`;
-  const pending = new Map<string, Parameters<MessageReceiptStore['commitPendingSteering']>[0]>();
+  const pending = new Map<string, PendingMessageAdmission>();
+  const admissionOrder: string[] = [];
+  const retracted = new Map<
+    string,
+    {
+      messageId: string;
+      settlement: 'retracted';
+      submittedPlacement: 'current_turn' | 'next_turn';
+      submittedContentDigest: `sha256:${string}`;
+    }
+  >();
+  let retractionError: Error | undefined;
   return {
     beginHostEpoch: async () => undefined,
     read: async (hostEpoch, operation, sessionId, operationId) => {
@@ -2564,19 +2758,105 @@ function memoryReceiptStore(
       receipts.set(receiptKey, snapshot);
       return snapshot;
     },
-    commitPendingSteering: async (admission) => {
+    commitAdmission: async (admission) => {
       const admissionKey = `${admission.sessionId}:${admission.messageId}`;
       const existing = pending.get(admissionKey);
-      if (existing) return existing;
+      if (existing) {
+        assert.equal(existing.sessionId, admission.sessionId);
+        assert.equal(existing.turnId, admission.turnId);
+        assert.equal(existing.runId, admission.runId);
+        assert.deepEqual(existing.content, admission.content);
+        assert.deepEqual(existing.modelContent, admission.modelContent);
+        if (
+          admission.placement === 'current_turn' &&
+          admission.disposition === 'steering' &&
+          existing.placement === 'next_turn' &&
+          existing.disposition === 'followup'
+        ) {
+          const promoted = {
+            ...existing,
+            placement: 'current_turn' as const,
+            disposition: 'steering' as const,
+          };
+          pending.set(admissionKey, promoted);
+          admissionOrder.splice(admissionOrder.indexOf(admissionKey), 1);
+          admissionOrder.push(admissionKey);
+          return promoted;
+        }
+        assert.equal(existing.placement, admission.placement);
+        assert.equal(existing.disposition, admission.disposition);
+        return existing;
+      }
       const snapshot = structuredClone(admission);
       pending.set(admissionKey, snapshot);
+      admissionOrder.push(admissionKey);
       return snapshot;
     },
-    listPendingSteering: async () => [...pending.values()],
-    settlePendingSteering: async (sessionId, messageIds) => {
+    readMessageAdmission: async (sessionId, messageId) => {
+      const admissionKey = `${sessionId}:${messageId}`;
+      return retracted.has(admissionKey) ? undefined : pending.get(admissionKey);
+    },
+    readMessageSettlement: async (sessionId, messageId) =>
+      retracted.get(`${sessionId}:${messageId}`),
+    listPendingMessages: async () =>
+      admissionOrder
+        .flatMap((admissionKey) => {
+          const admission = pending.get(admissionKey);
+          return admission && !retracted.has(admissionKey) ? [admission] : [];
+        })
+        .sort((left, right) =>
+          left.disposition === right.disposition ? 0 : left.disposition === 'steering' ? -1 : 1,
+        ),
+    commitMessageOrder: async (sessionId, messageIds) => {
+      const reorderedKeys: string[] = [];
+      for (const messageId of messageIds) {
+        const admissionKey = `${sessionId}:${messageId}`;
+        const admission = pending.get(admissionKey);
+        if (!admission || admission.disposition !== 'followup') {
+          throw new Error('Message order identity conflict');
+        }
+        reorderedKeys.push(admissionKey);
+      }
+      const positions = admissionOrder.flatMap((admissionKey, index) => {
+        const admission = pending.get(admissionKey);
+        return admission?.sessionId === sessionId && admission.disposition === 'followup'
+          ? [index]
+          : [];
+      });
+      if (positions.length !== reorderedKeys.length) {
+        throw new Error('Message order identity conflict');
+      }
+      for (let index = 0; index < positions.length; index += 1) {
+        admissionOrder[positions[index]!] = reorderedKeys[index]!;
+      }
+    },
+    commitMessageRetractions: async (sessionId, messageIds) => {
+      if (retractionError) {
+        const error = retractionError;
+        retractionError = undefined;
+        throw error;
+      }
+      for (const messageId of messageIds) {
+        const admissionKey = `${sessionId}:${messageId}`;
+        const admission = pending.get(admissionKey);
+        if (!admission) throw new Error('Message retraction identity does not exist');
+        retracted.set(admissionKey, {
+          messageId,
+          settlement: 'retracted',
+          submittedPlacement: admission.submittedPlacement,
+          submittedContentDigest: messageContentDigest(admission.content),
+        });
+        pending.delete(admissionKey);
+      }
+    },
+    garbageCollectMessageAdmissions: async (sessionId, messageIds) => {
       for (const messageId of messageIds) pending.delete(`${sessionId}:${messageId}`);
     },
-    pendingSteeringCount: () => pending.size,
+    pendingAdmissionCount: () =>
+      [...pending.keys()].filter((admissionKey) => !retracted.has(admissionKey)).length,
+    failNextRetraction: (error) => {
+      retractionError = error;
+    },
   };
 }
 

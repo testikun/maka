@@ -95,13 +95,15 @@ export function turnHasRetainedOutput(messages: readonly StoredMessage[], turnId
 }
 
 export function normalizeStopSessionSource(
-  source: 'stop_button' | 'graph_supervisor' | undefined,
+  source: 'stop_button' | 'graph_supervisor' | 'host_shutdown' | undefined,
 ): string | undefined {
   switch (source) {
     case 'stop_button':
       return 'renderer.stop_button';
     case 'graph_supervisor':
       return 'graph.supervisor';
+    case 'host_shutdown':
+      return 'runtime_host.shutdown';
     case undefined:
       return undefined;
   }

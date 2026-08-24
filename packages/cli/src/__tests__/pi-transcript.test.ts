@@ -128,7 +128,7 @@ describe('Maka Pi TUI transcript', () => {
 
   test('renders the pending-queue edit shortcut for the current platform', () => {
     const state = createMakaPiTranscriptState();
-    state.steering = ['Keep going'];
+    state.followup = ['Keep going'];
     const renderFor = (platform: NodeJS.Platform) =>
       renderMakaPiPendingQueue(state, 80, platform).map(stripAnsi);
 

@@ -41,7 +41,6 @@ import type {
   AbortEvent,
   PermissionDecisionAckEvent,
   PermissionRequestEvent,
-  QueueEnqueueOutcome,
   ShellRunUpdate,
   MessageContent,
 } from '@maka/core/events';
@@ -271,7 +270,7 @@ function runtimeCommitSinkFromEventStore(
 }
 
 export interface StopSessionInput {
-  source?: 'stop_button' | 'graph_supervisor';
+  source?: 'stop_button' | 'graph_supervisor' | 'host_shutdown';
   mode?: BackendStopMode;
 }
 
@@ -4812,35 +4811,6 @@ export class SessionManager {
       : this.runtimeKernel.stopSession(identity.sessionId, input);
   }
 
-  /** Queue a user message for mid-turn injection at the next step boundary. */
-  commitSteeringAdmission(input: {
-    sessionId: string;
-    turnId: string;
-    runId: string;
-    messageId: string;
-    content: MessageContent;
-    admittedAt?: number;
-  }): Promise<void> {
-    const commit = this.runtimeKernel.commitSteeringAdmission;
-    if (!commit) throw new Error('Runtime steering admission authority is unavailable');
-    return commit.call(this.runtimeKernel, input);
-  }
-
-  materializeSteeringAdmissions(
-    admissions: readonly {
-      sessionId: string;
-      turnId: string;
-      runId: string;
-      messageId: string;
-      content: MessageContent;
-      admittedAt: number;
-    }[],
-  ): Promise<void> {
-    const materialize = this.runtimeKernel.materializeSteeringAdmissions;
-    if (!materialize) throw new Error('Runtime steering materialization is unavailable');
-    return materialize.call(this.runtimeKernel, admissions);
-  }
-
   materializeRootSourceMessages(input: {
     sessionId: string;
     turnId: string;
@@ -4849,25 +4819,6 @@ export class SessionManager {
     const materialize = this.runtimeKernel.materializeRootSourceMessages;
     if (!materialize) throw new Error('Runtime root message materialization is unavailable');
     return materialize.call(this.runtimeKernel, input);
-  }
-
-  steer(sessionId: string, text: string): QueueEnqueueOutcome {
-    return this.runtimeKernel.steer(sessionId, text);
-  }
-
-  /** Queue a user message to open the turn after the current one finishes. */
-  queueMessage(sessionId: string, text: string): QueueEnqueueOutcome {
-    return this.runtimeKernel.queueMessage(sessionId, text);
-  }
-
-  /** Drain the followup queue into one `\n\n`-joined prompt, or null if empty. */
-  drainFollowup(sessionId: string): string | null {
-    return this.runtimeKernel.drainFollowup(sessionId);
-  }
-
-  /** Take back every queued message (both queues) as one `\n\n`-joined string. */
-  retractQueue(sessionId: string): string {
-    return this.runtimeKernel.retractQueue(sessionId);
   }
 
   async *regenerateTurn(

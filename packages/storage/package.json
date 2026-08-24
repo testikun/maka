@@ -18,6 +18,7 @@
     "./goal-authority": "./dist/goal-authority.js",
     "./plan-authority": "./dist/plan-authority.js",
     "./execution-stores": "./dist/execution-stores.js",
+    "./message-content-digest": "./dist/message-content-digest.js",
     "./external-sessions": "./dist/external-sessions.js",
     "./agent-graph-control-store": "./dist/agent-graph-control-store.js",
     "./interaction-store": "./dist/interaction-store-public.js",

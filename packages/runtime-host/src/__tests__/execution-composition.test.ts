@@ -313,14 +313,16 @@ test('production startup recovers steering admitted before an interrupted Run lo
       status: 'running',
       updatedAt: 11,
     });
-    await stores.messageReceiptStore.commitPendingSteering({
+    await stores.sessionStore.commitMessageAdmission({
       sessionId: session.id,
       turnId: 'interrupted-turn',
       runId: 'interrupted-run',
       messageId: 'admitted-steering',
       content: { text: 'durable steering' },
       modelContent: { text: 'durable steering' },
-      initiatingConnectionId: 'crashed-client',
+      submittedPlacement: 'current_turn',
+      placement: 'current_turn',
+      disposition: 'steering',
       admittedAt: 12,
     });
     await stores.sessionStore.appendMessage(session.id, {
@@ -346,7 +348,7 @@ test('production startup recovers steering admitted before an interrupted Run lo
       assert.deepEqual(source?.content, { text: 'durable steering' });
       assert.equal(source?.placement, 'current_turn');
       assert.equal(source?.disposition, 'steering');
-      assert.equal((await stores.messageReceiptStore.listPendingSteering()).length, 0);
+      assert.equal((await stores.messageReceiptStore.listPendingMessages()).length, 0);
       assert.equal(
         (await stores.agentRunStore.readRun(session.id, 'interrupted-run')).status,
         'failed',

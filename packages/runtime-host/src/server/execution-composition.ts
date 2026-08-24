@@ -68,6 +68,7 @@ import {
 } from '@maka/runtime/shell-detect';
 import { type MakaTool } from '@maka/runtime/tool-runtime';
 import { type RuntimeHostedRootAuthority } from '@maka/runtime/message-authority';
+import { classifyRuntimeEventTerminalFact } from '@maka/runtime/runtime-event-read-model';
 import { createAgentGraphControlStore } from '@maka/storage/agent-graph-control-store';
 import {
   createArtifactAttachmentResourceReader,
@@ -453,13 +454,23 @@ export async function createExecutionRuntimeHostComposition(
         requireRootCoordinator(rootCoordinator).claimStopFence(input, commitQueueFence, admission),
       startFromMessage: (input, admission) =>
         requireRootCoordinator(rootCoordinator).startFromMessage(input, admission),
-      startRecoveredSteering: (input, admission) =>
-        requireRootCoordinator(rootCoordinator).startRecoveredSteering(input, admission),
-      materializeSteeringAdmissions: (admissions) =>
-        requireRootCoordinator(rootCoordinator).materializeSteeringAdmissions(admissions),
+      startRecoveredMessages: (input, admission) =>
+        requireRootCoordinator(rootCoordinator).startRecoveredMessages(input, admission),
       prepareMessage: (input) => requireRootCoordinator(rootCoordinator).prepareMessage(input),
-      commitSteeringAdmission: (input) =>
-        requireRootCoordinator(rootCoordinator).commitSteeringAdmission(input),
+      commitMessageAdmission: (admission, materializeTranscript) =>
+        stores.sessionStore.commitMessageAdmission(
+          admission,
+          materializeTranscript
+            ? {
+                type: 'user',
+                id: admission.messageId,
+                turnId: admission.turnId,
+                ts: admission.admittedAt,
+                ...admission.content,
+                steeringEventId: admission.messageId,
+              }
+            : undefined,
+        ),
       claimStop: (input, commitQueueFence, admission) =>
         requireRootCoordinator(rootCoordinator).claimStop(input, commitQueueFence, admission),
     };
@@ -469,24 +480,23 @@ export async function createExecutionRuntimeHostComposition(
       durableProof: {
         readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
           stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
-        readSteeringAdmission: async (sessionId, messageId) => {
-          const message = (await stores.sessionStore.readMessages(sessionId)).find(
-            (candidate) =>
-              candidate.type === 'user' &&
-              candidate.id === messageId &&
-              candidate.steeringEventId === messageId,
-          );
-          return message?.type === 'user'
-            ? {
-                sessionId,
-                turnId: message.turnId,
-                messageId,
-                content: normalizeMessageContent(message),
-              }
-            : undefined;
-        },
         readImmutableSteeringMessageProof: (sessionId, messageId) =>
           stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
+        readExplicitStopProof: async (sessionId, runId) => {
+          const run = await stores.agentRunStore.readRun(sessionId, runId);
+          if (!run) return false;
+          const events = await stores.runtimeEventStore.readImmutableRuntimeEvents(
+            sessionId,
+            runId,
+          );
+          const fact = classifyRuntimeEventTerminalFact(run, events).fact;
+          return (
+            fact?.runStatus === 'cancelled' &&
+            (fact.abortSource === 'user_stop' ||
+              fact.abortSource === 'renderer.stop_button' ||
+              fact.abortSource === 'graph.supervisor')
+          );
+        },
       },
       receipts: stores.messageReceiptStore,
       sessionAdmission,

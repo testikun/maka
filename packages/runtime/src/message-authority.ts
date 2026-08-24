@@ -65,14 +65,14 @@ export interface RuntimeHostedRootAuthority extends RuntimeMessageAuthority {
   stopRoot(
     identity: RuntimeMessageRunIdentity,
     input?: {
-      source?: 'stop_button' | 'graph_supervisor';
+      source?: 'stop_button' | 'graph_supervisor' | 'host_shutdown';
       mode?: BackendStopMode;
     },
   ): Promise<void>;
   stopSession(
     sessionId: string,
     input?: {
-      source?: 'stop_button' | 'graph_supervisor';
+      source?: 'stop_button' | 'graph_supervisor' | 'host_shutdown';
       mode?: BackendStopMode;
     },
   ): Promise<void>;

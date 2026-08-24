@@ -33,6 +33,51 @@ import { RuntimePolicyActivationGate } from '../server/runtime-policy-activation
 import { clientCapabilityConnectionIdentity } from './fixtures/client-capability.js';
 
 describe('Host Client Capability coordinator', () => {
+  test('drops ephemeral Client bindings before a durable queued root starts', async () => {
+    const coordinator = createCoordinator();
+    const connection = coordinator.attachConnection(
+      clientCapabilityConnectionIdentity('connection-a'),
+      { send: async () => undefined },
+    );
+    await replace(coordinator, 'connection-a', 'registration-a', 'opaque');
+    assert.deepEqual(await coordinator.bindSession('session-a', 'connection-a'), { ok: true });
+    const bound = coordinator.snapshotForSession('session-a');
+    assert.ok(bound);
+    bound.release();
+
+    await coordinator.bindDurableSession('session-a');
+
+    assert.equal(coordinator.snapshotForSession('session-a'), undefined);
+    await connection.close();
+    await coordinator.close();
+  });
+
+  test('durable queued roots do not discover call-affine Client tools', async () => {
+    const coordinator = createCoordinator();
+    const connection = coordinator.attachConnection(
+      clientCapabilityConnectionIdentity('connection-a'),
+      { send: async () => undefined },
+    );
+    await replace(
+      coordinator,
+      'connection-a',
+      'registration-a',
+      'call-tool',
+      '0',
+      'call-offer',
+      'call',
+    );
+    const discovered = coordinator.snapshotForSession('session-a');
+    assert.ok(discovered);
+    discovered.release();
+
+    await coordinator.bindDurableSession('session-a');
+
+    assert.equal(coordinator.snapshotForSession('session-a'), undefined);
+    await connection.close();
+    await coordinator.close();
+  });
+
   test('freezes active snapshots across replacement and releases stale registrations', async () => {
     const sent: unknown[] = [];
     const coordinator = createCoordinator();

@@ -298,6 +298,51 @@ test('explicit retract is durable across connections and prevents successor admi
   });
 });
 
+test('accepted followup survives Host restart and opens its successor root', async () => {
+  await withExecutionRoot(async (fixture) => {
+    const firstHost = await fixture.startHost();
+    const client = await connectClient(fixture.root);
+    const turnId = randomUUID();
+    await client.startTurn({
+      sessionId: fixture.sessionId,
+      turnId,
+      content: { text: FAKE_ASK_USER_QUESTION_PROMPT },
+    });
+    const messageId = randomUUID();
+    const content = {
+      text: '<followup>continue after the Host restart</followup>',
+      displayText: 'continue after the Host restart',
+      attachments: [attachment('restart-followup', 'restart.png')],
+    };
+    const submitted = await client.request('turn.message.submit', {
+      originHostEpoch: firstHost.hostEpoch,
+      sessionId: fixture.sessionId,
+      messageId,
+      content,
+      placement: 'next_turn',
+    });
+    assert.equal(submitted.disposition, 'followup');
+
+    await fixture.killHost(firstHost);
+    await client.close().catch(() => undefined);
+
+    const restartedHost = await fixture.startHost();
+    await fixture.stopHost(restartedHost);
+    const chain = await fixture.readAdmissionChain();
+    assert.equal(chain.length, 2);
+    assert.equal(chain[1]?.previousRootTurnId, turnId);
+    assert.deepEqual(chain[1]?.sourceMessages, [
+      {
+        messageId,
+        content,
+        submittedContentDigest: chain[1]?.sourceMessages[0]?.submittedContentDigest,
+        placement: 'next_turn',
+        disposition: 'followup',
+      },
+    ]);
+  });
+});
+
 test('interrupt atomically retracts queued followup, stops the exact run, and is idempotent', async () => {
   await withExecutionRoot(async (fixture) => {
     const host = await fixture.startHost();
@@ -367,6 +412,9 @@ test('interrupt atomically retracts queued followup, stops the exact run, and is
     await first.close();
     await second.close();
     await fixture.stopHost(host);
+
+    const restartedHost = await fixture.startHost();
+    await fixture.stopHost(restartedHost);
 
     const ledger = await fixture.readTurn(turnId);
     assert.deepEqual(

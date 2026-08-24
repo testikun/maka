@@ -534,7 +534,7 @@ function createMessages(
       throw new Error('unexpected root start');
     },
     prepareMessage: async (input) => ({ kind: 'ready', content: input.content }),
-    commitSteeringAdmission: async () => {},
+    commitMessageAdmission: async (admission) => admission,
     claimStop: async () => {
       throw new Error('unexpected root stop');
     },
@@ -545,9 +545,9 @@ function createMessages(
     durableProof: {
       readRootTurnSourceMessageReceipt: (requestedSessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(requestedSessionId, messageId),
-      readSteeringAdmission: async () => undefined,
       readImmutableSteeringMessageProof: (requestedSessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(requestedSessionId, messageId),
+      readExplicitStopProof: async () => false,
     },
     receipts: stores.messageReceiptStore,
     sessionAdmission: new SessionAdmissionGate(),

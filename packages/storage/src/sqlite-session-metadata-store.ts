@@ -97,6 +97,12 @@ import {
 } from '@maka/core/session';
 import { markPersisted } from '@maka/core/persisted-value';
 import {
+  normalizePendingMessageAdmission,
+  readPendingMessageAdmission,
+  samePendingMessageAdmission,
+  type PendingMessageAdmission,
+} from './message-receipt-store.js';
+import {
   type AgentGraphIntentAdmissionSnapshot,
   type AgentGraphTimelineMetadataSnapshot,
 } from '@maka/core/agent-graph-timeline';
@@ -1475,6 +1481,128 @@ export class SqliteSessionMetadataStore {
       const sequence = row.last_sequence + 1;
       this.insertSessionMessagesSync(sessionId, sequence, encoded);
       this.updateCatalogProjectionSync(sessionId, projection, false, lockConnection);
+    });
+  }
+
+  async commitMessageAdmission(
+    admission: PendingMessageAdmission,
+    transcriptMessage?: StoredMessage,
+    projection?: SessionCatalogMessageProjection,
+  ): Promise<PendingMessageAdmission> {
+    this.assertOpen();
+    const stored = normalizePendingMessageAdmission(admission);
+    const encodedMessage = transcriptMessage
+      ? (() => {
+          const json = JSON.stringify(transcriptMessage);
+          const message = decodeCanonicalMessage(JSON.parse(json) as unknown);
+          if (message.id !== stored.messageId) {
+            throw new Error('Message admission transcript identity mismatch');
+          }
+          return { message, json };
+        })()
+      : undefined;
+    if (encodedMessage && !projection) {
+      throw new Error('Message admission transcript projection is missing');
+    }
+    return this.transaction(() => {
+      const record = this.readRecordSync(stored.sessionId);
+      if (!record) throw new SessionNotFoundError(stored.sessionId);
+      const settlement = this.db
+        .prepare(`
+          SELECT 1
+          FROM core_message_admission_settlements
+          WHERE session_id = ? AND message_id = ?
+        `)
+        .get(stored.sessionId, stored.messageId);
+      if (settlement) throw new Error('Message admission identity is durably settled');
+      const orderRow = this.db
+        .prepare(
+          'SELECT COALESCE(MAX(queue_order), -1) + 1 AS next_order FROM core_message_admissions WHERE session_id = ?',
+        )
+        .get(stored.sessionId) as { next_order?: unknown };
+      if (typeof orderRow.next_order !== 'number' || !Number.isSafeInteger(orderRow.next_order)) {
+        throw new Error('Invalid Message admission order');
+      }
+      const inserted = this.db
+        .prepare(`
+          INSERT OR IGNORE INTO core_message_admissions(
+            session_id, turn_id, run_id, message_id, content_json, model_content_json,
+            submitted_placement, placement, disposition, queue_order, admitted_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        .run(
+          stored.sessionId,
+          stored.turnId,
+          stored.runId,
+          stored.messageId,
+          JSON.stringify(stored.content),
+          JSON.stringify(stored.modelContent),
+          stored.submittedPlacement,
+          stored.placement,
+          stored.disposition,
+          orderRow.next_order,
+          stored.admittedAt,
+        );
+      let canonical = stored;
+      if (inserted.changes === 0) {
+        const existing = readPendingMessageAdmission(this.db, stored.sessionId, stored.messageId);
+        if (!existing || !samePendingMessageAdmission(existing, stored)) {
+          throw new Error('Message admission identity conflict');
+        }
+        canonical = existing;
+        if (
+          encodedMessage &&
+          stored.placement === 'current_turn' &&
+          stored.disposition === 'steering' &&
+          existing.placement === 'next_turn' &&
+          existing.disposition === 'followup'
+        ) {
+          this.db
+            .prepare(`
+              UPDATE core_message_admissions
+              SET placement = 'current_turn', disposition = 'steering', queue_order = ?
+              WHERE session_id = ? AND message_id = ?
+            `)
+            .run(orderRow.next_order, stored.sessionId, stored.messageId);
+          canonical = { ...existing, placement: 'current_turn', disposition: 'steering' };
+        } else if (
+          existing.placement !== stored.placement ||
+          existing.disposition !== stored.disposition
+        ) {
+          throw new Error('Message admission queue disposition conflict');
+        }
+      }
+      if (encodedMessage) {
+        const existingMessages = this.readMessagesWith(
+          stored.sessionId,
+          decodeStoredMessage,
+        ).filter((message) => message.id === stored.messageId);
+        if (existingMessages.length > 1) {
+          throw new Error('Message admission transcript identity is ambiguous');
+        }
+        const [existingMessage] = existingMessages;
+        if (existingMessage && !isDeepStrictEqual(existingMessage, encodedMessage.message)) {
+          throw new Error('Message admission transcript identity conflict');
+        }
+        if (!existingMessage) {
+          const row = this.db
+            .prepare(
+              'SELECT COALESCE(MAX(sequence), -1) AS last_sequence FROM session_messages WHERE session_id = ?',
+            )
+            .get(stored.sessionId) as { last_sequence?: unknown };
+          if (typeof row.last_sequence !== 'number' || !Number.isSafeInteger(row.last_sequence)) {
+            throw new Error(`Invalid Session message sequence for ${stored.sessionId}`);
+          }
+          this.insertSessionMessagesSync(stored.sessionId, row.last_sequence + 1, [encodedMessage]);
+          this.updateCatalogProjectionSync(
+            stored.sessionId,
+            projection!,
+            false,
+            !record.header.connectionLocked && encodedMessage.message.type === 'user',
+          );
+        }
+      }
+      return canonical;
     });
   }
 

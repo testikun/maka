@@ -562,8 +562,20 @@ async function createFixture(options: { recoverAdmissions?: boolean } = {}): Pro
     startFromMessage: (input, lease) =>
       requireCoordinator(coordinator).startFromMessage(input, lease),
     prepareMessage: (input) => requireCoordinator(coordinator).prepareMessage(input),
-    commitSteeringAdmission: (input) =>
-      requireCoordinator(coordinator).commitSteeringAdmission(input),
+    commitMessageAdmission: (admission, materializeTranscript) =>
+      stores.sessionStore.commitMessageAdmission(
+        admission,
+        materializeTranscript
+          ? {
+              type: 'user',
+              id: admission.messageId,
+              turnId: admission.turnId,
+              ts: admission.admittedAt,
+              ...admission.content,
+              steeringEventId: admission.messageId,
+            }
+          : undefined,
+      ),
     claimStop: (input, commitQueueFence, lease) =>
       requireCoordinator(coordinator).claimStop(input, commitQueueFence, lease),
   };
@@ -575,9 +587,9 @@ async function createFixture(options: { recoverAdmissions?: boolean } = {}): Pro
     durableProof: {
       readRootTurnSourceMessageReceipt: (sessionId, messageId) =>
         stores.agentRunStore.readRootTurnSourceMessageReceipt(sessionId, messageId),
-      readSteeringAdmission: async () => undefined,
       readImmutableSteeringMessageProof: (sessionId, messageId) =>
         stores.runtimeEventStore.readImmutableSteeringMessageProof(sessionId, messageId),
+      readExplicitStopProof: async () => false,
     },
     receipts: stores.messageReceiptStore,
     sessionAdmission: admission,

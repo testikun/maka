@@ -31,6 +31,7 @@ import {
 } from '@maka/core/model-call-attempt';
 import type { InteractionCanonicalOutcome, InteractionRequest } from '@maka/core/interaction';
 import type { ShellRunRecord } from '@maka/core/shell-run';
+import { messageContentDigest } from '../message-content-digest.js';
 import { createSqliteAgentRunStore } from '../agent-run-store.js';
 import {
   closeSqliteInteractionStoreFacade,
@@ -38,8 +39,10 @@ import {
   type StoredInteractionRequest,
 } from '../interaction-store.js';
 import { createSqliteMessageReceiptStore } from '../message-receipt-store.js';
+import { createSessionStore } from '../session-store.js';
 import { resolveStorageRoot, tryAcquireInteractiveRootOwner } from '../root-authority.js';
 import { createSqliteShellRunStore } from '../shell-run-store.js';
+import { migrateSqliteCoreExecutionDatabase } from '../sqlite-core-execution-schema.js';
 import {
   removeTrackedControlDirectories,
   trackControlDirectory,
@@ -50,6 +53,57 @@ import {
 after(removeTrackedControlDirectories);
 
 describe('SQLite core execution stores', () => {
+  test('discards unproven legacy pending steering and upgrades settlement proofs', () => {
+    const database = new DatabaseSync(':memory:');
+    try {
+      database.exec(`
+        CREATE TABLE core_pending_steering_admissions (
+          sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+          session_id TEXT NOT NULL,
+          turn_id TEXT NOT NULL,
+          run_id TEXT NOT NULL,
+          message_id TEXT NOT NULL,
+          content_json TEXT NOT NULL,
+          model_content_json TEXT NOT NULL,
+          admitted_at INTEGER NOT NULL
+        );
+        INSERT INTO core_pending_steering_admissions(
+          session_id, turn_id, run_id, message_id, content_json, model_content_json, admitted_at
+        ) VALUES ('session-1', 'turn-1', 'run-1', 'message-1', '{"text":"lost"}',
+          '{"text":"lost"}', 1);
+        CREATE TABLE core_message_admission_settlements (
+          session_id TEXT NOT NULL,
+          message_id TEXT NOT NULL,
+          settlement TEXT NOT NULL CHECK (settlement IN ('retracted')),
+          PRIMARY KEY (session_id, message_id)
+        );
+      `);
+
+      migrateSqliteCoreExecutionDatabase(database);
+
+      assert.equal(
+        database
+          .prepare(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'core_pending_steering_admissions'",
+          )
+          .get(),
+        undefined,
+      );
+      assert.deepEqual(database.prepare('SELECT * FROM core_message_admissions').all(), []);
+      const settlementColumns = new Set(
+        (
+          database.prepare('PRAGMA table_info(core_message_admission_settlements)').all() as Array<{
+            name: string;
+          }>
+        ).map((column) => column.name),
+      );
+      assert.equal(settlementColumns.has('submitted_placement'), true);
+      assert.equal(settlementColumns.has('submitted_content_digest'), true);
+    } finally {
+      database.close();
+    }
+  });
+
   test('persists AgentRun header and events', async () => {
     await withRoot(async (root) => {
       const store = createSqliteAgentRunStore(root);
@@ -392,32 +446,220 @@ describe('SQLite core execution stores', () => {
     });
   });
 
-  test('persists pending steering across Host Epochs until it is settled', async () => {
+  test('persists message admission across Host Epochs until it is settled', async () => {
     await withRoot(async (root) => {
+      const sessions = createSessionStore(root);
+      const session = await sessions.create({
+        cwd: root,
+        llmConnectionSlug: 'test',
+        model: 'test-model',
+        permissionMode: 'ask',
+      });
       const admission = {
-        sessionId: 'session-1',
+        sessionId: session.id,
         turnId: 'turn-1',
         runId: 'run-1',
         messageId: 'message-1',
         content: { text: 'submitted' },
         modelContent: { text: 'prepared' },
-        initiatingConnectionId: 'connection-1',
+        submittedPlacement: 'current_turn',
+        placement: 'current_turn',
+        disposition: 'steering',
         admittedAt: 123,
       } as const;
       const store = createSqliteMessageReceiptStore(root);
       await store.beginHostEpoch('epoch-1');
-      assert.deepEqual(await store.commitPendingSteering(admission), admission);
+      assert.deepEqual(await sessions.commitMessageAdmission(admission), admission);
+      await sessions.close?.();
       store.close();
 
       const reopened = createSqliteMessageReceiptStore(root);
       try {
         await reopened.beginHostEpoch('epoch-2');
-        assert.deepEqual(await reopened.listPendingSteering(), [admission]);
-        await reopened.settlePendingSteering('session-1', ['message-1']);
-        assert.deepEqual(await reopened.listPendingSteering(), []);
+        assert.deepEqual(await reopened.listPendingMessages(), [admission]);
+        await reopened.garbageCollectMessageAdmissions(session.id, ['message-1']);
+        assert.deepEqual(await reopened.listPendingMessages(), []);
       } finally {
         reopened.close();
       }
+    });
+  });
+
+  test('a retracted Message identity cannot be admitted again after restart', async () => {
+    await withRoot(async (root) => {
+      const sessions = createSessionStore(root);
+      const session = await sessions.create({
+        cwd: root,
+        llmConnectionSlug: 'test',
+        model: 'test-model',
+        permissionMode: 'ask',
+      });
+      const admission = {
+        sessionId: session.id,
+        turnId: 'turn-1',
+        runId: 'run-1',
+        messageId: 'message-1',
+        content: { text: 'submitted' },
+        modelContent: { text: 'prepared' },
+        submittedPlacement: 'next_turn',
+        placement: 'next_turn',
+        disposition: 'followup',
+        admittedAt: 123,
+      } as const;
+      await sessions.commitMessageAdmission(admission);
+      const receipts = createSqliteMessageReceiptStore(root);
+      await receipts.commitMessageRetractions(session.id, [admission.messageId]);
+      assert.deepEqual(await receipts.readMessageSettlement(session.id, admission.messageId), {
+        messageId: admission.messageId,
+        settlement: 'retracted',
+        submittedPlacement: 'next_turn',
+        submittedContentDigest: messageContentDigest(admission.content),
+      });
+      receipts.close();
+      await sessions.close?.();
+
+      const reopenedSessions = createSessionStore(root);
+      await assert.rejects(
+        reopenedSessions.commitMessageAdmission({
+          ...admission,
+          turnId: 'turn-2',
+          runId: 'run-2',
+          admittedAt: 456,
+        }),
+        /durably settled/,
+      );
+      const reopenedReceipts = createSqliteMessageReceiptStore(root);
+      assert.deepEqual(await reopenedReceipts.listPendingMessages(), []);
+      reopenedReceipts.close();
+      await reopenedSessions.close?.();
+    });
+  });
+
+  test('commits a Message admission and transcript row at one SQLite cut', async () => {
+    await withRoot(async (root) => {
+      const sessions = createSessionStore(root);
+      const session = await sessions.create({
+        cwd: root,
+        llmConnectionSlug: 'test',
+        model: 'test-model',
+        permissionMode: 'ask',
+      });
+      const admission = {
+        sessionId: session.id,
+        turnId: 'turn-1',
+        runId: 'run-1',
+        messageId: 'message-1',
+        content: { text: 'submitted' },
+        modelContent: { text: 'prepared' },
+        submittedPlacement: 'current_turn',
+        placement: 'current_turn',
+        disposition: 'steering',
+        admittedAt: 123,
+      } as const;
+      const transcriptMessage = {
+        type: 'user',
+        id: admission.messageId,
+        turnId: admission.turnId,
+        ts: admission.admittedAt,
+        text: 'submitted',
+        steeringEventId: admission.messageId,
+      } as const;
+
+      await sessions.commitMessageAdmission(admission, transcriptMessage);
+      assert.deepEqual(await sessions.readMessages(session.id), [transcriptMessage]);
+      assert.deepEqual(
+        await sessions.commitMessageAdmission({ ...admission, admittedAt: 999 }),
+        admission,
+      );
+      await assert.rejects(
+        sessions.commitMessageAdmission(admission, {
+          ...transcriptMessage,
+          text: 'different transcript',
+        }),
+        /transcript identity conflict/,
+      );
+
+      await sessions.commitMessageAdmission({
+        ...admission,
+        messageId: 'message-2',
+        runId: 'different-run',
+      });
+      await assert.rejects(
+        sessions.commitMessageAdmission(
+          { ...admission, messageId: 'message-2' },
+          { ...transcriptMessage, id: 'message-2' },
+        ),
+        /identity conflict/,
+      );
+      assert.deepEqual(
+        (await sessions.readMessages(session.id)).map((message) => message.id),
+        ['message-1'],
+      );
+      await sessions.close?.();
+    });
+  });
+
+  test('persists pending Message reorder and promotion priority', async () => {
+    await withRoot(async (root) => {
+      const sessions = createSessionStore(root);
+      const session = await sessions.create({
+        cwd: root,
+        llmConnectionSlug: 'test',
+        model: 'test-model',
+        permissionMode: 'ask',
+      });
+      const admission = (
+        messageId: string,
+        placement: 'current_turn' | 'next_turn',
+        admittedAt: number,
+      ) => ({
+        sessionId: session.id,
+        turnId: 'turn-1',
+        runId: 'run-1',
+        messageId,
+        content: { text: messageId },
+        modelContent: { text: messageId },
+        submittedPlacement: placement,
+        placement,
+        disposition: placement === 'current_turn' ? ('steering' as const) : ('followup' as const),
+        admittedAt,
+      });
+      const admissions = [
+        admission('followup-a', 'next_turn', 1),
+        admission('followup-b', 'next_turn', 2),
+        admission('steering-c', 'current_turn', 3),
+        admission('followup-d', 'next_turn', 4),
+        admission('followup-e', 'next_turn', 5),
+      ];
+      for (const pending of admissions) await sessions.commitMessageAdmission(pending);
+      const receipts = createSqliteMessageReceiptStore(root);
+      await receipts.commitMessageOrder(session.id, [
+        'followup-b',
+        'followup-a',
+        'followup-e',
+        'followup-d',
+      ]);
+      for (const messageId of ['followup-b', 'followup-a']) {
+        const pending = admissions.find((candidate) => candidate.messageId === messageId);
+        assert.ok(pending);
+        await sessions.commitMessageAdmission(
+          { ...pending, placement: 'current_turn', disposition: 'steering' },
+          {
+            type: 'user',
+            id: messageId,
+            turnId: pending.turnId,
+            ts: pending.admittedAt,
+            text: messageId,
+            steeringEventId: messageId,
+          },
+        );
+      }
+      assert.deepEqual(
+        (await receipts.listPendingMessages()).map((pending) => pending.messageId),
+        ['steering-c', 'followup-b', 'followup-a', 'followup-e', 'followup-d'],
+      );
+      receipts.close();
+      await sessions.close?.();
     });
   });
 

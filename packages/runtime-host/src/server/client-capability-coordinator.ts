@@ -105,6 +105,7 @@ type SessionCapabilityBinding =
 type SessionBindingMode = 'strict' | 'degrade';
 
 interface SessionCapabilityState {
+  readonly durable: boolean;
   readonly initiatingProviderId?: string;
   readonly serviceProviderId?: string;
   readonly sessionBindings: ReadonlyMap<string, SessionCapabilityBinding>;
@@ -234,11 +235,19 @@ export class HostClientCapabilityCoordinator implements ClientCapabilityService 
     return this.#bindSession(sessionId, initiatingConnectionId, 'strict');
   }
 
-  async bindConfirmedFollowup(sessionId: string, initiatingConnectionId: string): Promise<void> {
-    const result = await this.#bindSession(sessionId, initiatingConnectionId, 'degrade');
-    if (!result.ok) {
-      throw new Error(`Confirmed follow-up capability binding failed: ${result.message}`);
-    }
+  bindDurableSession(sessionId: string): Promise<void> {
+    return this.#activation.runMutation(() => {
+      const previous = this.#sessions.get(sessionId);
+      const durable: SessionCapabilityState = {
+        durable: true,
+        sessionBindings: new Map(),
+        turnBindings: new Map(),
+      };
+      if (previous && sessionCapabilityStatesEqual(previous, durable)) return;
+      this.#sessions.set(sessionId, durable);
+      if (previous || this.#hasCallOffers()) this.#onModelToolsChanged();
+      for (const provider of this.#providers.values()) this.#deleteProviderIfUnused(provider);
+    });
   }
 
   async #bindSession(
@@ -430,6 +439,7 @@ export class HostClientCapabilityCoordinator implements ClientCapabilityService 
     return {
       ok: true,
       state: {
+        durable: false,
         ...(initiatingProviderId ? { initiatingProviderId } : {}),
         ...(serviceProviderId ? { serviceProviderId } : {}),
         sessionBindings: next,
@@ -486,20 +496,22 @@ export class HostClientCapabilityCoordinator implements ClientCapabilityService 
       selected.push({ registration, offer });
       rememberOfferProxyNames(offer, proxyNames);
     }
-    const eligible = this.#eligibleOffersByContract();
-    for (const [contractId, candidates] of [...eligible].sort(([left], [right]) =>
-      left.localeCompare(right),
-    )) {
-      const offer = candidates[0]?.offer;
-      if (
-        !offer ||
-        offer.offer.affinity !== 'call' ||
-        offerConflictsWithProxyNames(offer, proxyNames)
-      ) {
-        continue;
+    if (!state?.durable) {
+      const eligible = this.#eligibleOffersByContract();
+      for (const [contractId, candidates] of [...eligible].sort(([left], [right]) =>
+        left.localeCompare(right),
+      )) {
+        const offer = candidates[0]?.offer;
+        if (
+          !offer ||
+          offer.offer.affinity !== 'call' ||
+          offerConflictsWithProxyNames(offer, proxyNames)
+        ) {
+          continue;
+        }
+        selected.push({ offer });
+        rememberOfferProxyNames(offer, proxyNames);
       }
-      selected.push({ offer });
-      rememberOfferProxyNames(offer, proxyNames);
     }
     if (selected.length === 0) return;
     const trusted = selected.filter((binding) => binding.registration?.trustedProvider === true);
@@ -1111,6 +1123,7 @@ export class HostClientCapabilityCoordinator implements ClientCapabilityService 
       state.sessionBindings.size === 0 &&
       state.turnBindings.size === 0 &&
       !state.serviceProviderId &&
+      !state.durable &&
       !this.#hasCallOffers()
     ) {
       this.#sessions.delete(sessionId);
@@ -1125,7 +1138,8 @@ export class HostClientCapabilityCoordinator implements ClientCapabilityService 
       if (
         state.sessionBindings.size === 0 &&
         state.turnBindings.size === 0 &&
-        !state.serviceProviderId
+        !state.serviceProviderId &&
+        !state.durable
       ) {
         this.#sessions.delete(sessionId);
       }
@@ -1392,6 +1406,7 @@ function sessionCapabilityStatesEqual(
   return (
     left.initiatingProviderId === right.initiatingProviderId &&
     left.serviceProviderId === right.serviceProviderId &&
+    left.durable === right.durable &&
     bindingMapsEqual(left.sessionBindings, right.sessionBindings) &&
     bindingMapsEqual(left.turnBindings, right.turnBindings)
   );

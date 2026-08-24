@@ -281,10 +281,8 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
   const tui = new TuiMainScreen(terminal);
   const state = createMakaPiTranscriptState();
   let transcriptLastUsedModel: string | undefined;
-  let transcriptMessageIds = new Set<string>();
   const rememberTranscript = (messages: readonly StoredMessage[]): void => {
     transcriptLastUsedModel = latestAssistantModelId(messages);
-    transcriptMessageIds = new Set(messages.map((message) => message.id));
   };
   const replaceTranscript = (messages: readonly StoredMessage[]): void => {
     rememberTranscript(messages);
@@ -547,7 +545,7 @@ export async function runMakaPiTui(input: MakaPiTuiInput): Promise<void> {
           message.type === 'user' &&
           message.turnId === turnId &&
           message.steeringEventId !== undefined &&
-          !transcriptMessageIds.has(message.id),
+          !state.renderedUserMessageIds.has(message.id),
       );
       rememberTranscript(messages);
       for (const message of newSteeringMessages) {

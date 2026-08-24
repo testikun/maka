@@ -651,8 +651,10 @@ test('entry update preserves queue identity, order, and placement and replays it
   );
   await submit(fixture, 'follow-2', 'second', 'next_turn');
   let preparedUpdateContent: MessageContent | undefined;
+  let preparedUpdateConnectionId: string | undefined;
   fixture.setMessagePreparation(async (input) => {
     preparedUpdateContent = input.content;
+    preparedUpdateConnectionId = input.initiatingConnectionId;
     return { kind: 'ready', content: input.content };
   });
 
@@ -665,9 +667,10 @@ test('entry update preserves queue identity, order, and placement and replays it
       expectedQueueRevision: 3,
       text: 'please first @src/a.ts',
     },
-    operationContext(),
+    operationContext('editor-connection'),
   );
   assert.equal(updated.ok, true);
+  assert.equal(preparedUpdateConnectionId, 'editor-connection');
   assert.deepEqual(preparedUpdateContent, {
     text: 'please first @src/a.ts',
     inlineReferences: [
@@ -737,7 +740,11 @@ test('entry update preserves queue identity, order, and placement and replays it
     { originHostEpoch: 'epoch-1', sessionId: ROOT.sessionId, retractId: 'cleanup-update' },
     operationContext(),
   );
-  fixture.coordinator.abandonRootReservation(ROOT);
+  const owner = fixture.coordinator.bindRun(ROOT);
+  owner.ack(owner.pull().map((lease) => lease.id));
+  owner.release();
+  const batch = fixture.coordinator.beginTerminalTransition(ROOT);
+  fixture.coordinator.completeIdle(batch);
   await fixture.coordinator.close();
 });
 

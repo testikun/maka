@@ -204,7 +204,6 @@ interface LiveEntry {
   readonly messageId: string;
   content: MessageContent;
   modelContent: MessageContent;
-  readonly initiatingConnectionId: string;
   readonly submittedPlacement: MessagePlacement;
   readonly placement: MessagePlacement;
   readonly generation: number;
@@ -317,7 +316,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     'queue.retract': (input) => this.retract(input),
     'queue.entry.retract': (input) => this.retractQueuedEntry(input),
     'queue.entry.promote': (input) => this.promoteQueuedEntry(input),
-    'queue.entry.update': (input) => this.updateQueuedEntry(input),
+    'queue.entry.update': (input, context) => this.updateQueuedEntry(input, context.connectionId),
     'queue.entries.reorder': (input) => this.reorderQueuedEntries(input),
     'turn.interrupt': (input) => this.interrupt(input),
   };
@@ -1069,6 +1068,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
 
   private updateQueuedEntry(
     input: QueueEntryUpdateInput,
+    initiatingConnectionId: string,
   ): Promise<MessageOutcome<QueueMutationResult>> {
     return this.#runQueuedMutation({
       spec: MESSAGE_OPERATION_SPECS['queue.entry.update'],
@@ -1076,7 +1076,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       operationId: input.updateId,
       verb: 'Update',
       input,
-      execute: () => this.#updateQueuedEntryAdmitted(input),
+      execute: () => this.#updateQueuedEntryAdmitted(input, initiatingConnectionId),
     });
   }
 
@@ -1326,6 +1326,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
 
   async #updateQueuedEntryAdmitted(
     input: QueueEntryUpdateInput,
+    initiatingConnectionId: string,
   ): Promise<MessageOutcome<QueueMutationResult>> {
     const header = await this.#root.readSessionHeader(input.sessionId);
     if (this.#failStopped) {
@@ -1362,7 +1363,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       turnId: state.reservedRoot.turnId,
       content,
       placement: queued.entry.placement,
-      initiatingConnectionId: queued.entry.initiatingConnectionId,
+      initiatingConnectionId,
     });
     if (prepared.kind === 'rejected') return failure('operation_conflict', prepared.error);
     const modelContent = prepared.content;
@@ -1412,6 +1413,8 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       throw error;
     }
     return success(result);
+  }
+
   async #queueCapacityError(
     sessionId: string,
     candidate: SessionMessageQueueProjection,

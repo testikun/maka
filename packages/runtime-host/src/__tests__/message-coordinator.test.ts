@@ -36,6 +36,7 @@ import {
 import {
   HostMessageCoordinator,
   type HostMessageCoordinatorOptions,
+  type HostMessageRecoveryBatch,
   type HostMessageRootPort,
   type HostMessageRootState,
 } from '../server/message-coordinator.js';
@@ -268,7 +269,7 @@ test('binds the exact reserved Run after a pre-bind stop fence', async () => {
   fixture.coordinator.reserveRootTurn(ROOT);
   assert.equal((await submit(fixture, 'queued-before-bind', 'discard me', 'next_turn')).ok, true);
 
-  const fence = fixture.coordinator.commitStopFence(ROOT);
+  const fence = await fixture.coordinator.commitStopFence(ROOT);
   assert.equal(fence.retracted.length, 1);
   assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).followup, []);
   assert.equal(fixture.liveResidencies(), 0);
@@ -897,6 +898,111 @@ test('entry promote durably admits the message before making it non-retractable'
     ['promoted-followup'],
   );
   assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
+});
+
+test('retract settles a failed promotion so restart cannot recover it', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const delay = fixture.delaySteeringAdmission(new Error('durable promotion failed'));
+
+  const promotion = fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      promoteId: 'promote-durable',
+    },
+    operationContext(),
+  );
+  await delay.started.promise;
+  delay.release.resolve(undefined);
+  await assert.rejects(promotion, /durable promotion failed/);
+  assert.equal(fixture.pendingSteeringCount(), 1);
+
+  const retracted = await fixture.coordinator.handlers['queue.entry.retract'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      retractId: 'retract-failed-promotion',
+    },
+    operationContext(),
+  );
+  assert.equal(retracted.ok, true);
+  assert.equal(fixture.pendingSteeringCount(), 0);
+});
+
+test('failed promotion retry reuses the durable admission timestamp', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const delay = fixture.delaySteeringAdmission(new Error('durable promotion failed'));
+
+  const first = fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      promoteId: 'promote-first',
+    },
+    operationContext(),
+  );
+  await delay.started.promise;
+  delay.release.resolve(undefined);
+  await assert.rejects(first, /durable promotion failed/);
+
+  const retry = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      promoteId: 'promote-retry',
+    },
+    operationContext(),
+  );
+  assert.equal(retry.ok, true);
+});
+
+test('restart recovers only the first contiguous initiating-client batch', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await fixture.coordinator.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      messageId: 'steering-b',
+      content: { text: 'from B' },
+      placement: 'current_turn',
+    },
+    operationContext('connection-b'),
+  );
+  await fixture.coordinator.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      messageId: 'steering-a',
+      content: { text: 'from A' },
+      placement: 'current_turn',
+    },
+    operationContext('connection-a'),
+  );
+  fixture.setRootState({ kind: 'idle' });
+
+  const restarted = fixture.restart('epoch-2');
+  await restarted.recoverPendingAfterHostRestart();
+
+  assert.equal(fixture.recoveredBatches.length, 1);
+  assert.equal(fixture.recoveredBatches[0]?.initiatingConnectionId, 'connection-b');
+  assert.deepEqual(
+    fixture.recoveredBatches[0]?.sources.map((source) => source.messageId),
+    ['steering-b'],
+  );
+  assert.deepEqual(
+    restarted.projection(ROOT.sessionId).followup.map((entry) => entry.messageId),
+    ['steering-a'],
+  );
+  assert.equal(fixture.pendingSteeringCount(), 1);
 });
 
 test('entry promote requires an active Turn', async () => {
@@ -1693,6 +1799,8 @@ test('administrative drain preserves accepted entries until the terminal stop fe
 
   owner.release();
   await fixture.coordinator.prepareTerminalTransition(ROOT);
+  assert.equal(fixture.pendingSteeringCount(), 1);
+  await fixture.coordinator.commitStopFence(ROOT);
   assert.equal(fixture.pendingSteeringCount(), 0);
   const batch = fixture.coordinator.beginTerminalTransition(ROOT);
   assert.deepEqual(batch.sources, []);
@@ -2318,6 +2426,19 @@ function createFixture(
       };
     },
   };
+  const recoveredBatches: HostMessageRecoveryBatch[] = [];
+  root.materializeSteeringAdmissions = async () => undefined;
+  root.startRecoveredSteering = async (input) => {
+    recoveredBatches.push(structuredClone(input));
+    rootState = {
+      kind: 'active',
+      sessionId: input.sessionId,
+      turnId: 'recovered-turn',
+      runId: 'recovered-run',
+    };
+    coordinator.reserveRootTurn(rootState);
+    return { turnId: 'recovered-turn' };
+  };
   const receiptStore = memoryReceiptStore(
     operationReceipts,
     async (operation, operationId) => {
@@ -2387,6 +2508,7 @@ function createFixture(
     events,
     receipts,
     steeringAdmissions,
+    recoveredBatches,
     pendingSteeringCount: () => receiptStore.pendingSteeringCount(),
     delaySteeringAdmission: (error?: Error) => {
       const delay = { started: deferred<void>(), release: deferred<void>(), error };

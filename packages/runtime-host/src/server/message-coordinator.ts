@@ -139,7 +139,7 @@ export interface HostMessageRootPort {
   readRootState(sessionId: string): Promise<HostMessageRootState> | HostMessageRootState;
   claimStopFence(
     input: Omit<TurnInterruptInput, 'originHostEpoch' | 'interruptId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admission: SessionAdmissionLease,
   ): Promise<HostMessageStopFence>;
   startFromMessage(
@@ -167,7 +167,7 @@ export interface HostMessageRootPort {
   }): Promise<void>;
   claimStop(
     input: Omit<TurnInterruptInput, 'originHostEpoch' | 'interruptId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admission: SessionAdmissionLease,
   ): Promise<HostMessageStopClaim>;
 }
@@ -226,6 +226,7 @@ interface LiveEntry {
   readonly disposition: 'steering' | 'followup';
   readonly generation: number;
   readonly residency: RuntimeHostResidency;
+  pendingSteeringAdmittedAt?: number;
   state: 'queued' | 'in_flight' | 'released';
   leaseId?: string;
 }
@@ -483,14 +484,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           );
         }
         await this.#root.materializeSteeringAdmissions(pending);
-        const sources = pending.map(pendingSteeringSource);
+        const firstBatch = sameInitiatingClientAdmissionPrefix(pending);
+        const sources = firstBatch.map(pendingSteeringSource);
         const started = await this.#root.startRecoveredSteering(
           {
             sessionId,
-            content: aggregateMessageContent(pending.map((entry) => entry.modelContent)),
-            submittedContent: aggregateMessageContent(pending.map((entry) => entry.content)),
+            content: aggregateMessageContent(firstBatch.map((entry) => entry.modelContent)),
+            submittedContent: aggregateMessageContent(firstBatch.map((entry) => entry.content)),
             sources,
-            initiatingConnectionId: pending[0]!.initiatingConnectionId,
+            initiatingConnectionId: firstBatch[0]!.initiatingConnectionId,
           },
           admissionLease,
         );
@@ -501,8 +503,9 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
         }
         await this.#receipts.settlePendingSteering(
           sessionId,
-          pending.map((entry) => entry.messageId),
+          firstBatch.map((entry) => entry.messageId),
         );
+        this.#queueRecoveredSteering(pending.slice(firstBatch.length));
       });
     }
   }
@@ -630,7 +633,28 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     this.#draining = true;
   }
 
-  async prepareStopFence(identity: RuntimeMessageRunIdentity): Promise<void> {
+  #queueRecoveredSteering(admissions: readonly PendingSteeringAdmission[]): void {
+    for (const admission of admissions) {
+      const state = this.#state(admission.sessionId);
+      const residency = this.#acquireResidency();
+      state.followup.push({
+        entryId: this.#createId(),
+        messageId: admission.messageId,
+        content: admission.content,
+        modelContent: admission.modelContent,
+        initiatingConnectionId: admission.initiatingConnectionId,
+        placement: 'next_turn',
+        disposition: 'followup',
+        generation: state.generation,
+        residency,
+        pendingSteeringAdmittedAt: admission.admittedAt,
+        state: 'queued',
+      });
+      this.#mutated(state);
+    }
+  }
+
+  prepareStopFence(identity: RuntimeMessageRunIdentity): void {
     const state = this.#sessions.get(identity.sessionId);
     // A root handoff can durably replace or release this identity before a concurrent
     // administrative Stop reaches the Session lane. The authoritative fence
@@ -644,14 +668,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       }
       return;
     }
+    state.steeringDiscardPreparedFor = { ...identity };
+  }
+
+  async commitStopFence(identity: RuntimeMessageRunIdentity): Promise<QueueFenceResult> {
+    const state = this.#requireState(identity.sessionId);
     await this.#receipts.settlePendingSteering(
       identity.sessionId,
       [...state.steering, ...state.inFlight.values()].map((entry) => entry.messageId),
     );
-    state.steeringDiscardPreparedFor = { ...identity };
-  }
-
-  commitStopFence(identity: RuntimeMessageRunIdentity): QueueFenceResult {
     return this.#commitQueueFence(identity);
   }
 
@@ -1012,8 +1037,15 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       queueRevision: state.revision + (queued.length > 0 ? 1 : 0),
       retracted: queued.map(retractedSnapshot),
     };
+    const retractedEntries = [...state.followup];
     const retracted = this.#retractFollowups(state);
-    if (retracted.length > 0) this.#mutated(state);
+    if (retracted.length > 0) {
+      await this.#receipts.settlePendingSteering(
+        input.sessionId,
+        retractedEntries.map((entry) => entry.messageId),
+      );
+      this.#mutated(state);
+    }
     if (!isDeepStrictEqual(result, { queueRevision: state.revision, retracted })) {
       throw new RuntimeMessageAuthorityInvariantError(
         'Retract mutation did not match its prepared result',
@@ -1192,6 +1224,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       return failure('not_found', 'Message queue entry does not exist');
     }
     queued.remove();
+    await this.#receipts.settlePendingSteering(input.sessionId, [queued.entry.messageId]);
     this.#releaseEntry(queued.entry);
     this.#mutated(state);
     this.#maybeReclaim(input.sessionId, state);
@@ -1252,8 +1285,9 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       content: entry.content,
       modelContent: entry.modelContent,
       initiatingConnectionId: entry.initiatingConnectionId,
-      admittedAt: Date.now(),
+      admittedAt: entry.pendingSteeringAdmittedAt ?? Date.now(),
     });
+    entry.pendingSteeringAdmittedAt = pending.admittedAt;
     await this.#root.commitSteeringAdmission({
       sessionId: pending.sessionId,
       turnId: pending.turnId,
@@ -2247,6 +2281,17 @@ function sameInitiatingClientPrefix(entries: readonly LiveEntry[]): LiveEntry[] 
     (entry) => entry.initiatingConnectionId !== initiatingConnectionId,
   );
   return entries.slice(0, boundary === -1 ? entries.length : boundary);
+}
+
+function sameInitiatingClientAdmissionPrefix(
+  admissions: readonly PendingSteeringAdmission[],
+): PendingSteeringAdmission[] {
+  const initiatingConnectionId = admissions[0]?.initiatingConnectionId;
+  if (!initiatingConnectionId) return [];
+  const boundary = admissions.findIndex(
+    (admission) => admission.initiatingConnectionId !== initiatingConnectionId,
+  );
+  return admissions.slice(0, boundary === -1 ? admissions.length : boundary);
 }
 
 function rootAdmissionPayloadFits(sources: readonly RootTurnSourceMessage[]): boolean {

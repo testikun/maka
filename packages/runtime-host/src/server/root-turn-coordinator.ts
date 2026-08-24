@@ -1198,7 +1198,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
 
   claimStop(
     input: Pick<TurnStopInput, 'sessionId' | 'turnId' | 'runId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admission: SessionAdmissionLease,
   ): Promise<HostMessageStopClaim> {
     return this.runCommand(async () => {
@@ -1228,7 +1228,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
 
   claimStopFence(
     input: Pick<TurnStopInput, 'sessionId' | 'turnId' | 'runId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admission: SessionAdmissionLease,
   ): Promise<HostMessageStopFence> {
     return this.declareStopFence(input, commitQueueFence, admission).then((declared) => ({
@@ -1884,7 +1884,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
 
   private async declareStopFence(
     input: Pick<TurnStopInput, 'sessionId' | 'turnId' | 'runId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admission: SessionAdmissionLease,
     stopInput: {
       source?: 'stop_button' | 'graph_supervisor';
@@ -1898,7 +1898,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     if (active.startSettled.phase === 'rejected') {
       return { active, deliverStop: () => Promise.resolve() };
     }
-    commitQueueFence();
+    await commitQueueFence();
     await this.interactions.claimRunClosure(input, 'turn_stopped', admission);
     const shouldDeliverStop = !active.stopRequested;
     active.stopRequested = true;
@@ -1913,7 +1913,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
 
   private async prepareStopDisposition(
     input: Pick<TurnStopInput, 'sessionId' | 'turnId' | 'runId'>,
-    commitQueueFence: () => QueueFenceResult,
+    commitQueueFence: () => QueueFenceResult | Promise<QueueFenceResult>,
     admissionLease: SessionAdmissionLease,
   ): Promise<TurnStopDisposition> {
     const admission = await this.stores.agentRunStore.readRootTurnAdmission(
@@ -1933,7 +1933,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
     const active = this.#executions.get(input.sessionId);
     if (isTerminalSnapshot(snapshot)) {
       if (active?.turnId === input.turnId && active.runId === input.runId) {
-        commitQueueFence();
+        await commitQueueFence();
         active.stopRequested = true;
         return { kind: 'await_terminal', active };
       }
@@ -1958,7 +1958,7 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
       };
     }
 
-    commitQueueFence();
+    await commitQueueFence();
     await this.interactions.claimRunClosure(input, 'turn_stopped', admissionLease);
     const shouldRequestStop = !active.stopRequested;
     active.stopRequested = true;

@@ -326,36 +326,56 @@ function verifyMaterializedRootSourceMessages(
       `Admitted queued Turn ${admission.turnId} unexpectedly recorded its aggregate UserMessage`,
     );
   }
-  if (
-    rootUserMessages.length > admission.sourceMessages.length ||
-    (!allowPrefix && rootUserMessages.length !== admission.sourceMessages.length)
-  ) {
-    throw new Error(
-      `Admitted queued Turn ${admission.turnId} has incomplete source materialization`,
-    );
-  }
-  for (let sourceIndex = 0; sourceIndex < admission.sourceMessages.length; sourceIndex += 1) {
-    const source = admission.sourceMessages[sourceIndex]!;
-    const materialized = rootUserMessages[sourceIndex];
+  let localSourceIndex = 0;
+  let missingSource = false;
+  for (const source of admission.sourceMessages) {
     const identityOwners = index.messagesById.get(source.messageId) ?? [];
-    if (!materialized) {
-      if (identityOwners.length > 0) {
+    if (identityOwners.length === 0) {
+      if (!allowPrefix) {
         throw new Error(
-          `Admitted queued Turn ${admission.turnId} reuses a source message identity`,
+          `Admitted queued Turn ${admission.turnId} has incomplete source materialization`,
         );
       }
+      missingSource = true;
       continue;
     }
+    if (identityOwners.length !== 1) {
+      throw new Error(`Admitted queued Turn ${admission.turnId} reuses a source message identity`);
+    }
+    const materialized = identityOwners[0]!;
     if (
-      identityOwners.length !== 1 ||
-      identityOwners[0] !== materialized ||
-      materialized.id !== source.messageId ||
+      materialized.type !== 'user' ||
       !messageContentsEqual(normalizeMessageContent(materialized), source.content)
     ) {
       throw new Error(
         `Admitted queued Turn ${admission.turnId} does not match its source messages`,
       );
     }
+    if (missingSource) {
+      throw new Error(
+        `Admitted queued Turn ${admission.turnId} has incomplete source materialization`,
+      );
+    }
+    if (materialized.turnId !== admission.turnId) {
+      if (
+        source.disposition !== 'steering' ||
+        materialized.turnId !== admission.previousRootTurnId
+      ) {
+        throw new Error(
+          `Admitted queued Turn ${admission.turnId} reuses a source message identity`,
+        );
+      }
+      continue;
+    }
+    if (missingSource || rootUserMessages[localSourceIndex] !== materialized) {
+      throw new Error(
+        `Admitted queued Turn ${admission.turnId} has incomplete source materialization`,
+      );
+    }
+    localSourceIndex += 1;
+  }
+  if (localSourceIndex !== rootUserMessages.length) {
+    throw new Error(`Admitted queued Turn ${admission.turnId} does not match its source messages`);
   }
 }
 

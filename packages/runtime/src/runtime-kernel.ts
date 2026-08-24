@@ -25,12 +25,14 @@ import type {
   RuntimeEventStore,
 } from '@maka/core/runtime-event-store';
 import { isSessionInlineRun } from '@maka/core/agent-run';
-import type {
-  ActiveInteractionRequestEvent,
-  CompleteEvent,
-  MessageContent,
-  SessionEvent,
-  TokenUsageEvent,
+import {
+  messageContentsEqual,
+  normalizeMessageContent,
+  type ActiveInteractionRequestEvent,
+  type CompleteEvent,
+  type MessageContent,
+  type SessionEvent,
+  type TokenUsageEvent,
 } from '@maka/core/events';
 import type {
   SessionBlockedReason,
@@ -2281,21 +2283,38 @@ export class RuntimeKernel implements RuntimeKernelLike {
   async materializeRootSourceMessages(input: {
     sessionId: string;
     turnId: string;
-    messages: readonly { messageId: string; content: MessageContent }[];
+    previousRootTurnId: string | null;
+    messages: readonly {
+      messageId: string;
+      content: MessageContent;
+      disposition: 'steering' | 'followup' | 'turn_started';
+    }[];
   }): Promise<void> {
-    const existingIds = new Set(
-      (await this.deps.store.readMessages(input.sessionId)).map((message) => message.id),
+    const existingById = new Map(
+      (await this.deps.store.readMessages(input.sessionId)).map((message) => [message.id, message]),
     );
     for (const message of input.messages) {
-      if (existingIds.has(message.messageId)) continue;
-      await this.deps.store.appendMessage(input.sessionId, {
-        type: 'user',
+      const existing = existingById.get(message.messageId);
+      if (existing) {
+        if (
+          existing.type !== 'user' ||
+          !messageContentsEqual(normalizeMessageContent(existing), message.content) ||
+          (existing.turnId !== input.turnId &&
+            (message.disposition !== 'steering' || existing.turnId !== input.previousRootTurnId))
+        ) {
+          throw new Error(`Queued root source ${message.messageId} conflicts with its transcript`);
+        }
+        continue;
+      }
+      const materialized = {
+        type: 'user' as const,
         id: message.messageId,
         turnId: input.turnId,
         ts: this.deps.now(),
         ...structuredClone(message.content),
-      });
-      existingIds.add(message.messageId);
+      };
+      await this.deps.store.appendMessage(input.sessionId, materialized);
+      existingById.set(message.messageId, materialized);
     }
   }
 

@@ -217,6 +217,37 @@ test('startup recovery replays an admitted regenerate with its source lineage', 
   });
 });
 
+test('startup accepts successor steering materialized under its predecessor', async () => {
+  await withExecutionRoot(async (fixture) => {
+    const predecessorTurnId = randomUUID();
+    const predecessorHost = await fixture.startHost();
+    const predecessor = await connectClient(fixture.root);
+    await predecessor.startTurn({
+      sessionId: fixture.sessionId,
+      turnId: predecessorTurnId,
+      content: { text: 'finish predecessor' },
+    });
+    await waitForTerminalTurn(predecessor, fixture.sessionId, predecessorTurnId);
+    await predecessor.close();
+    await fixture.stopHost(predecessorHost);
+
+    const turnId = randomUUID();
+    const seeded = await fixture.seedQueuedRunWithPredecessorSteering(turnId, predecessorTurnId);
+    const firstHost = await fixture.startHost();
+    const first = await connectClient(fixture.root);
+    const terminal = await waitForTerminalTurn(first, fixture.sessionId, turnId);
+    assert.equal(terminal.runId, seeded.runId);
+    await first.close();
+    await fixture.stopHost(firstHost);
+
+    const secondHost = await fixture.startHost();
+    await fixture.stopHost(secondHost);
+    const ledger = await fixture.readTurn(turnId);
+    assert.equal(ledger.runs.length, 1);
+    assert.equal(ledger.userMessages.length, 0);
+  });
+});
+
 test('a fresh quoted Turn preserves durable and Runtime handoff content', async () => {
   await withExecutionRoot(async (fixture) => {
     const host = await fixture.startHost();

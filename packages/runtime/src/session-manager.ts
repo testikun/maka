@@ -4814,7 +4814,12 @@ export class SessionManager {
   materializeRootSourceMessages(input: {
     sessionId: string;
     turnId: string;
-    messages: readonly { messageId: string; content: MessageContent }[];
+    previousRootTurnId: string | null;
+    messages: readonly {
+      messageId: string;
+      content: MessageContent;
+      disposition: 'steering' | 'followup' | 'turn_started';
+    }[];
   }): Promise<void> {
     const materialize = this.runtimeKernel.materializeRootSourceMessages;
     if (!materialize) throw new Error('Runtime root message materialization is unavailable');

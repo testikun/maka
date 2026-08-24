@@ -734,6 +734,64 @@ export class ExecutionFixture {
     }
   }
 
+  async seedQueuedRunWithPredecessorSteering(
+    turnId: string,
+    predecessorTurnId: string,
+  ): Promise<{ runId: string; sourceMessageId: string }> {
+    const owner = await tryAcquireInteractiveRootOwner(this.capability);
+    assert.ok(owner);
+    if (!owner) throw new Error('Unable to acquire execution root for queued recovery setup');
+    let stores: Awaited<ReturnType<typeof openInteractiveExecutionStoresForWrite>> | undefined;
+    try {
+      stores = await openInteractiveExecutionStoresForWrite(owner.lease);
+      const admittedAt = Date.now();
+      const source = {
+        messageId: randomUUID(),
+        content: { text: 'steering folded from predecessor' },
+        placement: 'current_turn' as const,
+        disposition: 'steering' as const,
+      };
+      await stores.sessionStore.appendMessage(this.sessionId, {
+        type: 'user',
+        id: source.messageId,
+        turnId: predecessorTurnId,
+        ts: admittedAt,
+        steeringEventId: source.messageId,
+        ...source.content,
+      });
+      const result = await stores.agentRunStore.admitRootTurn({
+        sessionId: this.sessionId,
+        turnId,
+        proposedRunId: randomUUID(),
+        proposedUserMessageId: randomUUID(),
+        execution: { kind: 'external_message' },
+        previousRootTurnId: predecessorTurnId,
+        normalizedInput: source.content,
+        sourceMessages: [source],
+        admittedAt,
+      });
+      assert.equal(result.kind, 'admitted');
+      await stores.agentRunStore.createRun({
+        runId: result.admission.runId,
+        invocationId: result.admission.runId,
+        sessionId: this.sessionId,
+        turnId,
+        status: 'created',
+        backendKind: 'fake',
+        llmConnectionSlug: 'fake',
+        modelId: 'fake-model',
+        cwd: this.root,
+        permissionMode: 'ask',
+        createdAt: admittedAt,
+        updatedAt: admittedAt,
+      });
+      return { runId: result.admission.runId, sourceMessageId: source.messageId };
+    } finally {
+      await stores?.sessionStore.close?.();
+      await owner.close();
+    }
+  }
+
   async archiveSession(): Promise<void> {
     const owner = await tryAcquireInteractiveRootOwner(this.capability);
     assert.ok(owner);

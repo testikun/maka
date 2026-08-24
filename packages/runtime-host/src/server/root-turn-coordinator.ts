@@ -1966,9 +1966,11 @@ export class RootTurnCoordinator implements HostedExecutionAuthority {
       await this.manager.materializeRootSourceMessages({
         sessionId: input.sessionId,
         turnId: input.turnId,
+        previousRootTurnId: admission.previousRootTurnId,
         messages: admission.sourceMessages.map((source) => ({
           messageId: source.messageId,
           content: source.content,
+          disposition: source.disposition,
         })),
       });
     }

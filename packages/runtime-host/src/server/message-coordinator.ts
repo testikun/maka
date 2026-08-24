@@ -935,7 +935,6 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           }
           continue;
         }
-        const result = { disposition, queueRevision: candidateRevision + 1 } as const;
         let durableAdmittedAt: number | undefined;
         if (!durableAdmission) {
           const admitted = await this.#root.commitMessageAdmission(
@@ -971,6 +970,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
         if (disposition === 'steering') state.steering.push(entry);
         else state.followup.push(entry);
         this.#mutated(state);
+        const result = { disposition, queueRevision: state.revision } as const;
         try {
           await this.#commitReceipt('submit', input.sessionId, input.messageId, payload, result);
         } catch (error) {

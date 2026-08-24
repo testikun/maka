@@ -347,6 +347,35 @@ test('persists a steering message before admitting it to the active Turn queue',
   await fixture.coordinator.close();
 });
 
+test('submit reports the authoritative revision after a delayed durable admission', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const owner = fixture.coordinator.bindRun(ROOT);
+  assert.equal((await submit(fixture, 'first-steering', 'first', 'current_turn')).ok, true);
+  const delay = fixture.delaySteeringAdmission();
+
+  const submitted = submit(fixture, 'delayed-steering', 'second', 'current_turn');
+  await delay.started.promise;
+  const [firstLease] = owner.pull();
+  assert.ok(firstLease);
+  owner.ack([firstLease.id]);
+  delay.release.resolve(undefined);
+
+  const outcome = await submitted;
+  assert.equal(outcome.ok, true);
+  if (outcome.ok && outcome.result.disposition !== 'turn_started') {
+    assert.equal(outcome.result.queueRevision, 4);
+  }
+  assert.equal(fixture.coordinator.projection(ROOT.sessionId).queueRevision, 4);
+
+  const [secondLease] = owner.pull();
+  assert.ok(secondLease);
+  owner.ack([secondLease.id]);
+  owner.release();
+  fixture.coordinator.completeIdle(fixture.coordinator.beginTerminalTransition(ROOT));
+  await fixture.coordinator.close();
+});
+
 test('terminal transition settles steering after durable provider consumption', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);

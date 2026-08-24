@@ -50,15 +50,15 @@ import {
   performCompanionTurn,
   type CompanionErrorCode,
   type EnsureCompanionForkResult,
-} from './quote-companion-core';
+} from './quote-companion-core.js';
 import { mergeSettledMessages } from '../../../../settled-message-merge.js';
 import { getDesktopConversationCopy } from '../../../../locales/conversation-copy.js';
 import {
   snapshotCompanionQuotes,
   type CompanionQuoteSnapshot,
   type StagedCompanionQuote,
-} from './quote-companion-panel-state';
-import type { CompanionForkVisibilityEvent } from './quote-companion-visibility';
+} from './quote-companion-panel-state.js';
+import type { CompanionForkVisibilityEvent } from './quote-companion-visibility.js';
 
 export interface UseQuoteCompanionInput {
   /** Stable owner for the currently mounted panel generation. */
@@ -155,6 +155,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
   const forkSetupPromiseRef = useRef<Promise<EnsureCompanionForkResult> | null>(null);
   const stopRequestedRef = useRef(false);
   const activeTurnIdRef = useRef<string | null>(null);
+  const submittingMessageIdRef = useRef<string | null>(null);
   const turnInFlightRef = useRef(false);
   const settlingTurnIdsRef = useRef<Set<string>>(new Set());
   const onForkVisibilityChangeRef = useRef(onForkVisibilityChange);
@@ -202,8 +203,17 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
       });
     unsubscribeRef.current = sideChat.subscribeEvents(forkId, (event: SessionEvent) => {
       if (!mountedRef.current) return;
-      if (turnInFlightRef.current && activeTurnIdRef.current === null && event.turnId) {
+      const submittingMessageId = submittingMessageIdRef.current;
+      const admitsSubmittingMessage =
+        submittingMessageId !== null &&
+        ((event.type === 'steering_message' && event.messageId === submittingMessageId) ||
+          (event.type === 'queue_update' &&
+            event.steeringEntries?.some(
+              (entry) => entry.messageId === submittingMessageId,
+            ) === true));
+      if (admitsSubmittingMessage) {
         activeTurnIdRef.current = event.turnId;
+        submittingMessageIdRef.current = null;
         ownTurnIdsRef.current.add(event.turnId);
         setOwnTurnTick((tick) => tick + 1);
       }
@@ -237,6 +247,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
             setAllMessages((current) => mergeSettledMessages(current, next));
             setLiveTurn((prev) => (prev ? reconcileTerminalLiveTurn(prev, next) : prev));
             activeTurnIdRef.current = null;
+            submittingMessageIdRef.current = null;
             turnInFlightRef.current = false;
             stopRequestedRef.current = false;
             setTurnInFlight(false);
@@ -244,6 +255,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
           .catch(() => {
             if (!mountedRef.current || activeTurnIdRef.current !== settledTurnId) return;
             activeTurnIdRef.current = null;
+            submittingMessageIdRef.current = null;
             turnInFlightRef.current = false;
             stopRequestedRef.current = false;
             setTurnInFlight(false);
@@ -394,15 +406,17 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
         onForkCommitted: () => {},
         onBeforeSend: () => {
           stopRequestedRef.current = false;
-          activeTurnIdRef.current = null;
+          activeTurnIdRef.current = turnId;
+          submittingMessageIdRef.current = turnId;
           turnInFlightRef.current = true;
           setTurnInFlight(true);
         },
         onQuotesConsumed: () => onQuotesConsumed(quoteSnapshot),
       });
       if (result.status === 'sent') {
-        if (activeTurnIdRef.current === null && result.turnId) {
+        if (turnInFlightRef.current && result.turnId) {
           activeTurnIdRef.current = result.turnId;
+          submittingMessageIdRef.current = null;
           ownTurnIdsRef.current.add(result.turnId);
           setOwnTurnTick((tick) => tick + 1);
         }
@@ -437,6 +451,7 @@ export function useQuoteCompanion(input: UseQuoteCompanionInput): UseQuoteCompan
         };
         setError(byCode[result.code]);
         activeTurnIdRef.current = null;
+        submittingMessageIdRef.current = null;
         turnInFlightRef.current = false;
         setTurnInFlight(false);
         setLiveTurn(undefined);

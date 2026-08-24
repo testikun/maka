@@ -38,7 +38,11 @@ import { test } from 'node:test';
 import { TOOL_BOUNDARY_PROTOCOL_V1 } from '@maka/core/runtime-event';
 import { canonicalToolArgsHash } from '@maka/core/tool-args-identity';
 import type { AgentRunHeader } from '@maka/core/agent-run';
-import { normalizeMessageContent, type MessageContent } from '@maka/core/events';
+import {
+  aggregateMessageContents,
+  normalizeMessageContent,
+  type MessageContent,
+} from '@maka/core/events';
 import type { ConnectionCatalogEntry } from '@maka/core/runtime-policy';
 import type { StoredMessage } from '@maka/core/session';
 import type { Task } from '@maka/core/task-ledger';
@@ -672,6 +676,62 @@ export class ExecutionFixture {
     content: string | MessageContent,
   ): Promise<{ runId: string; userMessageId: string }> {
     return this.seedTurnState(turnId, content, false, false);
+  }
+
+  async seedPartiallyMaterializedQueuedAdmission(
+    turnId: string,
+    materializedSourceCount: number,
+  ): Promise<{ runId: string; sourceMessageIds: readonly string[] }> {
+    const owner = await tryAcquireInteractiveRootOwner(this.capability);
+    assert.ok(owner);
+    if (!owner) throw new Error('Unable to acquire execution root for queued admission setup');
+    let stores: Awaited<ReturnType<typeof openInteractiveExecutionStoresForWrite>> | undefined;
+    try {
+      stores = await openInteractiveExecutionStoresForWrite(owner.lease);
+      const admittedAt = Date.now();
+      const sources = [
+        {
+          messageId: randomUUID(),
+          content: { text: 'first recovered source' },
+          placement: 'current_turn' as const,
+          disposition: 'steering' as const,
+        },
+        {
+          messageId: randomUUID(),
+          content: { text: 'second recovered source' },
+          placement: 'next_turn' as const,
+          disposition: 'followup' as const,
+        },
+      ];
+      const result = await stores.agentRunStore.admitRootTurn({
+        sessionId: this.sessionId,
+        turnId,
+        proposedRunId: randomUUID(),
+        proposedUserMessageId: randomUUID(),
+        execution: { kind: 'external_message' },
+        previousRootTurnId: null,
+        normalizedInput: aggregateMessageContents(sources.map((source) => source.content)),
+        sourceMessages: sources,
+        admittedAt,
+      });
+      assert.equal(result.kind, 'admitted');
+      for (const source of sources.slice(0, materializedSourceCount)) {
+        await stores.sessionStore.appendMessage(this.sessionId, {
+          type: 'user',
+          id: source.messageId,
+          turnId,
+          ts: admittedAt,
+          ...source.content,
+        });
+      }
+      return {
+        runId: result.admission.runId,
+        sourceMessageIds: sources.map((source) => source.messageId),
+      };
+    } finally {
+      await stores?.sessionStore.close?.();
+      await owner.close();
+    }
   }
 
   async archiveSession(): Promise<void> {

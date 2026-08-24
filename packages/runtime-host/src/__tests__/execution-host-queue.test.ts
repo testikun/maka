@@ -484,6 +484,57 @@ test('a durable admission without a Run resumes before the Host becomes ready', 
   });
 });
 
+test('startup resumes a queued root after only a prefix of its sources materialized', async () => {
+  await withExecutionRoot(async (fixture) => {
+    const turnId = randomUUID();
+    const seeded = await fixture.seedPartiallyMaterializedQueuedAdmission(turnId, 1);
+
+    const host = await fixture.startHost();
+    const client = await connectClient(fixture.root);
+    const recovered = await client.queryTurn({ sessionId: fixture.sessionId, turnId });
+    assert.equal(recovered.runId, seeded.runId);
+    assert.ok(recovered.status === 'running' || recovered.status === 'waiting_for_user');
+
+    await client.stopTurn(
+      { sessionId: fixture.sessionId, turnId, runId: seeded.runId },
+      PROCESS_TIMEOUT_MS,
+    );
+    await client.close();
+    await fixture.stopHost(host);
+
+    const ledger = await fixture.readTurn(turnId);
+    assert.deepEqual(
+      ledger.userMessages.map((message) => message.id),
+      seeded.sourceMessageIds,
+    );
+  });
+});
+
+test('startup resumes a queued root after all sources materialized before Run creation', async () => {
+  await withExecutionRoot(async (fixture) => {
+    const turnId = randomUUID();
+    const seeded = await fixture.seedPartiallyMaterializedQueuedAdmission(turnId, 2);
+
+    const host = await fixture.startHost();
+    const client = await connectClient(fixture.root);
+    const recovered = await client.queryTurn({ sessionId: fixture.sessionId, turnId });
+    assert.equal(recovered.runId, seeded.runId);
+
+    await client.stopTurn(
+      { sessionId: fixture.sessionId, turnId, runId: seeded.runId },
+      PROCESS_TIMEOUT_MS,
+    );
+    await client.close();
+    await fixture.stopHost(host);
+
+    const ledger = await fixture.readTurn(turnId);
+    assert.deepEqual(
+      ledger.userMessages.map((message) => message.id),
+      seeded.sourceMessageIds,
+    );
+  });
+});
+
 test('startup recovery compares an existing quoted UserMessage canonically', async () => {
   await withExecutionRoot(async (fixture) => {
     const turnId = randomUUID();

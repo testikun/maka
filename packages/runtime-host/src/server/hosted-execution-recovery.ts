@@ -118,6 +118,26 @@ export async function prepareHostedExecutionRecovery(
         }
         continue;
       }
+      if (materializesRootSourceMessages(admission)) {
+        verifyMaterializedRootSourceMessages(
+          admission,
+          rootUserMessages,
+          messageIdOwners,
+          messageIndex,
+          !run,
+        );
+        if (!run) {
+          replayAdmissions.push(admission);
+          rootReplayAdmissions.push(admission);
+          continue;
+        }
+        await input.projection.assertRunIdentityAndContinuation(
+          run,
+          admission.turnId,
+          admission.execution,
+        );
+        continue;
+      }
       if (messageIdOwners.length > 1) {
         throw new Error(`Admitted Turn ${admission.turnId} has a duplicated UserMessage identity`);
       }
@@ -288,6 +308,55 @@ function verifyOrRecoverUserMessage(
   const recoveredMessage = recoveryUserMessage(admission);
   missingMessages.push(recoveredMessage);
   indexRecoveryMessage(index, recoveredMessage);
+}
+
+function materializesRootSourceMessages(admission: RootTurnAdmission): boolean {
+  return admission.sourceMessages.some((source) => source.disposition === 'steering');
+}
+
+function verifyMaterializedRootSourceMessages(
+  admission: RootTurnAdmission,
+  rootUserMessages: readonly RecoveryUserMessage[],
+  aggregateMessageIdOwners: readonly StoredMessage[],
+  index: RecoveryMessageIndex,
+  allowPrefix: boolean,
+): void {
+  if (aggregateMessageIdOwners.length > 0) {
+    throw new Error(
+      `Admitted queued Turn ${admission.turnId} unexpectedly recorded its aggregate UserMessage`,
+    );
+  }
+  if (
+    rootUserMessages.length > admission.sourceMessages.length ||
+    (!allowPrefix && rootUserMessages.length !== admission.sourceMessages.length)
+  ) {
+    throw new Error(
+      `Admitted queued Turn ${admission.turnId} has incomplete source materialization`,
+    );
+  }
+  for (let sourceIndex = 0; sourceIndex < admission.sourceMessages.length; sourceIndex += 1) {
+    const source = admission.sourceMessages[sourceIndex]!;
+    const materialized = rootUserMessages[sourceIndex];
+    const identityOwners = index.messagesById.get(source.messageId) ?? [];
+    if (!materialized) {
+      if (identityOwners.length > 0) {
+        throw new Error(
+          `Admitted queued Turn ${admission.turnId} reuses a source message identity`,
+        );
+      }
+      continue;
+    }
+    if (
+      identityOwners.length !== 1 ||
+      identityOwners[0] !== materialized ||
+      materialized.id !== source.messageId ||
+      !messageContentsEqual(normalizeMessageContent(materialized), source.content)
+    ) {
+      throw new Error(
+        `Admitted queued Turn ${admission.turnId} does not match its source messages`,
+      );
+    }
+  }
 }
 
 function recoveryUserMessage(admission: RootTurnAdmission): RecoveryUserMessage {

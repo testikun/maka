@@ -906,15 +906,6 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
           followup:
             disposition === 'followup' ? [...current.followup, candidateEntry] : current.followup,
         };
-        if (!projectionFitsEveryEntryState(candidate)) {
-          return failure('session_busy', 'Message queue projection capacity is full');
-        }
-        if (!(await this.#preflightSessionSnapshot(input.sessionId, { queue: candidate }))) {
-          return failure('session_busy', 'Session projection capacity is full');
-        }
-        if (!interruptResultFits(candidate, rootState)) {
-          return failure('session_busy', 'Message queue interrupt result capacity is full');
-        }
         const prospectiveSources = [
           ...[...state.inFlight.values(), ...state.steering, ...state.followup].map(
             sourceFromEntry,
@@ -927,9 +918,13 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
             disposition,
           },
         ] satisfies RootTurnSourceMessage[];
-        if (!rootAdmissionPayloadFits(prospectiveSources)) {
-          return failure('session_busy', 'Message queue cannot form a durable follow-up Turn');
-        }
+        const capacityError = await this.#queueCapacityError(
+          input.sessionId,
+          candidate,
+          prospectiveSources,
+          rootState,
+        );
+        if (capacityError) return failure('session_busy', capacityError);
         if (
           state.phase !== 'open' ||
           state.revision !== candidateRevision ||
@@ -1265,6 +1260,45 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       }
       return failure('not_found', 'Message queue entry does not exist');
     }
+    const candidateRevision = state.revision;
+    const candidateGeneration = state.generation;
+    const promotedEntry: LiveEntry = {
+      ...entry,
+      placement: 'current_turn',
+      disposition: 'steering',
+    };
+    const remainingFollowups = state.followup.filter(
+      (_queued, queuedIndex) => queuedIndex !== index,
+    );
+    const candidate: SessionMessageQueueProjection = {
+      ...this.#project(state),
+      queueRevision: candidateRevision + 1,
+      steering: [
+        ...[...state.inFlight.values()].map(inFlightSnapshot),
+        ...state.steering.map(queuedSteeringSnapshot),
+        queuedSteeringSnapshot(promotedEntry),
+      ],
+      followup: remainingFollowups.map(queuedFollowupSnapshot),
+    };
+    const capacityError = await this.#queueCapacityError(
+      input.sessionId,
+      candidate,
+      [...state.inFlight.values(), ...state.steering, promotedEntry, ...remainingFollowups].map(
+        sourceFromEntry,
+      ),
+      rootState,
+    );
+    if (capacityError) return failure('session_busy', capacityError);
+    if (
+      state.phase !== 'open' ||
+      state.revision !== candidateRevision ||
+      state.generation !== candidateGeneration ||
+      !state.reservedRoot ||
+      !sameRun(state.reservedRoot, rootState) ||
+      state.followup[index] !== entry
+    ) {
+      return failure('session_busy', 'Message queue changed during promotion');
+    }
     const pending = await this.#root.commitMessageAdmission(
       {
         sessionId: input.sessionId,
@@ -1282,7 +1316,7 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     );
     entry.durableAdmittedAt = pending.admittedAt;
     state.followup.splice(index, 1);
-    state.steering.push({ ...entry, placement: 'current_turn', disposition: 'steering' });
+    state.steering.push(promotedEntry);
     this.#mutated(state);
     const result = { queueRevision: state.revision };
     try {
@@ -1382,6 +1416,25 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       throw error;
     }
     return success(result);
+  async #queueCapacityError(
+    sessionId: string,
+    candidate: SessionMessageQueueProjection,
+    prospectiveSources: readonly RootTurnSourceMessage[],
+    identity: RuntimeMessageRunIdentity,
+  ): Promise<string | undefined> {
+    if (!projectionFitsEveryEntryState(candidate)) {
+      return 'Message queue projection capacity is full';
+    }
+    if (!(await this.#preflightSessionSnapshot(sessionId, { queue: candidate }))) {
+      return 'Session projection capacity is full';
+    }
+    if (!interruptResultFits(candidate, identity)) {
+      return 'Message queue interrupt result capacity is full';
+    }
+    if (!rootAdmissionPayloadFits(prospectiveSources)) {
+      return 'Message queue cannot form a durable follow-up Turn';
+    }
+    return undefined;
   }
 
   async #reorderQueuedEntriesAdmitted(

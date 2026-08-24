@@ -943,6 +943,68 @@ test('entry promote durably admits the message before making it non-retractable'
   assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
 });
 
+test('entry promote preflights the promoted canonical queue before durable mutation', async () => {
+  const fixture = createFixture(
+    undefined,
+    (_sessionId, candidate) => (candidate.queue?.steering.length ?? 0) === 0,
+  );
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'promoted-followup', 'send this now', 'next_turn');
+  const [entry] = fixture.coordinator.projection(ROOT.sessionId).followup;
+  assert.ok(entry);
+
+  const promoted = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entry.entryId,
+      promoteId: 'promote-preflight',
+    },
+    operationContext(),
+  );
+
+  assert.equal(promoted.ok, false);
+  if (!promoted.ok) assert.equal(promoted.error.code, 'session_busy');
+  assert.deepEqual(fixture.coordinator.projection(ROOT.sessionId).steering, []);
+  assert.deepEqual(
+    fixture.coordinator.projection(ROOT.sessionId).followup.map((queued) => queued.messageId),
+    ['promoted-followup'],
+  );
+});
+
+test('entry promote rejects a follow-up that only exceeds capacity as in-flight steering', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  const base = await submit(fixture, 'boundary-base', 'x'.repeat(32_000), 'next_turn');
+  assert.equal(base.ok, true);
+  const submitted = await submit(fixture, 'boundary-followup', 'y'.repeat(20_937), 'next_turn');
+  assert.equal(submitted.ok, true);
+  const entry = fixture.coordinator
+    .projection(ROOT.sessionId)
+    .followup.find((queued) => queued.messageId === 'boundary-followup');
+  assert.ok(entry);
+
+  const promoted = await fixture.coordinator.handlers['queue.entry.promote'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: entry.entryId,
+      promoteId: 'promote-boundary',
+    },
+    operationContext(),
+  );
+
+  assert.equal(promoted.ok, false);
+  if (!promoted.ok) assert.equal(promoted.error.code, 'session_busy');
+  const projection = fixture.coordinator.projection(ROOT.sessionId);
+  assert.equal(projection.steering.length, 0);
+  assert.deepEqual(
+    projection.followup.map((queued) => queued.messageId),
+    ['boundary-base', 'boundary-followup'],
+  );
+  assert.doesNotThrow(() => decodeSessionMessageQueueProjection(projection));
+});
+
 test('retract settles a failed promotion so restart cannot recover it', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);

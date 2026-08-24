@@ -1109,6 +1109,54 @@ test('restart recovers every admission under the durable Session execution contr
   assert.equal(fixture.pendingAdmissionCount(), 0);
 });
 
+test('restart recovers steering that was echoed before any later provider dispatch', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'echo-only-steering', 'run this after restart', 'current_turn');
+  fixture.events.push(
+    steeringEvent(
+      'echo-only-steering',
+      { text: 'run this after restart' },
+      { text: 'run this after restart' },
+    ),
+  );
+  fixture.setRootState({ kind: 'idle' });
+
+  await fixture.restart('epoch-2').recoverPendingAfterHostRestart();
+
+  assert.deepEqual(
+    fixture.recoveredBatches[0]?.sources.map((source) => source.messageId),
+    ['echo-only-steering'],
+  );
+  assert.equal(fixture.pendingAdmissionCount(), 0);
+});
+
+test('restart preserves explicit Stop as a durable message retraction', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'stopped-followup', 'do not resurrect this', 'next_turn');
+  fixture.setExplicitStopProof(true);
+  fixture.setRootState({ kind: 'idle' });
+
+  const restarted = fixture.restart('epoch-2');
+  await restarted.recoverPendingAfterHostRestart();
+
+  assert.deepEqual(fixture.recoveredBatches, []);
+  assert.equal(fixture.pendingAdmissionCount(), 0);
+  const retry = await restarted.handlers['turn.message.submit'](
+    {
+      originHostEpoch: 'epoch-2',
+      sessionId: ROOT.sessionId,
+      messageId: 'stopped-followup',
+      content: { text: 'do not resurrect this' },
+      placement: 'next_turn',
+    },
+    operationContext(),
+  );
+  assert.equal(retry.ok, false);
+  if (!retry.ok) assert.equal(retry.error.code, 'operation_conflict');
+});
+
 test('restart preserves durable reorder and promotion priority', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);

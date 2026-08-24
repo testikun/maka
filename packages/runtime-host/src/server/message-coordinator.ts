@@ -432,26 +432,25 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
       await this.#sessionAdmission.run(sessionId, async (admissionLease) => {
         const pending: PendingMessageAdmission[] = [];
         const settled: string[] = [];
+        const stopped: string[] = [];
         for (const candidate of durable) {
           const source = await this.#durableProof.readRootTurnSourceMessageReceipt(
             sessionId,
             candidate.messageId,
           );
-          const consumed = source
-            ? undefined
-            : await this.#durableProof.readImmutableSteeringMessageProof(
-                sessionId,
-                candidate.messageId,
-              );
-          const stopped =
-            !source &&
-            !consumed &&
-            (await this.#durableProof.readExplicitStopProof(sessionId, candidate.runId));
-          if (source || consumed || stopped) settled.push(candidate.messageId);
-          else pending.push(candidate);
+          if (source) {
+            settled.push(candidate.messageId);
+          } else if (await this.#durableProof.readExplicitStopProof(sessionId, candidate.runId)) {
+            stopped.push(candidate.messageId);
+          } else {
+            pending.push(candidate);
+          }
         }
         if (settled.length > 0) {
           await this.#receipts.garbageCollectMessageAdmissions(sessionId, settled);
+        }
+        if (stopped.length > 0) {
+          await this.#receipts.commitMessageRetractions(sessionId, stopped);
         }
         if (pending.length === 0) return;
         const header = await this.#root.readSessionHeader(sessionId);

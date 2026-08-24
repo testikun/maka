@@ -563,6 +563,8 @@ async function createExecutionStoresForWrite<K extends StorageRootKind, E extend
       readMessageSettlement: (sessionId, messageId) =>
         run(() => messageReceiptStore.readMessageSettlement(sessionId, messageId)),
       listPendingMessages: () => run(() => messageReceiptStore.listPendingMessages()),
+      updatePendingMessage: (admission) =>
+        run(() => messageReceiptStore.updatePendingMessage(admission)),
       commitMessageOrder: (sessionId, messageIds) =>
         run(() => messageReceiptStore.commitMessageOrder(sessionId, messageIds)),
       commitMessageRetractions: (sessionId, messageIds) =>

@@ -1324,6 +1324,38 @@ test('restart preserves durable reorder and promotion priority', async () => {
   );
 });
 
+test('restart recovers the durably edited queued Message content', async () => {
+  const fixture = createFixture();
+  fixture.coordinator.reserveRootTurn(ROOT);
+  await submit(fixture, 'edited-after-restart', 'original instruction', 'next_turn');
+
+  const updated = await fixture.coordinator.handlers['queue.entry.update'](
+    {
+      originHostEpoch: 'epoch-1',
+      sessionId: ROOT.sessionId,
+      entryId: 'id-1',
+      updateId: 'durable-update',
+      expectedQueueRevision: 1,
+      text: 'corrected instruction',
+    },
+    operationContext(),
+  );
+  assert.equal(updated.ok, true);
+  fixture.setRootState({ kind: 'idle' });
+
+  await fixture.restart('epoch-2').recoverPendingAfterHostRestart();
+
+  assert.deepEqual(fixture.recoveredBatches[0]?.sources, [
+    {
+      messageId: 'edited-after-restart',
+      content: { text: 'corrected instruction' },
+      submittedContentDigest: messageContentDigest({ text: 'corrected instruction' }),
+      placement: 'next_turn',
+      disposition: 'followup',
+    },
+  ]);
+});
+
 test('entry promote requires an active Turn', async () => {
   const fixture = createFixture();
   fixture.coordinator.reserveRootTurn(ROOT);
@@ -2953,6 +2985,23 @@ function memoryReceiptStore(
         .sort((left, right) =>
           left.disposition === right.disposition ? 0 : left.disposition === 'steering' ? -1 : 1,
         ),
+    updatePendingMessage: async (admission) => {
+      const admissionKey = `${admission.sessionId}:${admission.messageId}`;
+      const existing = pending.get(admissionKey);
+      if (
+        !existing ||
+        existing.turnId !== admission.turnId ||
+        existing.runId !== admission.runId ||
+        existing.submittedPlacement !== admission.submittedPlacement ||
+        existing.placement !== admission.placement ||
+        existing.disposition !== admission.disposition ||
+        existing.admittedAt !== admission.admittedAt ||
+        retracted.has(admissionKey)
+      ) {
+        throw new Error('Message update identity conflict');
+      }
+      pending.set(admissionKey, structuredClone(admission));
+    },
     commitMessageOrder: async (sessionId, messageIds) => {
       const reorderedKeys: string[] = [];
       for (const messageId of messageIds) {

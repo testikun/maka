@@ -599,6 +599,49 @@ describe('SQLite core execution stores', () => {
     });
   });
 
+  test('updates pending Message content only for the exact unsettled admission', async () => {
+    await withRoot(async (root) => {
+      const sessions = createSessionStore(root);
+      const session = await sessions.create({
+        cwd: root,
+        llmConnectionSlug: 'test',
+        model: 'test-model',
+        permissionMode: 'ask',
+      });
+      const admission = {
+        sessionId: session.id,
+        turnId: 'turn-1',
+        runId: 'run-1',
+        messageId: 'message-1',
+        content: { text: 'original' },
+        modelContent: { text: 'prepared original' },
+        submittedPlacement: 'next_turn',
+        placement: 'next_turn',
+        disposition: 'followup',
+        admittedAt: 123,
+      } as const;
+      await sessions.commitMessageAdmission(admission);
+      const receipts = createSqliteMessageReceiptStore(root);
+      const updated = {
+        ...admission,
+        content: { text: 'corrected' },
+        modelContent: { text: 'prepared corrected' },
+      } as const;
+
+      await receipts.updatePendingMessage(updated);
+      assert.deepEqual(await receipts.listPendingMessages(), [updated]);
+      await assert.rejects(
+        receipts.updatePendingMessage({ ...updated, runId: 'wrong-run' }),
+        /identity conflict/,
+      );
+      await receipts.commitMessageRetractions(session.id, [admission.messageId]);
+      await assert.rejects(receipts.updatePendingMessage(updated), /identity conflict/);
+
+      receipts.close();
+      await sessions.close?.();
+    });
+  });
+
   test('persists pending Message reorder and promotion priority', async () => {
     await withRoot(async (root) => {
       const sessions = createSessionStore(root);

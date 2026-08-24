@@ -93,6 +93,7 @@ export interface MessageReceiptStore {
     messageId: string,
   ): Promise<MessageAdmissionSettlement | undefined>;
   listPendingMessages(): Promise<readonly PendingMessageAdmission[]>;
+  updatePendingMessage(admission: PendingMessageAdmission): Promise<void>;
   commitMessageOrder(sessionId: string, messageIds: readonly string[]): Promise<void>;
   commitMessageRetractions(sessionId: string, messageIds: readonly string[]): Promise<void>;
   garbageCollectMessageAdmissions(sessionId: string, messageIds: readonly string[]): Promise<void>;
@@ -266,6 +267,38 @@ class SqliteMessageReceiptStore implements ClosableMessageReceiptStore {
       `)
       .all()
       .map(decodePendingMessageAdmissionRow);
+  }
+
+  async updatePendingMessage(admission: PendingMessageAdmission): Promise<void> {
+    const stored = normalizePendingMessageAdmission(admission);
+    const updated = this.#lease.database
+      .prepare(`
+        UPDATE core_message_admissions
+        SET content_json = ?, model_content_json = ?
+        WHERE session_id = ? AND turn_id = ? AND run_id = ? AND message_id = ?
+          AND submitted_placement = ? AND placement = ? AND disposition = ? AND admitted_at = ?
+          AND NOT EXISTS (
+            SELECT 1
+            FROM core_message_admission_settlements
+            WHERE core_message_admission_settlements.session_id =
+                core_message_admissions.session_id
+              AND core_message_admission_settlements.message_id =
+                core_message_admissions.message_id
+          )
+      `)
+      .run(
+        JSON.stringify(stored.content),
+        JSON.stringify(stored.modelContent),
+        stored.sessionId,
+        stored.turnId,
+        stored.runId,
+        stored.messageId,
+        stored.submittedPlacement,
+        stored.placement,
+        stored.disposition,
+        stored.admittedAt,
+      );
+    if (updated.changes !== 1) throw new Error('Message update identity conflict');
   }
 
   async commitMessageOrder(sessionId: string, messageIds: readonly string[]): Promise<void> {

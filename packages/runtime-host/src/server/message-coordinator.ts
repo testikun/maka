@@ -1402,6 +1402,24 @@ export class HostMessageCoordinator implements RuntimeMessageAuthority {
     ) {
       return failure('session_busy', 'Message queue changed during update');
     }
+    const durableAdmittedAt = queued.entry.durableAdmittedAt;
+    if (durableAdmittedAt === undefined || !state.reservedRoot) {
+      throw new RuntimeMessageAuthorityInvariantError(
+        'Queued Message update lost its durable admission identity',
+      );
+    }
+    await this.#receipts.updatePendingMessage({
+      sessionId: input.sessionId,
+      turnId: state.reservedRoot.turnId,
+      runId: state.reservedRoot.runId,
+      messageId: queued.entry.messageId,
+      content,
+      modelContent,
+      submittedPlacement: queued.entry.submittedPlacement,
+      placement: queued.entry.placement,
+      disposition: dispositionFromPlacement(queued.entry.placement),
+      admittedAt: durableAdmittedAt,
+    });
     queued.entry.content = content;
     queued.entry.modelContent = modelContent;
     this.#mutated(state);

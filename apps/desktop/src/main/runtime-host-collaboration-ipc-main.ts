@@ -18,6 +18,8 @@
  */
 
 import type { DesktopRuntimeHostClient } from './runtime-host-client.js';
+import { RuntimeHostOperationError } from '@maka/runtime-host/client';
+import type { CollaborationTurnRequestQueryResult } from '@maka/runtime-host/protocol';
 import {
   encodeDesktopCollaborationInvitation,
   type DesktopCollaborationConnectionTarget,
@@ -91,10 +93,21 @@ export function registerRuntimeHostCollaborationIpc(
   handleReconnectableRead(
     ipcMain,
     'session-collaboration:turn-request:query',
-    (_event, sessionId: unknown) =>
-      client.queryCollaborationTurnRequests(
-        sessionId === undefined ? undefined : requiredId(sessionId, 'Session'),
-      ),
+    async (_event, sessionId: unknown) => {
+      try {
+        return await client.queryCollaborationTurnRequests(
+          sessionId === undefined ? undefined : requiredId(sessionId, 'Session'),
+        );
+      } catch (error) {
+        if (
+          error instanceof RuntimeHostOperationError &&
+          error.code === 'operation_unavailable'
+        ) {
+          return { canRequestTurns: false, requests: [] } satisfies CollaborationTurnRequestQueryResult;
+        }
+        throw error;
+      }
+    },
   );
   ipcMain.handle(
     'session-collaboration:turn-request:acknowledge',

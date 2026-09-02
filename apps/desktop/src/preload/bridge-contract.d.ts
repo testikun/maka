@@ -449,6 +449,7 @@ export interface DesktopRuntimeHostProfileChangedEvent {
   readonly profileName: string;
   readonly profileKind: RuntimeHostProfileKind;
   readonly profileAccess: RuntimeHostProfileAccess;
+  readonly collaborationAuthority?: boolean;
   readonly readiness: 'connecting' | 'ready' | 'reconnecting' | 'unavailable';
   readonly hostId?: string;
   readonly isDefault: boolean;
@@ -460,6 +461,7 @@ export interface DesktopRuntimeHostIdentity extends DesktopRuntimeHostRef {
   readonly profileName: string;
   readonly profileKind: RuntimeHostProfileKind;
   readonly profileAccess: RuntimeHostProfileAccess;
+  readonly collaborationAuthority?: boolean;
   readonly readiness: 'ready' | 'reconnecting';
 }
 

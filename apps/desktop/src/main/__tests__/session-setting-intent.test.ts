@@ -86,18 +86,54 @@ test('Runtime leaving Plan after approval supersedes the committed Plan overlay'
   assert.equal(container.querySelector('output')?.getAttribute('data-value'), 'false');
 });
 
+test('awaitSettled waits for an in-flight mode commit', async () => {
+  const { document, window } = parseHTML('<div id="root"></div>');
+  Object.assign(globalThis, {
+    document,
+    window,
+    HTMLElement: window.HTMLElement,
+    Node: window.Node,
+    IS_REACT_ACT_ENVIRONMENT: true,
+  });
+  const container = document.querySelector('#root');
+  assert.ok(container);
+  const root = createRoot(container);
+  mountedRoot = root;
+  let releaseWrite!: () => void;
+  let controller: SessionSettingIntentController<boolean> | undefined;
+  await act(async () => {
+    root.render(createElement(Harness, {
+      catalogRevision: 0,
+      catalogValue: false,
+      capture: (next) => { controller = next; },
+      write: () => new Promise<boolean>((resolve) => { releaseWrite = () => resolve(true); }),
+    }));
+  });
+  const request = controller!.request('session-1', true);
+  let settled = false;
+  const waiting = controller!.awaitSettled('session-1').then(() => { settled = true; });
+  await Promise.resolve();
+  assert.equal(settled, false);
+  releaseWrite();
+  await request;
+  await waiting;
+  assert.equal(settled, true);
+});
+
 function Harness({
   catalogRevision,
   catalogValue,
   capture,
+  write = async () => true,
 }: {
   catalogRevision: number;
   catalogValue: boolean;
   capture(controller: SessionSettingIntentController<boolean>): void;
+  write?: () => Promise<boolean>;
 }) {
   const controller = useSessionSettingIntent<boolean>({
     catalogRevision,
-    write: async () => true,
+    write,
     refreshCatalog: async () => {
       throw new Error('catalog unavailable');
     },

@@ -36,6 +36,7 @@ interface SessionSettingIntentOptions<Value> {
 interface SessionSettingIntentController<Value> {
   overlayBySession: Readonly<Record<string, Value>>;
   request(sessionId: string, value: Value): Promise<boolean>;
+  awaitSettled(sessionId: string): Promise<void>;
   clear(sessionId: string): void;
 }
 
@@ -52,6 +53,7 @@ export function useSessionSettingIntent<Value>(
   const optionsRef = useRef(options);
   optionsRef.current = options;
   const intentsRef = useRef(new Map<string, SettingIntent<Value>>());
+  const settledWaitersRef = useRef(new Map<string, Array<() => void>>());
   const [overlayBySession, setOverlayBySession] = useState<Record<string, Value>>({});
 
   const setOverlay = useCallback((sessionId: string, value: Value | undefined): void => {
@@ -74,6 +76,13 @@ export function useSessionSettingIntent<Value>(
     intentsRef.current.delete(sessionId);
     setOverlay(sessionId, undefined);
   }, [setOverlay]);
+
+  const resolveSettledWaiters = useCallback((sessionId: string): void => {
+    const waiters = settledWaitersRef.current.get(sessionId);
+    if (!waiters) return;
+    settledWaitersRef.current.delete(sessionId);
+    for (const resolve of waiters) resolve();
+  }, []);
 
   useEffect(() => {
     for (const sessionId of intentsRef.current.keys()) reconcile(sessionId);
@@ -131,14 +140,26 @@ export function useSessionSettingIntent<Value>(
       } else {
         reconcile(sessionId);
       }
+      resolveSettledWaiters(sessionId);
     }
     return succeeded;
-  }, [reconcile, setOverlay]);
+  }, [reconcile, resolveSettledWaiters, setOverlay]);
+
+  const awaitSettled = useCallback((sessionId: string): Promise<void> => {
+    const intent = intentsRef.current.get(sessionId);
+    if (!intent?.inFlight) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      const waiters = settledWaitersRef.current.get(sessionId) ?? [];
+      waiters.push(resolve);
+      settledWaitersRef.current.set(sessionId, waiters);
+    });
+  }, []);
 
   const clear = useCallback((sessionId: string): void => {
     intentsRef.current.delete(sessionId);
+    resolveSettledWaiters(sessionId);
     setOverlay(sessionId, undefined);
-  }, [setOverlay]);
+  }, [resolveSettledWaiters, setOverlay]);
 
-  return { overlayBySession, request, clear };
+  return { overlayBySession, request, awaitSettled, clear };
 }

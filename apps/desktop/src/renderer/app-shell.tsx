@@ -1987,6 +1987,12 @@ function AppShellContent({
     const runningTurnIds = sessionId
       ? sessionsRef.current.find((session) => session.id === sessionId)?.runningTurnIds
       : undefined;
+    // The Plan toggle is committed asynchronously. Do not admit a root turn
+    // while its IPC write is still in flight: the catalog may still report
+    // `agent` even though the composer already displays Plan.
+    if (sessionId && !slashCommand) {
+      await planModeIntent.awaitSettled(sessionId);
+    }
     const followUpAtSubmit = !slashCommand
       ? resolveFollowUpModeAtSubmit({
           requestedMode: metadata?.followUpMode,

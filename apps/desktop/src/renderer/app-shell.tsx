@@ -1590,9 +1590,10 @@ function AppShellContent({
   const workbar = useWorkbarController({
     available: workbarAvailable,
     activeSession: activeSessionForView,
+    sessions,
     projectId: currentProjectId,
     projectAliases: currentProject?.aliases ?? [],
-    authoritativeSessionIds: authoritativeSessionIds ?? undefined,
+    authoritativeSessionIds,
     shellObscured,
     modelChoices: chatModelChoices,
     reportError: reportWorkbarError,

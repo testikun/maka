@@ -346,10 +346,16 @@ test('parent Side Chat and its staged quote survive linked child navigation', as
   const stagedQuoteText = await stagedQuote.textContent();
   expect(stagedQuoteText).toBeTruthy();
 
+  const draftText = 'draft survives linked child navigation';
+  const sideComposer = companion.locator(COMPOSER_INPUT);
+  await sideComposer.fill(draftText);
+  await expect(sideComposer).toHaveText(draftText);
+
   const parentTurn = parentAnswer.locator('xpath=ancestor::*[@data-turn-id][1]');
   await parentTurn.getByRole('button', { name: 'Implementation' }).click();
   await expect(page.getByText(PARENT_REMOVAL_CHILD_NAME, { exact: true })).toBeVisible();
   await expect(page.getByText('已确认切换到子任务后，父任务的侧边对话应继续保留。')).toBeVisible();
   await expect(companion).toBeVisible();
   await expect(stagedQuote).toHaveText(stagedQuoteText!);
+  await expect(companion.locator(COMPOSER_INPUT)).toHaveText(draftText);
 });

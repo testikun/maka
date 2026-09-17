@@ -1,0 +1,26 @@
+{
+  "model": "gpt-5.6-sol",
+  "baseUrl": "http://127.0.0.1:8080",
+  "fakeBackend": false,
+  "sourceId": "[\"cfe0672a5570f50c8b3061c4be05587a34a74a7d3b212af6babf87c405f79c40\",\"4fe60e85-c5c1-43cc-aae8-6e9051f68956\"]",
+  "targetId": "[\"cfe0672a5570f50c8b3061c4be05587a34a74a7d3b212af6babf87c405f79c40\",\"ab118838-2e3d-4eb4-989a-50ee551c8d30\"]",
+  "source": "User: 这是一项会话引用测试。请记住发布代号是「青柠灯塔」，验收顺序为：单元测试、构建、人工界面检查。不要调用工具，只回复一句确认。\n\nAssistant: 已记住：发布代号「青柠灯塔」，验收顺序为单元测试、构建、人工界面检查。",
+  "target": "User: 只根据引用内容，回答发布代号和三步验收顺序。不要调用工具。\n\nAssistant: 发布代号是「青柠灯塔」；三步验收顺序是：单元测试 → 构建 → 人工界面检查。",
+  "checks": [
+    "real model answered from referenced Session",
+    "@ space picker",
+    "localized pending and sent labels",
+    "ordinary @ sentence preserved",
+    "newline closes menu",
+    "archive error retains draft and chip"
+  ],
+  "featureHead": "3b91afc51",
+  "finalUiChecks": [
+    "picker and composer share left edge and 800px width",
+    "inline reference chips without drawer",
+    "multiple chips in 860px native window",
+    "removed second chip before sending",
+    "real model answered a normal follow-up from first reference",
+    "archive failure kept draft and inline reference"
+  ]
+}

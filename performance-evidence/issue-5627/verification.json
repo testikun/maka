@@ -1,0 +1,33 @@
+{
+  "productCommit": "26086c9666c1fe1714e3f6dc6d7eae7296a574ab",
+  "correctness": {
+    "passed": 9148,
+    "skipped": 26,
+    "failed": 0,
+    "suites": 591,
+    "postAblationPassed": 77,
+    "browserScenariosPassed": 7
+  },
+  "ablation": [
+    {
+      "module": "apps/desktop/dist/preload/transcript-contract.js",
+      "mutationRejected": true,
+      "restoredSha256": "67eeca618796c851a81a3d518dd57d3faf77086913a80d2ec6ecaded3dfbf2c6"
+    },
+    {
+      "module": "packages/ui/dist/chat-view.js",
+      "mutationRejected": true,
+      "restoredSha256": "7b31f90c7fca47c70a940fa070442ddb9fa7b834c6a543ad26d1e0a5206c20bb"
+    },
+    {
+      "method": "listShellRunUpdates",
+      "mutationRejected": true,
+      "restored": true
+    },
+    {
+      "method": "getShellRunUpdate",
+      "mutationRejected": true,
+      "restored": true
+    }
+  ]
+}

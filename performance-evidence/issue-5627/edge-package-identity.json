@@ -1,0 +1,21 @@
+{
+  "productCommit": "5017c7534780f21fef65ab13a93c92c95ce16a3e",
+  "matches": [
+    {
+      "file": "node_modules/@maka/runtime/dist/session-manager.js",
+      "sha256": "b62d57b2df9aa347d4011dfdd3afd98f2f635b1a51fc61540cd1ad376d22116b"
+    },
+    {
+      "file": "dist/main/runtime-host-session-observer.js",
+      "sha256": "b09af13ebf089f51dce91d684d704d367aeb93a92acd1c22e7a45828930288b8"
+    },
+    {
+      "file": "dist/main/desktop-transcript-replica.js",
+      "sha256": "84cba4f9388c38da204595b70022cf777130b94cf575a3ade116f5fbbbd3fc73"
+    },
+    {
+      "file": "dist/preload/transcript-contract.js",
+      "sha256": "67eeca618796c851a81a3d518dd57d3faf77086913a80d2ec6ecaded3dfbf2c6"
+    }
+  ]
+}

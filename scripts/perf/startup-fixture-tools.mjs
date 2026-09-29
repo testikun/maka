@@ -43,7 +43,7 @@ import { normalizeWebSearchQuery, WEB_SEARCH_QUERY_MAX_CHARS } from '@maka/core/
 import { bashToolResultToModelOutput } from '../../packages/runtime/dist/bash-model-output.js';
 import { BASH_MAX_RETAINED_CHARS } from '../../packages/runtime/dist/shell-exec.js';
 import { createSyntheticToolImage } from './startup-fixture-media.mjs';
-import { readPage, READ_PAGE_MAX_CHARS } from '../../packages/runtime/dist/read-page.js';
+import { readPage, READ_PAGE_MAX_BYTES as READ_PAGE_MAX_CHARS } from '../../packages/runtime/dist/read-page.js';
 import {
   GREP_MAX_LINES,
   GREP_MAX_LINES_PER_FILE,

@@ -17,7 +17,9 @@
   under the License.
 -->
 
-# Reproducing the September 29 edge-cost measurements
+# Reproducing the September 29 extreme-scenario stress tests
+
+**These are synthetic extreme-scenario and scale-boundary stress tests with root-session controls. Their frequency and representativeness in real usage have not been established. Measured costs under these conditions do not establish everyday performance or optimization priority.** A 1,000-tool single Turn and a single 4 MiB assistant message are deliberately constructed extremes; the latter was not validated as a naturally obtainable model response. Branching and restoring an old reading position are ordinary operations exercised here at selected stress sizes. A Turn is one task round within a session, not the entire session.
 
 Product commit: `5017c7534780f21fef65ab13a93c92c95ce16a3e`. The evidence branch contains an older product tree: **do not build its HEAD as the measured product**. Use a separate checkout at the product commit and overlay `scripts/perf/` plus `scripts/fixture-env.mjs` from the evidence revision containing this document. Older reports remain pinned to their original evidence revision.
 

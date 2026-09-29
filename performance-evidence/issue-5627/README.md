@@ -122,6 +122,6 @@ The exact Windows 11 / WSL2 workload, original Node 26.2.0 environment, and appr
 
 Startup Host-ready/composer/input measurements from #5556 belong to a separate startup plan and are not presented as session-switch improvements here. Long branch histories, giant single Turns and far reading-position recovery retain their existing costs.
 
-September 29 follow-up on product commit `5017c7534`: [measured edge costs](EDGE-COSTS.zh-CN.md), [per-return numerical samples](edge-costs.json), and [reproduction instructions](EDGE-BENCHMARKS.md). These current-version controls are separate from the historical before/after comparisons above. They quantify giant Turns, branch resource work, far reading-position recovery, and branch-creation failures.
+September 29 follow-up on product commit `5017c7534`: [synthetic extreme-scenario stress tests](EDGE-COSTS.zh-CN.md), [per-return numerical samples](edge-costs.json), and [reproduction instructions](EDGE-BENCHMARKS.md). These current-version controls are separate from the historical before/after comparisons above. They quantify giant Turns, branch resource work, far reading-position recovery, and branch-creation failures under deliberately selected stress conditions. Real-world frequency and representativeness have not been established; these results alone do not determine optimization priority.
 
 Prepared and submitted with Codex assistance at the contributor's direction.

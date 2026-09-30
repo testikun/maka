@@ -1,0 +1,185 @@
+{
+  "productHead": "d86fe4f1e0dcba72e9bb8027f641b77e3cf9c714",
+  "base": "2a104db46c0acac7d5dd763da68096bdc3d0b60d",
+  "platform": "macOS arm64; Node 24",
+  "ci": {
+    "url": "https://github.com/apache/maka/actions/runs/36686861355",
+    "statusAtPublication": "in_progress"
+  },
+  "performanceRerun": false,
+  "validation": {
+    "build": {
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": [
+        "dist-renderer/assets/architectureDiagram-5GKGNRK7-BSWNTF2Z.js              148.90 kB │ gzip:  41.12 kB",
+        "dist-renderer/assets/useAnnounce-DmTlZ6Dj.js                               183.55 kB │ gzip:  52.51 kB",
+        "dist-renderer/assets/chunk-DU6HZSFF-D9bIM-h8.js                            235.84 kB │ gzip:  38.11 kB",
+        "dist-renderer/assets/module-page-CH4DTVPI.js                               245.76 kB │ gzip:  77.52 kB",
+        "dist-renderer/assets/katex-ZlcWpGUi.js                                     258.68 kB │ gzip:  77.43 kB",
+        "dist-renderer/assets/markdown-body-Cd4-_QsR.js                             422.04 kB │ gzip: 132.37 kB",
+        "dist-renderer/assets/cytoscape.esm-EK2DW5Qr.js                             434.69 kB │ gzip: 137.74 kB",
+        "dist-renderer/assets/settings-modal-DZsYVjce.js                            483.95 kB │ gzip: 143.47 kB",
+        "dist-renderer/assets/chunk-FOHPRMQF-DzxwRta7.js                            662.10 kB │ gzip: 143.16 kB",
+        "dist-renderer/assets/src-CNWuX5NB.js                                     1,527.74 kB │ gzip: 279.38 kB",
+        "dist-renderer/assets/index-DMC1db7e.js                                   1,887.94 kB │ gzip: 527.21 kB",
+        "",
+        "[plugin builtin:vite-reporter] ",
+        "(!) Some chunks are larger than 500 kB after minification. Consider:",
+        "- Using dynamic import() to code-split the application",
+        "- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting",
+        "- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.",
+        "✓ built in 1.09s",
+        "Renderer entry output check passed.",
+        "[third-party-notices] OK — renderer artifact contains the byte-identical public notice."
+      ]
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "summary": [
+        "",
+        "> @maka/eval@0.1.0 typecheck",
+        "> tsc -p tsconfig.json --noEmit",
+        "",
+        "",
+        "> @maka/computer-use@0.1.0 typecheck",
+        "> tsc -p tsconfig.json --noEmit",
+        "",
+        "",
+        "> maka-agent@0.2.0 typecheck",
+        "> tsc -p tsconfig.json --noEmit",
+        "",
+        "",
+        "> @maka/ui@0.1.0 typecheck",
+        "> tsc -p tsconfig.json --noEmit",
+        "",
+        "",
+        "> @maka/desktop@0.2.0 typecheck",
+        "> tsc -p tsconfig.preload.json --noEmit && tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit && tsc -p tsconfig.storybook.json --noEmit",
+        ""
+      ]
+    },
+    "desktop": {
+      "command": "npm --workspace @maka/desktop run test:dist",
+      "exitCode": 0,
+      "summary": [
+        "ℹ tests 3099",
+        "ℹ suites 200",
+        "ℹ pass 3099",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 54241.709916"
+      ]
+    },
+    "ui": {
+      "command": "npm --workspace @maka/ui run test:dist",
+      "exitCode": 0,
+      "summary": [
+        "ℹ tests 698",
+        "ℹ suites 42",
+        "ℹ pass 698",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 29128.858125"
+      ]
+    },
+    "focused": {
+      "command": "node --test --test-force-exit <three Desktop suites and one UI suite>",
+      "exitCode": 0,
+      "summary": [
+        "ℹ tests 97",
+        "ℹ suites 0",
+        "ℹ pass 97",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 2127.459417"
+      ]
+    },
+    "architecture": {
+      "command": "npm run check:renderer-architecture -- --base d6876d708 --strict-base",
+      "exitCode": 0,
+      "summary": [
+        "ℹ tests 121",
+        "ℹ suites 4",
+        "ℹ pass 121",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 6654.871792"
+      ]
+    },
+    "electron": {
+      "command": "cd apps/desktop && npx playwright test --config e2e/playwright.config.ts e2e/partial-history-notice.spec.ts --reporter=line",
+      "exitCode": 0,
+      "summary": [
+        "",
+        "Running 1 test using 1 worker",
+        "",
+        "(node:57206) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+        "(Use `node --trace-warnings ...` to show where the warning was created)",
+        "",
+        "",
+        "[1/1] e2e/partial-history-notice.spec.ts:61:1 › a transcript over the history budget loads earlier Turns on upward reading",
+        "  1 passed (6.4s)"
+      ]
+    }
+  },
+  "ablation": [
+    {
+      "name": "tail-gap",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ a seek catches concurrent tail growth only within its 4000-byte answer budget (162.419ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 393.311375\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/transcript-window.test.js:207:5\n✖ a seek catches concurrent tail growth only within its 4000-byte answer budget (162.419ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/transcript-window.test.js:226:16)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: true,\n    expected: false,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "gap-budget",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ a seek catches concurrent tail growth only within its 600-byte answer budget (163.804167ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 383.801125\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/transcript-window.test.js:207:5\n✖ a seek catches concurrent tail growth only within its 600-byte answer budget (163.804167ms)\n  AssertionError [ERR_ASSERTION]: a full answer must not chase an advancing tail\n  \n  false !== true\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/transcript-window.test.js:221:20)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: false,\n    expected: true,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "restore-bounds",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ reconnecting a parked window keeps its bounds despite concurrent tail growth (191.701417ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 418.708292\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/transcript-window.test.js:236:1\n✖ reconnecting a parked window keeps its bounds despite concurrent tail growth (191.701417ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  ... Skipped lines\n  \n    [\n      {\n        id: 'user-t0',\n        text: 'Question t0',\n        ts: 1767323045000,\n  ...\n      },\n  +   {\n  +     id: 'user-t2',\n  +     text: 'Question t2',\n  +     ts: 1767323045006,\n  +     turnId: 't2',\n  +     type: 'user'\n  +   },\n  +   {\n  +     id: 'answer-t2',\n  +     modelId: 'fake-model',\n  +     text: 'Answer t2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  +     ts: 1767323045007,\n  +     turnId: 't2',\n  +     type: 'assistant'\n  +   },\n  +   {\n  +     id: 'done-t2',\n  +     status: 'completed',\n  +     ts: 1767323045008,\n  +     turnId: 't2',\n  +     type: 'turn_state'\n  +   },\n  +   {\n  +     id: 'user-t3',\n  +     text: 'Question t3',\n  +     ts: 1767323045009,\n  +     turnId: 't3',\n  +     type: 'user'\n  +   },\n  +   {\n  +     id: 'answer-t3',\n  +     modelId: 'fake-model',\n  +     text: 'Answer t3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  +     ts: 1767323045010,\n  +     turnId: 't3',\n  +     type: 'assistant'\n  +   },\n  +   {\n  +     id: 'done-t3',\n  +     status: 'completed',\n  +     ts: 1767323045011,\n  +     turnId: 't3',\n  +     type: 'turn_state'\n  +   },\n  +   {\n  +     id: 'user-t4',\n  +     text: 'Question t4',\n  +     ts: 1767323045012,\n  +     turnId: 't4',\n  +     type: 'user'\n  +   },\n  +   {\n  +     id: 'answer-t4',\n  +     modelId: 'fake-model',\n  +     text: 'Answer t4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  +     ts: 1767323045013,\n  +     turnId: 't4',\n  +     type: 'assistant'\n  +   },\n  +   {\n  +     id: 'done-t4',\n  +     status: 'completed',\n  +     ts: 1767323045014,\n  +     turnId: 't4',\n  +     type: 'turn_state'\n  +   },\n  +   {\n  +     id: 'user-t5',\n  +     text: 'Question t5',\n  +     ts: 1767323045015,\n  +     turnId: 't5',\n  +     type: 'user'\n  +   },\n  +   {\n  +     id: 'answer-t5',\n  +     modelId: 'fake-model',\n  +     text: 'Answer t5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  +     ts: 1767323045016,\n  +     turnId: 't5',\n  +     type: 'assistant'\n  +   },\n  +   {\n  +     id: 'done-t5',\n  +     status: 'completed',\n  +     ts: 1767323045017,\n  +     turnId: 't5',\n  +     type: 'turn_state'\n  +   },\n  +   {\n  +     id: 'user-t6',\n  +     text: 'Question t6',\n  +     ts: 1767323045018,\n  +     turnId: 't6',\n  +     type: 'user'\n  +   },\n  +   {\n  +     id: 'answer-t6',\n  +     modelId: 'fake-model',\n  +     text: 'Answer t6 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  +     ts: 1767323045019,\n  +     turnId: 't6',\n  +     type: 'assistant'\n  +   },\n  +   {\n  +     id: 'done-t6',\n  +     status: 'completed',\n  +     ts: 1767323045020,\n  +     turnId: 't6',\n  +     type: 'turn_state'\n  +   }\n    ]\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/transcript-window.test.js:250:12)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: [ { type: 'user', id: 'user-t0', turnId: 't0', ts: 1767323045000, text: 'Question t0' }, { type: 'assistant', id: 'answer-t0', turnId: 't0', ts: 1767323045001, text: 'Answer t0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t0', turnId: 't0', ts: 1767323045002, status: 'completed' }, { type: 'user', id: 'user-t1', turnId: 't1', ts: 1767323045003, text: 'Question t1' }, { type: 'assistant', id: 'answer-t1', turnId: 't1', ts: 1767323045004, text: 'Answer t1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t1', turnId: 't1', ts: 1767323045005, status: 'completed' }, { type: 'user', id: 'user-t2', turnId: 't2', ts: 1767323045006, text: 'Question t2' }, { type: 'assistant', id: 'answer-t2', turnId: 't2', ts: 1767323045007, text: 'Answer t2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t2', turnId: 't2', ts: 1767323045008, status: 'completed' }, { type: 'user', id: 'user-t3', turnId: 't3', ts: 1767323045009, text: 'Question t3' }, { type: 'assistant', id: 'answer-t3', turnId: 't3', ts: 1767323045010, text: 'Answer t3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t3', turnId: 't3', ts: 1767323045011, status: 'completed' }, { type: 'user', id: 'user-t4', turnId: 't4', ts: 1767323045012, text: 'Question t4' }, { type: 'assistant', id: 'answer-t4', turnId: 't4', ts: 1767323045013, text: 'Answer t4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t4', turnId: 't4', ts: 1767323045014, status: 'completed' }, { type: 'user', id: 'user-t5', turnId: 't5', ts: 1767323045015, text: 'Question t5' }, { type: 'assistant', id: 'answer-t5', turnId: 't5', ts: 1767323045016, text: 'Answer t5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t5', turnId: 't5', ts: 1767323045017, status: 'completed' }, { type: 'user', id: 'user-t6', turnId: 't6', ts: 1767323045018, text: 'Question t6' }, { type: 'assistant', id: 'answer-t6', turnId: 't6', ts: 1767323045019, text: 'Answer t6 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t6', turnId: 't6', ts: 1767323045020, status: 'completed' } ],\n    expected: [ { type: 'user', id: 'user-t0', turnId: 't0', ts: 1767323045000, text: 'Question t0' }, { type: 'assistant', id: 'answer-t0', turnId: 't0', ts: 1767323045001, text: 'Answer t0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t0', turnId: 't0', ts: 1767323045002, status: 'completed' }, { type: 'user', id: 'user-t1', turnId: 't1', ts: 1767323045003, text: 'Question t1' }, { type: 'assistant', id: 'answer-t1', turnId: 't1', ts: 1767323045004, text: 'Answer t1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', modelId: 'fake-model' }, { type: 'turn_state', id: 'done-t1', turnId: 't1', ts: 1767323045005, status: 'completed' } ],\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "cancel-confirmation",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ navigation cancels a background durability check without an error while opening (4.030292ms)\n✖ navigation cancels a background durability check without an error while waiting (52.241708ms)\nℹ tests 2\nℹ suites 0\nℹ pass 0\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 236.891708\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1222:5\n✖ navigation cancels a background durability check without an error while opening (4.030292ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n    {\n  +   error: Error: cancelled\n  +       at signal.addEventListener.once (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1232:101)\n  +       at [nodejs.internal.kHybridDispatch] (node:internal/event_target:856:20)\n  +       at AbortSignal.dispatchEvent (node:internal/event_target:789:26)\n  +       at runAbort (node:internal/abort_controller:554:10)\n  +       at abortSignal (node:internal/abort_controller:518:3)\n  +       at AbortController.abort (node:internal/abort_controller:573:5)\n  +       at AbortSignal.cancel (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:246:43)\n  +       at [nodejs.internal.kHybridDispatch] (node:internal/event_target:856:20)\n  +       at AbortSignal.dispatchEvent (node:internal/event_target:789:26)\n  +       at runAbort (node:internal/abort_controller:554:10)\n  -   value: false\n    }\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1248:20)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: {\n      error: Error: cancelled\n          at signal.addEventListener.once (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1232:101)\n          at [nodejs.internal.kHybridDispatch] (node:internal/event_target:856:20)\n          at AbortSignal.dispatchEvent (node:internal/event_target:789:26)\n          at runAbort (node:internal/abort_controller:554:10)\n          at abortSignal (node:internal/abort_controller:518:3)\n          at AbortController.abort (node:internal/abort_controller:573:5)\n          at AbortSignal.cancel (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:246:43)\n          at [nodejs.internal.kHybridDispatch] (node:internal/event_target:856:20)\n          at AbortSignal.dispatchEvent (node:internal/event_target:789:26)\n          at runAbort (node:internal/abort_controller:554:10)\n    },\n    expected: { value: false },\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n\ntest at apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1222:5\n✖ navigation cancels a background durability check without an error while waiting (52.241708ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n    {\n  +   error: Error: Desktop transcript read was superseded\n  +       at readDetached (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:261:23)\n  +       at async Object.waitForDurableMessage (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:283:29)\n  +       at async TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1248:30)\n  +       at async Test.run (node:internal/test_runner/test:1404:7)\n  +       at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)\n  -   value: false\n    }\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1248:20)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: {\n      error: Error: Desktop transcript read was superseded\n          at readDetached (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:261:23)\n          at async Object.waitForDurableMessage (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/renderer/platform/desktop/desktop-transcript-range-store.js:283:29)\n          at async TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1248:30)\n          at async Test.run (node:internal/test_runner/test:1404:7)\n          at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)\n    },\n    expected: { value: false },\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "initial-budget",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ forwards the candidate initial history budget to the Host page request (8.4745ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 223.160583\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/runtime-host-desktop-candidate.test.js:249:1\n✖ forwards the candidate initial history budget to the Host page request (8.4745ms)\n  AssertionError [ERR_ASSERTION]: the 1 MiB opening answer uses the Host page limit, not the 128 KiB default\n  + actual - expected\n  \n    [\n  +   131072\n  -   524288\n    ]\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/runtime-host-desktop-candidate.test.js:280:12)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: [ 131072 ],\n    expected: [ 524288 ],\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "resume-tail",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ Resume is offered only when the displayed window covers the session tail (36.189417ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 621.406042\n\n✖ failing tests:\n\ntest at packages/ui/dist/__tests__/chat-view-empty-compaction.test.js:210:1\n✖ Resume is offered only when the displayed window covers the session tail (36.189417ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/ui/dist/__tests__/chat-view-empty-compaction.test.js:225:16)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: true,\n    expected: false,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "completed-position",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ returning to latest preserves a positioned window that already reached the tail (169.518458ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 389.25975\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/transcript-window.test.js:256:1\n✖ returning to latest preserves a positioned window that already reached the tail (169.518458ms)\n  AssertionError [ERR_ASSERTION]: sending at the tail must not discard previously loaded history\n  + actual - expected\n  ... Skipped lines\n  \n    {\n      beginsAtTurnBoundary: true,\n      durableThrough: 263,\n  +   generation: 'ea905f9b-6733-4acb-818f-4cd1e5422b43',\n  -   generation: '68e49ebd-fed5-46fe-b60a-84d9d3809024',\n      hasNewer: false,\n  +   hasOlder: true,\n  -   hasOlder: false,\n      hostEpoch: 'host-1',\n      messages: [\n        {\n  -       id: 'user-t0',\n  -       text: 'Question t0',\n  -       ts: 1767323045000,\n  -       turnId: 't0',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t0',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045001,\n  -       turnId: 't0',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t0',\n  -       status: 'completed',\n  -       ts: 1767323045002,\n  -       turnId: 't0',\n  -       type: 'turn_state'\n  -     },\n  -     {\n  -       id: 'user-t1',\n  -       text: 'Question t1',\n  -       ts: 1767323045003,\n  -       turnId: 't1',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t1',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045004,\n  -       turnId: 't1',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t1',\n  -       status: 'completed',\n  -       ts: 1767323045005,\n  -       turnId: 't1',\n  -       type: 'turn_state'\n  -     },\n  -     {\n  -       id: 'user-t2',\n  -       text: 'Question t2',\n  -       ts: 1767323045006,\n  -       turnId: 't2',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t2',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045007,\n  -       turnId: 't2',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t2',\n  -       status: 'completed',\n  -       ts: 1767323045008,\n  -       turnId: 't2',\n  -       type: 'turn_state'\n  -     },\n  -     {\n  -       id: 'user-t3',\n  -       text: 'Question t3',\n  -       ts: 1767323045009,\n  -       turnId: 't3',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t3',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045010,\n  -       turnId: 't3',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t3',\n  -       status: 'completed',\n  -       ts: 1767323045011,\n  -       turnId: 't3',\n  -       type: 'turn_state'\n  -     },\n  -     {\n  -       id: 'user-t4',\n  -       text: 'Question t4',\n  -       ts: 1767323045012,\n  -       turnId: 't4',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t4',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045013,\n  -       turnId: 't4',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t4',\n  -       status: 'completed',\n  -       ts: 1767323045014,\n  -       turnId: 't4',\n  -       type: 'turn_state'\n  -     },\n  -     {\n  -       id: 'user-t5',\n  -       text: 'Question t5',\n  -       ts: 1767323045015,\n  -       turnId: 't5',\n  -       type: 'user'\n  -     },\n  -     {\n  -       id: 'answer-t5',\n  -       modelId: 'fake-model',\n  -       text: 'Answer t5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',\n  -       ts: 1767323045016,\n  -       turnId: 't5',\n  -       type: 'assistant'\n  -     },\n  -     {\n  -       id: 'done-t5',\n  -       status: 'completed',\n  -       ts: 1767323045017,\n  -       turnId: 't5',\n  -       type: 'turn_state'\n  -     },\n  -     {\n          id: 'user-t6',\n          text: 'Question t6',\n          ts: 1767323045018,\n          turnId: 't6',\n          type: 'user'\n  ...\n      ],\n  +   oldestSequence: 208,\n  -   oldestSequence: 16,\n      ready: true,\n      sessionId: '[\"host-1\",\"8906daf0-adf0-4dfe-9778-9a87035d7dc7\"]'\n    }\n  \n      at TestContext.<anonymous> (file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/__tests__/transcript-window.test.js:269:16)\n      at async Test.run (node:internal/test_runner/test:1404:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: { sessionId: '[\"host-1\",\"8906daf0-adf0-4dfe-9778-9a87035d7dc7\"]', generation: 'ea905f9b-6733-4acb-818f-4cd1e5422b43', hostEpoch: 'host-1', durableThrough: 263, oldestSequence: 208, hasOlder: true, hasNewer: false, beginsAtTurnBoundary: true, ready: true, messages: [ [Object], [Object], [Object], [Object], [Object], [Object] ] },\n    expected: {\n      sessionId: '[\"host-1\",\"8906daf0-adf0-4dfe-9778-9a87035d7dc7\"]',\n      generation: '68e49ebd-fed5-46fe-b60a-84d9d3809024',\n      hostEpoch: 'host-1',\n      durableThrough: 263,\n      oldestSequence: 16,\n      hasOlder: false,\n      hasNewer: false,\n      beginsAtTurnBoundary: true,\n      ready: true,\n      messages: [\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object],\n        [Object], [Object], [Object]\n      ]\n    },\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+    },
+    {
+      "name": "remove-positioning-guard",
+      "exitCode": 1,
+      "behaviorDetected": true,
+      "output": "✖ returning to latest cancels a pending seek even while the old view covers the tail (4004.738209ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 0\nℹ cancelled 1\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 4200.529709\n\n✖ failing tests:\n\ntest at apps/desktop/dist/main/__tests__/desktop-transcript-range-store.test.js:1187:1\n✖ returning to latest cancels a pending seek even while the old view covers the tail (4004.738209ms)\n  'test timed out after 4000ms'\n"
+    }
+  ]
+}

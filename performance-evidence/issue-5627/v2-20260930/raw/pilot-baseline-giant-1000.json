@@ -1,0 +1,4579 @@
+{
+  "schemaVersion": 1,
+  "label": "pilot-baseline-giant-1000",
+  "issue": 5627,
+  "startedAt": "2026-09-30T03:32:09.171Z",
+  "environment": {
+    "commit": "8d73d4e237609dd784b816181a8e4cc2061a7579;baseline;patch=a298af64906684bcfd494d26a61ae66285a0152d1289db59ad329014aca73443",
+    "platform": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M2 Pro",
+    "memoryBytes": 17179869184,
+    "node": "v24.20.0",
+    "electron": "43.4.1",
+    "executable": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/baseline/mac-arm64/Maka.app/Contents/MacOS/Maka",
+    "renderer": "packaged production build",
+    "host": "real isolated local Host using packaged production composition"
+  },
+  "fixture": {
+    "scenarioFingerprint": "ad15b2eac7da6373497f9321948498e2d909d4ea32f5ae9cc177b96efd17b683",
+    "sessions": 5,
+    "turns": 1104,
+    "tools": 12003,
+    "target": {
+      "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+      "name": "Fixture 0003 - 1 turns - 1000 tools",
+      "turns": 1,
+      "tools": 1000,
+      "payloadBytes": 4576672,
+      "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"37797ed6-80d2-4485-b0bb-19dc7fb8c357\"]"
+    },
+    "source": {
+      "sessionId": "deb3610e-22c9-42e1-be98-07a98adb60db",
+      "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"deb3610e-22c9-42e1-be98-07a98adb60db\"]",
+      "name": "Fixture 0001 - 2 turns - 2 tools",
+      "turnId": "synthetic-session-0001_t1_turn"
+    }
+  },
+  "method": {
+    "runsPerState": 5,
+    "sourceDwellMs": 500,
+    "observeMs": 1500,
+    "resourceWindow": "Entire target -> source -> target cycle plus fixed post-display observation; RSS sampled every 200 ms (sampled peak, not kernel high-water mark).",
+    "streamBytes": 6000,
+    "streamDescription": "A deterministic FakeBackend response emits one text delta about every 45 ms while the target is active.",
+    "milestones": "Renderer performance.now() from pointerdown to selected row, old transcript removal, first target turn, target anchor, and live bubble; stablePaintMs is anchor plus double RAF, not layout stability.",
+    "caveat": "Wall-clock samples run without CPU profiling. A --profile run is diagnostic and must not be mixed into timing medians."
+  },
+  "samples": {
+    "idle": [
+      {
+        "run": 1,
+        "active": false,
+        "clickRoundTripMs": 82,
+        "clickCompletedMs": 55,
+        "selectionVisibleMs": 2022.4,
+        "oldTranscriptGoneMs": 2022.4,
+        "firstTargetTurnVisibleMs": 2334.8,
+        "targetAnchorVisibleMs": 2334.8,
+        "readyVisibleMs": 2334.8,
+        "stablePaintMs": 2399.5,
+        "fadeCompletePaintMs": 2524.6,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 38.79999998211861,
+            "resolvedMs": 2022.6999023258686,
+            "batches": [
+              {
+                "at": 443.6000488102436,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 1,
+                "bytes": 130962,
+                "handledAt": 444.7999999821186
+              },
+              {
+                "at": 444.9000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 2,
+                "bytes": 145,
+                "handledAt": 444.9000976383686
+              },
+              {
+                "at": 561.4000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 3,
+                "bytes": 130950,
+                "handledAt": 562.7999999821186
+              },
+              {
+                "at": 562.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 4,
+                "bytes": 31994,
+                "handledAt": 563.1000488102436
+              },
+              {
+                "at": 675.9999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 5,
+                "bytes": 130950,
+                "handledAt": 677.1000488102436
+              },
+              {
+                "at": 677.1000488102436,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 6,
+                "bytes": 31994,
+                "handledAt": 677.4000976383686
+              },
+              {
+                "at": 778.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 7,
+                "bytes": 130950,
+                "handledAt": 779.9999511539936
+              },
+              {
+                "at": 779.9999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 8,
+                "bytes": 31994,
+                "handledAt": 780.1999023258686
+              },
+              {
+                "at": 882.2999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 9,
+                "bytes": 130950,
+                "handledAt": 883.6000488102436
+              },
+              {
+                "at": 883.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 10,
+                "bytes": 31994,
+                "handledAt": 883.9999511539936
+              },
+              {
+                "at": 994.9999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 11,
+                "bytes": 130950,
+                "handledAt": 996.1000488102436
+              },
+              {
+                "at": 996.1999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 12,
+                "bytes": 31994,
+                "handledAt": 996.4000976383686
+              },
+              {
+                "at": 1098.6999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 13,
+                "bytes": 130950,
+                "handledAt": 1099.7999999821186
+              },
+              {
+                "at": 1099.9000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 14,
+                "bytes": 31994,
+                "handledAt": 1100.1000488102436
+              },
+              {
+                "at": 1201.1999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 15,
+                "bytes": 130950,
+                "handledAt": 1202.4000976383686
+              },
+              {
+                "at": 1202.4000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 16,
+                "bytes": 31994,
+                "handledAt": 1202.6000488102436
+              },
+              {
+                "at": 1299.1000488102436,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 17,
+                "bytes": 130950,
+                "handledAt": 1300.2999999821186
+              },
+              {
+                "at": 1300.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 18,
+                "bytes": 31994,
+                "handledAt": 1300.9000976383686
+              },
+              {
+                "at": 1400.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 19,
+                "bytes": 130950,
+                "handledAt": 1401.9000976383686
+              },
+              {
+                "at": 1401.9000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 20,
+                "bytes": 31994,
+                "handledAt": 1402.1999023258686
+              },
+              {
+                "at": 1500.4999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 21,
+                "bytes": 130781,
+                "handledAt": 1501.4000976383686
+              },
+              {
+                "at": 1501.4999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 22,
+                "bytes": 31994,
+                "handledAt": 1501.6999023258686
+              },
+              {
+                "at": 1597.1999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 23,
+                "bytes": 130589,
+                "handledAt": 1598.1999023258686
+              },
+              {
+                "at": 1598.2999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 24,
+                "bytes": 31907,
+                "handledAt": 1598.4999511539936
+              },
+              {
+                "at": 1694.6000488102436,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 25,
+                "bytes": 130589,
+                "handledAt": 1695.6999023258686
+              },
+              {
+                "at": 1695.6999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 26,
+                "bytes": 31907,
+                "handledAt": 1695.9000976383686
+              },
+              {
+                "at": 1795.6999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 27,
+                "bytes": 130589,
+                "handledAt": 1796.6999023258686
+              },
+              {
+                "at": 1796.7999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 28,
+                "bytes": 31907,
+                "handledAt": 1796.9999511539936
+              },
+              {
+                "at": 1894.2999999821186,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 29,
+                "bytes": 130589,
+                "handledAt": 1895.4999511539936
+              },
+              {
+                "at": 1895.4999511539936,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 30,
+                "bytes": 31907,
+                "handledAt": 1895.7999999821186
+              },
+              {
+                "at": 1990.6999023258686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 31,
+                "bytes": 130195,
+                "handledAt": 1992.1000488102436
+              },
+              {
+                "at": 1992.4000976383686,
+                "ready": false,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 32,
+                "bytes": 3978,
+                "handledAt": 1992.4000976383686
+              },
+              {
+                "at": 1992.6999023258686,
+                "ready": true,
+                "generation": "f59e0225-8ed2-432c-ac12-7b608cd7f543",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 33,
+                "bytes": 0,
+                "handledAt": 1993.1000488102436
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 38.8,
+          "firstBatchMs": 443.6,
+          "readyBatchMs": 1992.7,
+          "readyBatchHandledMs": 1993.1,
+          "openResolvedMs": 2022.7,
+          "batches": 33,
+          "bytes": 2544535,
+          "handlerMs": 22,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [
+          {
+            "startMs": 2022.8,
+            "durationMs": 333
+          }
+        ],
+        "resources": {
+          "before": {
+            "at": 1790739135179,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.468058
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 2.569018
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 0.6096
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.052858
+                }
+              ]
+            },
+            "host": "0:03.60 285984",
+            "main": "0:01.47 308880"
+          },
+          "after": {
+            "at": 1790739137770,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.689779
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 3.370029
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 0.698766
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.052858
+                }
+              ]
+            },
+            "host": "0:05.68 292656",
+            "main": "0:01.69 305920"
+          },
+          "cycleBefore": {
+            "at": 1790739134426,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.446317
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 2.301551
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 0.55256
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.05276
+                }
+              ]
+            },
+            "host": "0:03.55 302848",
+            "main": "0:01.45 310000"
+          },
+          "observedAfter": {
+            "at": 1790739142271,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.741318
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 7.013258
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 0.943112
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:05.69 148480",
+            "main": "0:01.74 227904"
+          },
+          "memorySamples": [
+            {
+              "at": 1790739134641,
+              "rows": "11960 310816\n11964 394976\n11981 302224"
+            },
+            {
+              "at": 1790739134841,
+              "rows": "11960 310128\n11964 393152\n11981 290576"
+            },
+            {
+              "at": 1790739135040,
+              "rows": "11960 309296\n11964 393056\n11981 289264"
+            },
+            {
+              "at": 1790739135244,
+              "rows": "11960 308880\n11964 392592\n11981 285984"
+            },
+            {
+              "at": 1790739135441,
+              "rows": "11960 307392\n11964 398032\n11981 286320"
+            },
+            {
+              "at": 1790739135642,
+              "rows": "11960 306256\n11964 397856\n11981 289920"
+            },
+            {
+              "at": 1790739135841,
+              "rows": "11960 303232\n11964 396496\n11981 276800"
+            },
+            {
+              "at": 1790739136042,
+              "rows": "11960 305600\n11964 397760\n11981 281248"
+            },
+            {
+              "at": 1790739136244,
+              "rows": "11960 309120\n11964 399040\n11981 281792"
+            },
+            {
+              "at": 1790739136445,
+              "rows": "11960 310752\n11964 399696\n11981 283360"
+            },
+            {
+              "at": 1790739136646,
+              "rows": "11960 311520\n11964 401216\n11981 285008"
+            },
+            {
+              "at": 1790739136846,
+              "rows": "11960 313152\n11964 403728\n11981 287392"
+            },
+            {
+              "at": 1790739137046,
+              "rows": "11960 306848\n11964 405632\n11981 290752"
+            },
+            {
+              "at": 1790739137247,
+              "rows": "11960 306848\n11964 407728\n11981 293616"
+            },
+            {
+              "at": 1790739137449,
+              "rows": "11960 306848\n11964 460368\n11981 294144"
+            },
+            {
+              "at": 1790739137660,
+              "rows": "11960 305904\n11964 491344\n11981 292672"
+            },
+            {
+              "at": 1790739137850,
+              "rows": "11960 304224\n11964 493728\n11981 292384"
+            },
+            {
+              "at": 1790739138050,
+              "rows": "11960 264560\n11964 500128\n11981 291456"
+            },
+            {
+              "at": 1790739138252,
+              "rows": "11960 249552\n11964 538080\n11981 287680"
+            },
+            {
+              "at": 1790739138452,
+              "rows": "11960 250352\n11964 570928\n11981 286912"
+            },
+            {
+              "at": 1790739138655,
+              "rows": "11960 249728\n11964 594992\n11981 285504"
+            },
+            {
+              "at": 1790739138860,
+              "rows": "11960 244864\n11964 617264\n11981 283120"
+            },
+            {
+              "at": 1790739139059,
+              "rows": "11960 244864\n11964 640032\n11981 283120"
+            },
+            {
+              "at": 1790739139259,
+              "rows": "11960 241648\n11964 652256\n11981 276064"
+            },
+            {
+              "at": 1790739139461,
+              "rows": "11960 241248\n11964 671328\n11981 267776"
+            },
+            {
+              "at": 1790739139663,
+              "rows": "11960 240064\n11964 702368\n11981 193344"
+            },
+            {
+              "at": 1790739139862,
+              "rows": "11960 240240\n11964 714928\n11981 190816"
+            },
+            {
+              "at": 1790739140063,
+              "rows": "11960 240832\n11964 718496\n11981 163120"
+            },
+            {
+              "at": 1790739140265,
+              "rows": "11960 243216\n11964 722800\n11981 160080"
+            },
+            {
+              "at": 1790739140472,
+              "rows": "11960 243040\n11964 719952\n11981 153488"
+            },
+            {
+              "at": 1790739140667,
+              "rows": "11960 241728\n11964 714352\n11981 149184"
+            },
+            {
+              "at": 1790739140868,
+              "rows": "11960 241952\n11964 715600\n11981 149184"
+            },
+            {
+              "at": 1790739141071,
+              "rows": "11960 241872\n11964 709024\n11981 148704"
+            },
+            {
+              "at": 1790739141271,
+              "rows": "11960 242016\n11964 703712\n11981 150256"
+            },
+            {
+              "at": 1790739141478,
+              "rows": "11960 242000\n11964 703712\n11981 150256"
+            },
+            {
+              "at": 1790739141681,
+              "rows": "11960 242000\n11964 703536\n11981 150256"
+            },
+            {
+              "at": 1790739141879,
+              "rows": "11960 237840\n11964 703328\n11981 149728"
+            },
+            {
+              "at": 1790739142078,
+              "rows": "11960 236224\n11964 702016\n11981 149680"
+            },
+            {
+              "at": 1790739142278,
+              "rows": "11960 227904\n11964 699632\n11981 148480"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 131072,
+            "ms": 198.37816699999985,
+            "rows": 207,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 115.26441599999998,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 111.4521249999998,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.31725000000006,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.98191700000007,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 109.75274999999965,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.25116700000035,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.10279199999968,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 95.5457920000008,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 98.7314579999993,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.21720800000003,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 94.49695799999972,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 95.24770799999988,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 98.59154200000012,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 96.3642920000002,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 93.96366699999999,
+            "rows": 212,
+            "hasNext": false
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": 267.015625,
+          "loadedTurns": 1
+        },
+        "expansion": [
+          {
+            "ms": 789.4000000059605,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739137781,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.690938
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 3.371177
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 0.699521
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.052858
+                    }
+                  ]
+                },
+                "host": "0:05.68 292656",
+                "main": "0:01.69 305936"
+              },
+              "after": {
+                "at": 1790739138643,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.699847
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 4.229147
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 0.740499
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.052858
+                    }
+                  ]
+                },
+                "host": "0:05.68 285504",
+                "main": "0:01.70 249728"
+              }
+            }
+          },
+          {
+            "ms": 542.9000000059605,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739139018,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.704507
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 4.584457
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 0.765962
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.052858
+                    }
+                  ]
+                },
+                "host": "0:05.68 283120",
+                "main": "0:01.70 244864"
+              },
+              "after": {
+                "at": 1790739140115,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.718826
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 5.983775
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 0.829968
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.052858
+                    }
+                  ]
+                },
+                "host": "0:05.68 160080",
+                "main": "0:01.72 240512"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "run": 2,
+        "active": false,
+        "clickRoundTripMs": 75.2,
+        "clickCompletedMs": 57.1,
+        "selectionVisibleMs": 2163,
+        "oldTranscriptGoneMs": 2163,
+        "firstTargetTurnVisibleMs": 2542.1,
+        "targetAnchorVisibleMs": 2542.1,
+        "readyVisibleMs": 2542.1,
+        "stablePaintMs": 2630.3,
+        "fadeCompletePaintMs": 2753.2,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 41.299951165914536,
+            "resolvedMs": 2163.4999023377895,
+            "batches": [
+              {
+                "at": 531.0999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 1,
+                "bytes": 130962,
+                "handledAt": 532.2999511659145
+              },
+              {
+                "at": 532.4000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 2,
+                "bytes": 145,
+                "handledAt": 532.4000488221645
+              },
+              {
+                "at": 644.7000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 3,
+                "bytes": 130950,
+                "handledAt": 645.7999511659145
+              },
+              {
+                "at": 646.2000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 4,
+                "bytes": 31994,
+                "handledAt": 646.4000488221645
+              },
+              {
+                "at": 760.2999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 5,
+                "bytes": 130950,
+                "handledAt": 761.4000488221645
+              },
+              {
+                "at": 761.5999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 6,
+                "bytes": 31994,
+                "handledAt": 761.9999023377895
+              },
+              {
+                "at": 863.9000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 7,
+                "bytes": 130950,
+                "handledAt": 864.9999023377895
+              },
+              {
+                "at": 864.9999023377895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 8,
+                "bytes": 31994,
+                "handledAt": 865.2000976502895
+              },
+              {
+                "at": 970.7000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 9,
+                "bytes": 130950,
+                "handledAt": 971.9000488221645
+              },
+              {
+                "at": 972.0999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 10,
+                "bytes": 31994,
+                "handledAt": 972.2999511659145
+              },
+              {
+                "at": 1079.5999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 11,
+                "bytes": 130950,
+                "handledAt": 1080.7999511659145
+              },
+              {
+                "at": 1080.9000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 12,
+                "bytes": 31994,
+                "handledAt": 1081.0999999940395
+              },
+              {
+                "at": 1184.2000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 13,
+                "bytes": 130950,
+                "handledAt": 1185.4000488221645
+              },
+              {
+                "at": 1185.4999023377895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 14,
+                "bytes": 31994,
+                "handledAt": 1185.7000976502895
+              },
+              {
+                "at": 1289.9999023377895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 15,
+                "bytes": 130950,
+                "handledAt": 1291.0999999940395
+              },
+              {
+                "at": 1291.2000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 16,
+                "bytes": 31994,
+                "handledAt": 1291.4999023377895
+              },
+              {
+                "at": 1393.4000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 17,
+                "bytes": 130950,
+                "handledAt": 1394.4000488221645
+              },
+              {
+                "at": 1394.4999023377895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 18,
+                "bytes": 31994,
+                "handledAt": 1394.7999511659145
+              },
+              {
+                "at": 1490.7999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 19,
+                "bytes": 130950,
+                "handledAt": 1491.7999511659145
+              },
+              {
+                "at": 1491.7999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 20,
+                "bytes": 31994,
+                "handledAt": 1491.9999023377895
+              },
+              {
+                "at": 1596.5999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 21,
+                "bytes": 130781,
+                "handledAt": 1597.5999999940395
+              },
+              {
+                "at": 1597.5999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 22,
+                "bytes": 31994,
+                "handledAt": 1597.9000488221645
+              },
+              {
+                "at": 1695.7000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 23,
+                "bytes": 130589,
+                "handledAt": 1696.7000976502895
+              },
+              {
+                "at": 1696.9000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 24,
+                "bytes": 31907,
+                "handledAt": 1696.9999023377895
+              },
+              {
+                "at": 1807.2000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 25,
+                "bytes": 130589,
+                "handledAt": 1808.2999511659145
+              },
+              {
+                "at": 1808.2999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 26,
+                "bytes": 31907,
+                "handledAt": 1808.5999999940395
+              },
+              {
+                "at": 1915.7999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 27,
+                "bytes": 130589,
+                "handledAt": 1916.9000488221645
+              },
+              {
+                "at": 1916.9999023377895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 28,
+                "bytes": 31907,
+                "handledAt": 1917.2999511659145
+              },
+              {
+                "at": 2015.0999999940395,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 29,
+                "bytes": 130589,
+                "handledAt": 2016.0999999940395
+              },
+              {
+                "at": 2016.2999511659145,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 30,
+                "bytes": 31907,
+                "handledAt": 2016.4999023377895
+              },
+              {
+                "at": 2117.4000488221645,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 31,
+                "bytes": 130195,
+                "handledAt": 2119.0999999940395
+              },
+              {
+                "at": 2119.2000976502895,
+                "ready": false,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 32,
+                "bytes": 3978,
+                "handledAt": 2119.2999511659145
+              },
+              {
+                "at": 2119.4999023377895,
+                "ready": true,
+                "generation": "e4a35fb7-98ce-4eaa-a4f7-9d2f2e28ff2a",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 33,
+                "bytes": 0,
+                "handledAt": 2120.2000976502895
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 41.3,
+          "firstBatchMs": 531.1,
+          "readyBatchMs": 2119.5,
+          "readyBatchHandledMs": 2120.2,
+          "openResolvedMs": 2163.5,
+          "batches": 33,
+          "bytes": 2544535,
+          "handlerMs": 22.3,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [
+          {
+            "startMs": 2163.5,
+            "durationMs": 403
+          }
+        ],
+        "resources": {
+          "before": {
+            "at": 1790739143526,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.763088
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 7.81259
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.015511
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:05.73 170384",
+            "main": "0:01.76 229184"
+          },
+          "after": {
+            "at": 1790739146328,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.934436
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 8.885926
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.122806
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:07.97 252480",
+            "main": "0:01.93 204496"
+          },
+          "cycleBefore": {
+            "at": 1790739142281,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.741787
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 7.013258
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 0.943112
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:05.69 148480",
+            "main": "0:01.74 227072"
+          },
+          "observedAfter": {
+            "at": 1790739150619,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.975046
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 12.362437
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.346327
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:07.98 120512",
+            "main": "0:01.98 187488"
+          },
+          "memorySamples": [
+            {
+              "at": 1790739142496,
+              "rows": "11960 228576\n11964 706256\n11981 157968"
+            },
+            {
+              "at": 1790739142698,
+              "rows": "11960 228576\n11964 707104\n11981 157968"
+            },
+            {
+              "at": 1790739142903,
+              "rows": "11960 228512\n11964 708848\n11981 156560"
+            },
+            {
+              "at": 1790739143100,
+              "rows": "11960 229296\n11964 710656\n11981 171792"
+            },
+            {
+              "at": 1790739143301,
+              "rows": "11960 229264\n11964 710800\n11981 171776"
+            },
+            {
+              "at": 1790739143504,
+              "rows": "11960 229184\n11964 710512\n11981 170384"
+            },
+            {
+              "at": 1790739143705,
+              "rows": "11960 227984\n11964 713296\n11981 206752"
+            },
+            {
+              "at": 1790739143903,
+              "rows": "11960 223456\n11964 715920\n11981 252576"
+            },
+            {
+              "at": 1790739144103,
+              "rows": "11960 225840\n11964 716064\n11981 255440"
+            },
+            {
+              "at": 1790739144305,
+              "rows": "11960 229840\n11964 716912\n11981 256720"
+            },
+            {
+              "at": 1790739144506,
+              "rows": "11960 236256\n11964 718144\n11981 258416"
+            },
+            {
+              "at": 1790739144707,
+              "rows": "11960 241184\n11964 719520\n11981 258896"
+            },
+            {
+              "at": 1790739144907,
+              "rows": "11960 246640\n11964 720608\n11981 260624"
+            },
+            {
+              "at": 1790739145107,
+              "rows": "11960 252640\n11964 720960\n11981 261744"
+            },
+            {
+              "at": 1790739145309,
+              "rows": "11960 256192\n11964 719200\n11981 255904"
+            },
+            {
+              "at": 1790739145509,
+              "rows": "11960 256208\n11964 719760\n11981 259056"
+            },
+            {
+              "at": 1790739145722,
+              "rows": "11960 257376\n11964 643696\n11981 262048"
+            },
+            {
+              "at": 1790739145911,
+              "rows": "11960 251136\n11964 711840\n11981 262400"
+            },
+            {
+              "at": 1790739146113,
+              "rows": "11960 205968\n11964 681792\n11981 252560"
+            },
+            {
+              "at": 1790739146313,
+              "rows": "11960 204464\n11964 673600\n11981 252480"
+            },
+            {
+              "at": 1790739146513,
+              "rows": "11960 205168\n11964 676480\n11981 252384"
+            },
+            {
+              "at": 1790739146713,
+              "rows": "11960 206432\n11964 676992\n11981 252336"
+            },
+            {
+              "at": 1790739146913,
+              "rows": "11960 207056\n11964 674224\n11981 252320"
+            },
+            {
+              "at": 1790739147114,
+              "rows": "11960 206912\n11964 679648\n11981 252320"
+            },
+            {
+              "at": 1790739147314,
+              "rows": "11960 207360\n11964 682496\n11981 252400"
+            },
+            {
+              "at": 1790739147517,
+              "rows": "11960 207360\n11964 682592\n11981 252400"
+            },
+            {
+              "at": 1790739147716,
+              "rows": "11960 207248\n11964 680608\n11981 249968"
+            },
+            {
+              "at": 1790739147915,
+              "rows": "11960 207248\n11964 682192\n11981 249968"
+            },
+            {
+              "at": 1790739148118,
+              "rows": "11960 207264\n11964 682112\n11981 249824"
+            },
+            {
+              "at": 1790739148320,
+              "rows": "11960 205920\n11964 683072\n11981 240416"
+            },
+            {
+              "at": 1790739148519,
+              "rows": "11960 205168\n11964 678560\n11981 225616"
+            },
+            {
+              "at": 1790739148721,
+              "rows": "11960 205024\n11964 679296\n11981 185696"
+            },
+            {
+              "at": 1790739148920,
+              "rows": "11960 202448\n11964 680272\n11981 128816"
+            },
+            {
+              "at": 1790739149122,
+              "rows": "11960 201920\n11964 682560\n11981 128112"
+            },
+            {
+              "at": 1790739149320,
+              "rows": "11960 192064\n11964 683824\n11981 122832"
+            },
+            {
+              "at": 1790739149520,
+              "rows": "11960 192176\n11964 686832\n11981 122832"
+            },
+            {
+              "at": 1790739149725,
+              "rows": "11960 190576\n11964 685872\n11981 121296"
+            },
+            {
+              "at": 1790739149926,
+              "rows": "11960 187568\n11964 685824\n11981 120704"
+            },
+            {
+              "at": 1790739150127,
+              "rows": "11960 187568\n11964 685824\n11981 120640"
+            },
+            {
+              "at": 1790739150335,
+              "rows": "11960 187568\n11964 685824\n11981 120592"
+            },
+            {
+              "at": 1790739150536,
+              "rows": "11960 187568\n11964 685824\n11981 120592"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 131072,
+            "ms": 208.86987500000032,
+            "rows": 207,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 111.04937499999869,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 112.8232079999998,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.9984170000007,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 104.42299999999886,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 106.17733399999997,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 102.08891700000095,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 103.29683300000033,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.79179199999999,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 94.97508299999936,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.35187500000029,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 96.63145900000018,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 108.78525000000081,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 106.13466700000026,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 96.74729200000002,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 99.78612500000054,
+            "rows": 212,
+            "hasNext": false
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": 267.015625,
+          "loadedTurns": 1
+        },
+        "expansion": [
+          {
+            "ms": 432.10000002384186,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739146338,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.935714
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 8.886532
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.123586
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:07.97 252432",
+                "main": "0:01.94 204720"
+              },
+              "after": {
+                "at": 1790739146825,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.945049
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 9.351166
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.149491
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:07.97 252320",
+                "main": "0:01.95 207056"
+              }
+            }
+          },
+          {
+            "ms": 450.69999998807907,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739147539,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.951843
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 10.328206
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.183423
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:07.97 252400",
+                "main": "0:01.95 207376"
+              },
+              "after": {
+                "at": 1790739148478,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 1.959426
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 11.259192
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.226493
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:07.97 225616",
+                "main": "0:01.96 205152"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "run": 3,
+        "active": false,
+        "clickRoundTripMs": 84.7,
+        "clickCompletedMs": 65,
+        "selectionVisibleMs": 2166.2,
+        "oldTranscriptGoneMs": 2166.2,
+        "firstTargetTurnVisibleMs": 2526.7,
+        "targetAnchorVisibleMs": 2526.7,
+        "readyVisibleMs": 2526.7,
+        "stablePaintMs": 2605.8,
+        "fadeCompletePaintMs": 2726.6,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 48.400000005960464,
+            "resolvedMs": 2166.7000488340855,
+            "batches": [
+              {
+                "at": 574.9000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 1,
+                "bytes": 130962,
+                "handledAt": 576.0999511778355
+              },
+              {
+                "at": 576.0999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 2,
+                "bytes": 145,
+                "handledAt": 576.2000488340855
+              },
+              {
+                "at": 683.2000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 3,
+                "bytes": 130950,
+                "handledAt": 684.2999023497105
+              },
+              {
+                "at": 684.4000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 4,
+                "bytes": 31994,
+                "handledAt": 684.7000488340855
+              },
+              {
+                "at": 786.5000976622105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 5,
+                "bytes": 130950,
+                "handledAt": 787.7000488340855
+              },
+              {
+                "at": 787.7999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 6,
+                "bytes": 31994,
+                "handledAt": 788.0000976622105
+              },
+              {
+                "at": 893.4000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 7,
+                "bytes": 130950,
+                "handledAt": 894.5999511778355
+              },
+              {
+                "at": 894.7999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 8,
+                "bytes": 31994,
+                "handledAt": 895.0999511778355
+              },
+              {
+                "at": 1009.7000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 9,
+                "bytes": 130950,
+                "handledAt": 1011.0000976622105
+              },
+              {
+                "at": 1011.2000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 10,
+                "bytes": 31994,
+                "handledAt": 1011.5000976622105
+              },
+              {
+                "at": 1111.9000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 11,
+                "bytes": 130950,
+                "handledAt": 1113.0999511778355
+              },
+              {
+                "at": 1113.0999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 12,
+                "bytes": 31994,
+                "handledAt": 1113.2999023497105
+              },
+              {
+                "at": 1216.2999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 13,
+                "bytes": 130950,
+                "handledAt": 1217.5000976622105
+              },
+              {
+                "at": 1217.5000976622105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 14,
+                "bytes": 31994,
+                "handledAt": 1217.7000488340855
+              },
+              {
+                "at": 1319.7000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 15,
+                "bytes": 130950,
+                "handledAt": 1320.9000000059605
+              },
+              {
+                "at": 1320.9000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 16,
+                "bytes": 31994,
+                "handledAt": 1321.2000488340855
+              },
+              {
+                "at": 1421.2000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 17,
+                "bytes": 130950,
+                "handledAt": 1422.4000000059605
+              },
+              {
+                "at": 1422.4000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 18,
+                "bytes": 31994,
+                "handledAt": 1422.7000488340855
+              },
+              {
+                "at": 1521.5999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 19,
+                "bytes": 130950,
+                "handledAt": 1522.7000488340855
+              },
+              {
+                "at": 1522.9000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 20,
+                "bytes": 31994,
+                "handledAt": 1523.0999511778355
+              },
+              {
+                "at": 1621.7999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 21,
+                "bytes": 130781,
+                "handledAt": 1623.0999511778355
+              },
+              {
+                "at": 1623.2000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 22,
+                "bytes": 31994,
+                "handledAt": 1623.5000976622105
+              },
+              {
+                "at": 1720.2000488340855,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 23,
+                "bytes": 130589,
+                "handledAt": 1721.4000000059605
+              },
+              {
+                "at": 1721.5000976622105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 24,
+                "bytes": 31907,
+                "handledAt": 1721.7999023497105
+              },
+              {
+                "at": 1821.5999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 25,
+                "bytes": 130589,
+                "handledAt": 1823.7000488340855
+              },
+              {
+                "at": 1823.7999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 26,
+                "bytes": 31907,
+                "handledAt": 1824.2000488340855
+              },
+              {
+                "at": 1933.0000976622105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 27,
+                "bytes": 130589,
+                "handledAt": 1934.2999023497105
+              },
+              {
+                "at": 1934.2999023497105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 28,
+                "bytes": 31907,
+                "handledAt": 1934.7000488340855
+              },
+              {
+                "at": 2033.4000000059605,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 29,
+                "bytes": 130589,
+                "handledAt": 2034.5000976622105
+              },
+              {
+                "at": 2034.5999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 30,
+                "bytes": 31907,
+                "handledAt": 2034.9000000059605
+              },
+              {
+                "at": 2130.5999511778355,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 31,
+                "bytes": 130195,
+                "handledAt": 2132.9000000059605
+              },
+              {
+                "at": 2133.0000976622105,
+                "ready": false,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 32,
+                "bytes": 3978,
+                "handledAt": 2133.0999511778355
+              },
+              {
+                "at": 2133.4000000059605,
+                "ready": true,
+                "generation": "614a267e-8811-4300-9e29-df75bdc2cb2e",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 33,
+                "bytes": 0,
+                "handledAt": 2134.2999023497105
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 48.4,
+          "firstBatchMs": 574.9,
+          "readyBatchMs": 2133.4,
+          "readyBatchHandledMs": 2134.3,
+          "openResolvedMs": 2166.7,
+          "batches": 33,
+          "bytes": 2544535,
+          "handlerMs": 26.3,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [
+          {
+            "startMs": 2166.7,
+            "durationMs": 382
+          }
+        ],
+        "resources": {
+          "before": {
+            "at": 1790739151925,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.00116
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 13.186108
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.421225
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:08.02 117088",
+            "main": "0:02.00 173248"
+          },
+          "after": {
+            "at": 1790739154703,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.186728
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 14.226371
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.514835
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:10.27 252512",
+            "main": "0:02.19 234192"
+          },
+          "cycleBefore": {
+            "at": 1790739150632,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 1.975574
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 12.362437
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.346327
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:07.98 120512",
+            "main": "0:01.98 187488"
+          },
+          "observedAfter": {
+            "at": 1790739158973,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.224669
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 17.654833
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.70435
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:10.28 251056",
+            "main": "0:02.23 233104"
+          },
+          "memorySamples": [
+            {
+              "at": 1790739150848,
+              "rows": "11960 187136\n11964 686480\n11981 118544"
+            },
+            {
+              "at": 1790739151048,
+              "rows": "11960 187984\n11964 707904\n11981 128624"
+            },
+            {
+              "at": 1790739151251,
+              "rows": "11960 175968\n11964 726432\n11981 111552"
+            },
+            {
+              "at": 1790739151453,
+              "rows": "11960 176800\n11964 724016\n11981 118112"
+            },
+            {
+              "at": 1790739151658,
+              "rows": "11960 175456\n11964 719312\n11981 117392"
+            },
+            {
+              "at": 1790739151861,
+              "rows": "11960 173168\n11964 711808\n11981 117088"
+            },
+            {
+              "at": 1790739152055,
+              "rows": "11960 173408\n11964 706256\n11981 117120"
+            },
+            {
+              "at": 1790739152253,
+              "rows": "11960 157888\n11964 635344\n11981 192768"
+            },
+            {
+              "at": 1790739152455,
+              "rows": "11960 161920\n11964 637760\n11981 219664"
+            },
+            {
+              "at": 1790739152656,
+              "rows": "11960 163968\n11964 619152\n11981 222912"
+            },
+            {
+              "at": 1790739152856,
+              "rows": "11960 172432\n11964 621328\n11981 227264"
+            },
+            {
+              "at": 1790739153056,
+              "rows": "11960 180912\n11964 622176\n11981 228336"
+            },
+            {
+              "at": 1790739153258,
+              "rows": "11960 189312\n11964 620416\n11981 230464"
+            },
+            {
+              "at": 1790739153458,
+              "rows": "11960 199008\n11964 619456\n11981 234560"
+            },
+            {
+              "at": 1790739153660,
+              "rows": "11960 207344\n11964 622304\n11981 240032"
+            },
+            {
+              "at": 1790739153860,
+              "rows": "11960 214880\n11964 623440\n11981 244512"
+            },
+            {
+              "at": 1790739154061,
+              "rows": "11960 252128\n11964 624720\n11981 249552"
+            },
+            {
+              "at": 1790739154265,
+              "rows": "11960 253952\n11964 687664\n11981 253152"
+            },
+            {
+              "at": 1790739154462,
+              "rows": "11960 248608\n11964 731072\n11981 253776"
+            },
+            {
+              "at": 1790739154664,
+              "rows": "11960 234144\n11964 752128\n11981 252512"
+            },
+            {
+              "at": 1790739154864,
+              "rows": "11960 234528\n11964 753184\n11981 252512"
+            },
+            {
+              "at": 1790739155065,
+              "rows": "11960 234528\n11964 754640\n11981 252512"
+            },
+            {
+              "at": 1790739155266,
+              "rows": "11960 235312\n11964 750048\n11981 252512"
+            },
+            {
+              "at": 1790739155466,
+              "rows": "11960 235312\n11964 755120\n11981 252512"
+            },
+            {
+              "at": 1790739155668,
+              "rows": "11960 235280\n11964 755728\n11981 252496"
+            },
+            {
+              "at": 1790739155868,
+              "rows": "11960 235280\n11964 755728\n11981 252496"
+            },
+            {
+              "at": 1790739156069,
+              "rows": "11960 235344\n11964 755680\n11981 252496"
+            },
+            {
+              "at": 1790739156271,
+              "rows": "11960 235360\n11964 755680\n11981 252496"
+            },
+            {
+              "at": 1790739156471,
+              "rows": "11960 235360\n11964 756176\n11981 252496"
+            },
+            {
+              "at": 1790739156672,
+              "rows": "11960 234800\n11964 755968\n11981 252496"
+            },
+            {
+              "at": 1790739156873,
+              "rows": "11960 234800\n11964 756176\n11981 252464"
+            },
+            {
+              "at": 1790739157074,
+              "rows": "11960 234896\n11964 756896\n11981 252464"
+            },
+            {
+              "at": 1790739157275,
+              "rows": "11960 234848\n11964 756592\n11981 252032"
+            },
+            {
+              "at": 1790739157475,
+              "rows": "11960 234848\n11964 757248\n11981 252032"
+            },
+            {
+              "at": 1790739157676,
+              "rows": "11960 234848\n11964 756816\n11981 252032"
+            },
+            {
+              "at": 1790739157876,
+              "rows": "11960 234848\n11964 757424\n11981 252032"
+            },
+            {
+              "at": 1790739158081,
+              "rows": "11960 234848\n11964 757440\n11981 252048"
+            },
+            {
+              "at": 1790739158288,
+              "rows": "11960 234832\n11964 756784\n11981 251968"
+            },
+            {
+              "at": 1790739158486,
+              "rows": "11960 233088\n11964 753952\n11981 251104"
+            },
+            {
+              "at": 1790739158687,
+              "rows": "11960 233088\n11964 753488\n11981 251056"
+            },
+            {
+              "at": 1790739158894,
+              "rows": "11960 233088\n11964 753488\n11981 251056"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 131072,
+            "ms": 196.13941599999816,
+            "rows": 207,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 105.8502499999995,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.67120900000009,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 104.11279099999956,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 113.45499999999811,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 99.33062499999869,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.80045800000153,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.80320800000118,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 98.92279199999757,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.83970799999952,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.52799999999843,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 95.51616700000159,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.36512500000026,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 107.5894580000022,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.56941599999845,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 94.63287500000297,
+            "rows": 212,
+            "hasNext": false
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": 267.015625,
+          "loadedTurns": 1
+        },
+        "expansion": [
+          {
+            "ms": 786.5,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739154712,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.187579
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 14.227161
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.51558
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:10.27 252512",
+                "main": "0:02.19 234192"
+              },
+              "after": {
+                "at": 1790739155547,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.196745
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 15.297945
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.551389
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:10.27 252512",
+                "main": "0:02.20 235360"
+              }
+            }
+          },
+          {
+            "ms": 450.40000000596046,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739155924,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.201461
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 15.681139
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.56305
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:10.27 252496",
+                "main": "0:02.20 235312"
+              },
+              "after": {
+                "at": 1790739156853,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.209771
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 16.59762
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.593631
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055189
+                    }
+                  ]
+                },
+                "host": "0:10.27 252464",
+                "main": "0:02.21 234800"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "run": 4,
+        "active": false,
+        "clickRoundTripMs": 74.7,
+        "clickCompletedMs": 55.6,
+        "selectionVisibleMs": 2083,
+        "oldTranscriptGoneMs": 2083,
+        "firstTargetTurnVisibleMs": 2417.9,
+        "targetAnchorVisibleMs": 2417.9,
+        "readyVisibleMs": 2417.9,
+        "stablePaintMs": 2495.8,
+        "fadeCompletePaintMs": 2619.6,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 40.099999994039536,
+            "resolvedMs": 2083.2000976502895,
+            "batches": [
+              {
+                "at": 482.49990233778954,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 1,
+                "bytes": 130962,
+                "handledAt": 483.70009765028954
+              },
+              {
+                "at": 483.70009765028954,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 2,
+                "bytes": 145,
+                "handledAt": 483.79995116591454
+              },
+              {
+                "at": 586.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 3,
+                "bytes": 130950,
+                "handledAt": 587.0999999940395
+              },
+              {
+                "at": 587.2999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 4,
+                "bytes": 31994,
+                "handledAt": 587.7000976502895
+              },
+              {
+                "at": 701.2999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 5,
+                "bytes": 130950,
+                "handledAt": 702.2999511659145
+              },
+              {
+                "at": 702.4000488221645,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 6,
+                "bytes": 31994,
+                "handledAt": 702.5999999940395
+              },
+              {
+                "at": 816.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 7,
+                "bytes": 130950,
+                "handledAt": 819.2999511659145
+              },
+              {
+                "at": 819.4000488221645,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 8,
+                "bytes": 31994,
+                "handledAt": 819.7999511659145
+              },
+              {
+                "at": 928.7999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 9,
+                "bytes": 130950,
+                "handledAt": 929.9999023377895
+              },
+              {
+                "at": 930.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 10,
+                "bytes": 31994,
+                "handledAt": 930.4000488221645
+              },
+              {
+                "at": 1035.9000488221645,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 11,
+                "bytes": 130950,
+                "handledAt": 1036.9999023377895
+              },
+              {
+                "at": 1037.2000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 12,
+                "bytes": 31994,
+                "handledAt": 1037.4000488221645
+              },
+              {
+                "at": 1136.9999023377895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 13,
+                "bytes": 130950,
+                "handledAt": 1138.0999999940395
+              },
+              {
+                "at": 1138.2000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 14,
+                "bytes": 31994,
+                "handledAt": 1138.4000488221645
+              },
+              {
+                "at": 1239.2999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 15,
+                "bytes": 130950,
+                "handledAt": 1240.2000976502895
+              },
+              {
+                "at": 1240.2000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 16,
+                "bytes": 31994,
+                "handledAt": 1240.4999023377895
+              },
+              {
+                "at": 1347.4999023377895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 17,
+                "bytes": 130950,
+                "handledAt": 1348.4999023377895
+              },
+              {
+                "at": 1348.5999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 18,
+                "bytes": 31994,
+                "handledAt": 1348.7999511659145
+              },
+              {
+                "at": 1446.2999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 19,
+                "bytes": 130950,
+                "handledAt": 1447.2999511659145
+              },
+              {
+                "at": 1447.2999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 20,
+                "bytes": 31994,
+                "handledAt": 1447.4999023377895
+              },
+              {
+                "at": 1543.7000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 21,
+                "bytes": 130781,
+                "handledAt": 1544.7999511659145
+              },
+              {
+                "at": 1544.7999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 22,
+                "bytes": 31994,
+                "handledAt": 1545.0999999940395
+              },
+              {
+                "at": 1643.7999511659145,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 23,
+                "bytes": 130589,
+                "handledAt": 1644.7999511659145
+              },
+              {
+                "at": 1645.2000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 24,
+                "bytes": 31907,
+                "handledAt": 1645.4999023377895
+              },
+              {
+                "at": 1747.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 25,
+                "bytes": 130589,
+                "handledAt": 1748.0999999940395
+              },
+              {
+                "at": 1748.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 26,
+                "bytes": 31907,
+                "handledAt": 1748.4000488221645
+              },
+              {
+                "at": 1852.9000488221645,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 27,
+                "bytes": 130589,
+                "handledAt": 1854.0999999940395
+              },
+              {
+                "at": 1854.4999023377895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 28,
+                "bytes": 31907,
+                "handledAt": 1854.7000976502895
+              },
+              {
+                "at": 1954.9999023377895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 29,
+                "bytes": 130589,
+                "handledAt": 1956.0999999940395
+              },
+              {
+                "at": 1956.2000976502895,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 30,
+                "bytes": 31907,
+                "handledAt": 1956.4999023377895
+              },
+              {
+                "at": 2052.0999999940395,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 31,
+                "bytes": 130195,
+                "handledAt": 2053.2000976502895
+              },
+              {
+                "at": 2053.4000488221645,
+                "ready": false,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 32,
+                "bytes": 3978,
+                "handledAt": 2053.4999023377895
+              },
+              {
+                "at": 2053.7000976502895,
+                "ready": true,
+                "generation": "acf7319b-6198-4f8b-b0dc-e7a1ba529136",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 33,
+                "bytes": 0,
+                "handledAt": 2054.2000976502895
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 40.1,
+          "firstBatchMs": 482.5,
+          "readyBatchMs": 2053.7,
+          "readyBatchHandledMs": 2054.2,
+          "openResolvedMs": 2083.2,
+          "batches": 33,
+          "bytes": 2544535,
+          "handlerMs": 23.7,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [
+          {
+            "startMs": 2083.2,
+            "durationMs": 358
+          }
+        ],
+        "resources": {
+          "before": {
+            "at": 1790739160257,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.249954
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 18.440593
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.777379
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:10.32 252944",
+            "main": "0:02.25 233552"
+          },
+          "after": {
+            "at": 1790739162928,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.463229
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 19.406139
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.864182
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:12.51 245728",
+            "main": "0:02.46 245120"
+          },
+          "cycleBefore": {
+            "at": 1790739158987,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.225388
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 17.654833
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 1.70435
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055189
+                }
+              ]
+            },
+            "host": "0:10.28 251056",
+            "main": "0:02.23 233104"
+          },
+          "observedAfter": {
+            "at": 1790739167218,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.501693
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 22.82689
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 2.052359
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:12.51 221008",
+            "main": "0:02.50 186096"
+          },
+          "memorySamples": [
+            {
+              "at": 1790739159204,
+              "rows": "11960 233120\n11964 754256\n11981 251056"
+            },
+            {
+              "at": 1790739159406,
+              "rows": "11960 233744\n11964 754432\n11981 251456"
+            },
+            {
+              "at": 1790739159608,
+              "rows": "11960 233872\n11964 755424\n11981 251456"
+            },
+            {
+              "at": 1790739159807,
+              "rows": "11960 233536\n11964 753184\n11981 252944"
+            },
+            {
+              "at": 1790739160013,
+              "rows": "11960 233552\n11964 753184\n11981 252944"
+            },
+            {
+              "at": 1790739160218,
+              "rows": "11960 233552\n11964 753040\n11981 252944"
+            },
+            {
+              "at": 1790739160411,
+              "rows": "11960 233584\n11964 756352\n11981 253328"
+            },
+            {
+              "at": 1790739160614,
+              "rows": "11960 233984\n11964 760144\n11981 269984"
+            },
+            {
+              "at": 1790739160811,
+              "rows": "11960 235584\n11964 760576\n11981 270592"
+            },
+            {
+              "at": 1790739161015,
+              "rows": "11960 240400\n11964 761664\n11981 271728"
+            },
+            {
+              "at": 1790739161214,
+              "rows": "11960 234112\n11964 761760\n11981 272144"
+            },
+            {
+              "at": 1790739161415,
+              "rows": "11960 238544\n11964 760048\n11981 272192"
+            },
+            {
+              "at": 1790739161619,
+              "rows": "11960 243312\n11964 735504\n11981 272336"
+            },
+            {
+              "at": 1790739161816,
+              "rows": "11960 248384\n11964 736832\n11981 272640"
+            },
+            {
+              "at": 1790739162018,
+              "rows": "11960 254816\n11964 738064\n11981 272832"
+            },
+            {
+              "at": 1790739162219,
+              "rows": "11960 262336\n11964 705360\n11981 272496"
+            },
+            {
+              "at": 1790739162421,
+              "rows": "11960 260704\n11964 734560\n11981 272288"
+            },
+            {
+              "at": 1790739162622,
+              "rows": "11960 258016\n11964 777280\n11981 271856"
+            },
+            {
+              "at": 1790739162825,
+              "rows": "11960 249120\n11964 781664\n11981 245840"
+            },
+            {
+              "at": 1790739163021,
+              "rows": "11960 239584\n11964 779296\n11981 245088"
+            },
+            {
+              "at": 1790739163222,
+              "rows": "11960 225376\n11964 777568\n11981 232464"
+            },
+            {
+              "at": 1790739163424,
+              "rows": "11960 210736\n11964 778656\n11981 230512"
+            },
+            {
+              "at": 1790739163624,
+              "rows": "11960 189008\n11964 779520\n11981 226480"
+            },
+            {
+              "at": 1790739163824,
+              "rows": "11960 188736\n11964 776208\n11981 224656"
+            },
+            {
+              "at": 1790739164025,
+              "rows": "11960 188688\n11964 759312\n11981 223040"
+            },
+            {
+              "at": 1790739164228,
+              "rows": "11960 188624\n11964 748144\n11981 222736"
+            },
+            {
+              "at": 1790739164427,
+              "rows": "11960 188608\n11964 734528\n11981 222528"
+            },
+            {
+              "at": 1790739164628,
+              "rows": "11960 188672\n11964 726352\n11981 221808"
+            },
+            {
+              "at": 1790739164828,
+              "rows": "11960 188384\n11964 705200\n11981 221744"
+            },
+            {
+              "at": 1790739165029,
+              "rows": "11960 188384\n11964 707904\n11981 221744"
+            },
+            {
+              "at": 1790739165232,
+              "rows": "11960 186944\n11964 700896\n11981 221104"
+            },
+            {
+              "at": 1790739165431,
+              "rows": "11960 186880\n11964 702752\n11981 221120"
+            },
+            {
+              "at": 1790739165633,
+              "rows": "11960 186880\n11964 712848\n11981 221120"
+            },
+            {
+              "at": 1790739165832,
+              "rows": "11960 186768\n11964 712720\n11981 221040"
+            },
+            {
+              "at": 1790739166033,
+              "rows": "11960 186752\n11964 721952\n11981 221040"
+            },
+            {
+              "at": 1790739166235,
+              "rows": "11960 186752\n11964 722400\n11981 221040"
+            },
+            {
+              "at": 1790739166436,
+              "rows": "11960 186752\n11964 722400\n11981 221040"
+            },
+            {
+              "at": 1790739166639,
+              "rows": "11960 186112\n11964 717472\n11981 221040"
+            },
+            {
+              "at": 1790739166838,
+              "rows": "11960 186080\n11964 716224\n11981 221008"
+            },
+            {
+              "at": 1790739167045,
+              "rows": "11960 186080\n11964 716128\n11981 221008"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 131072,
+            "ms": 199.04804199999853,
+            "rows": 207,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.21729200000118,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 112.5041659999988,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 111.90229099999851,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 106.59049999999843,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 104.35999999999694,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 98.33783399999811,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 99.61216699999932,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 105.84891699999935,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 96.30591699999786,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 95.0737079999999,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 97.60062499999913,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 100.52508400000079,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 103.16687500000262,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 99.21966699999757,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 94.56658400000015,
+            "rows": 212,
+            "hasNext": false
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": 267.015625,
+          "loadedTurns": 1
+        },
+        "expansion": [
+          {
+            "ms": 434.2000000178814,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739162938,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.464181
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 19.406975
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.864904
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:12.51 245728",
+                "main": "0:02.46 245120"
+              },
+              "after": {
+                "at": 1790739163428,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.472255
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 19.874823
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.890376
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:12.51 227728",
+                "main": "0:02.47 190240"
+              }
+            }
+          },
+          {
+            "ms": 449.59999999403954,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739164151,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.478094
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 20.869531
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.926287
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:12.51 222816",
+                "main": "0:02.48 188752"
+              },
+              "after": {
+                "at": 1790739165086,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.486866
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 21.791475
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 1.969829
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:12.51 221968",
+                "main": "0:02.49 188400"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "run": 5,
+        "active": false,
+        "clickRoundTripMs": 78.3,
+        "clickCompletedMs": 59.9,
+        "selectionVisibleMs": 2228.5,
+        "oldTranscriptGoneMs": 2228.5,
+        "firstTargetTurnVisibleMs": 2618,
+        "targetAnchorVisibleMs": 2618,
+        "readyVisibleMs": 2618,
+        "stablePaintMs": 2695.4,
+        "fadeCompletePaintMs": 2819.9,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 43.60004881024361,
+            "resolvedMs": 2228.7999999821186,
+            "batches": [
+              {
+                "at": 516.2999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 1,
+                "bytes": 130962,
+                "handledAt": 517.4000976383686
+              },
+              {
+                "at": 517.4000976383686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 2,
+                "bytes": 145,
+                "handledAt": 517.4999511539936
+              },
+              {
+                "at": 639.9000976383686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 3,
+                "bytes": 130950,
+                "handledAt": 641.1000488102436
+              },
+              {
+                "at": 641.1999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 4,
+                "bytes": 31994,
+                "handledAt": 641.4000976383686
+              },
+              {
+                "at": 743.7999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 5,
+                "bytes": 130950,
+                "handledAt": 744.9999511539936
+              },
+              {
+                "at": 745.2999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 6,
+                "bytes": 31994,
+                "handledAt": 745.4999511539936
+              },
+              {
+                "at": 863.4999511539936,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 7,
+                "bytes": 130950,
+                "handledAt": 864.6999023258686
+              },
+              {
+                "at": 864.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 8,
+                "bytes": 31994,
+                "handledAt": 864.9999511539936
+              },
+              {
+                "at": 1008.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 9,
+                "bytes": 130950,
+                "handledAt": 1009.6000488102436
+              },
+              {
+                "at": 1009.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 10,
+                "bytes": 31994,
+                "handledAt": 1009.9000976383686
+              },
+              {
+                "at": 1112.9999511539936,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 11,
+                "bytes": 130950,
+                "handledAt": 1114.1999023258686
+              },
+              {
+                "at": 1114.2999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 12,
+                "bytes": 31994,
+                "handledAt": 1114.6000488102436
+              },
+              {
+                "at": 1219.4000976383686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 13,
+                "bytes": 130950,
+                "handledAt": 1220.4999511539936
+              },
+              {
+                "at": 1220.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 14,
+                "bytes": 31994,
+                "handledAt": 1220.7999999821186
+              },
+              {
+                "at": 1327.1999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 15,
+                "bytes": 130950,
+                "handledAt": 1328.4000976383686
+              },
+              {
+                "at": 1328.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 16,
+                "bytes": 31994,
+                "handledAt": 1328.9999511539936
+              },
+              {
+                "at": 1441.7999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 17,
+                "bytes": 130950,
+                "handledAt": 1443.1000488102436
+              },
+              {
+                "at": 1443.1999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 18,
+                "bytes": 31994,
+                "handledAt": 1443.4999511539936
+              },
+              {
+                "at": 1553.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 19,
+                "bytes": 130950,
+                "handledAt": 1554.9000976383686
+              },
+              {
+                "at": 1554.9000976383686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 20,
+                "bytes": 31994,
+                "handledAt": 1555.1999023258686
+              },
+              {
+                "at": 1659.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 21,
+                "bytes": 130781,
+                "handledAt": 1660.7999999821186
+              },
+              {
+                "at": 1660.9000976383686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 22,
+                "bytes": 31994,
+                "handledAt": 1661.1000488102436
+              },
+              {
+                "at": 1766.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 23,
+                "bytes": 130589,
+                "handledAt": 1767.6999023258686
+              },
+              {
+                "at": 1767.7999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 24,
+                "bytes": 31907,
+                "handledAt": 1767.9999511539936
+              },
+              {
+                "at": 1868.7999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 25,
+                "bytes": 130589,
+                "handledAt": 1869.9000976383686
+              },
+              {
+                "at": 1870.1999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 26,
+                "bytes": 31907,
+                "handledAt": 1870.4000976383686
+              },
+              {
+                "at": 1967.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 27,
+                "bytes": 130589,
+                "handledAt": 1968.7999999821186
+              },
+              {
+                "at": 1968.7999999821186,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 28,
+                "bytes": 31907,
+                "handledAt": 1969.1000488102436
+              },
+              {
+                "at": 2078.6000488102436,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 29,
+                "bytes": 130589,
+                "handledAt": 2083.6999023258686
+              },
+              {
+                "at": 2083.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 30,
+                "bytes": 31907,
+                "handledAt": 2084.1000488102436
+              },
+              {
+                "at": 2187.1999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 31,
+                "bytes": 130195,
+                "handledAt": 2188.6000488102436
+              },
+              {
+                "at": 2188.6999023258686,
+                "ready": false,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 32,
+                "bytes": 3978,
+                "handledAt": 2188.6999023258686
+              },
+              {
+                "at": 2188.9000976383686,
+                "ready": true,
+                "generation": "f1482b17-0610-4d3c-95a2-78afd5943ec5",
+                "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+                "deliverySequence": 33,
+                "bytes": 0,
+                "handledAt": 2189.7999999821186
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 43.6,
+          "firstBatchMs": 516.3,
+          "readyBatchMs": 2188.9,
+          "readyBatchHandledMs": 2189.8,
+          "openResolvedMs": 2228.8,
+          "batches": 33,
+          "bytes": 2544535,
+          "handlerMs": 27.4,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [
+          {
+            "startMs": 2228.9,
+            "durationMs": 411
+          }
+        ],
+        "resources": {
+          "before": {
+            "at": 1790739168482,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.526057
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 23.609506
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 2.135234
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:12.55 203088",
+            "main": "0:02.53 186176"
+          },
+          "after": {
+            "at": 1790739171353,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.781052
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 24.760032
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 2.246752
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:14.79 250720",
+            "main": "0:02.78 193104"
+          },
+          "cycleBefore": {
+            "at": 1790739167226,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.50229
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 22.82689
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 2.052359
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:12.51 221008",
+            "main": "0:02.50 186096"
+          },
+          "observedAfter": {
+            "at": 1790739175731,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 11960,
+                  "cpuTime": 2.82572
+                },
+                {
+                  "type": "renderer",
+                  "id": 11964,
+                  "cpuTime": 28.34931
+                },
+                {
+                  "type": "GPU",
+                  "id": 11961,
+                  "cpuTime": 2.499584
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 11962,
+                  "cpuTime": 0.055338
+                }
+              ]
+            },
+            "host": "0:14.80  77632",
+            "main": "0:02.83 136160"
+          },
+          "memorySamples": [
+            {
+              "at": 1790739167438,
+              "rows": "11960 187104\n11964 721088\n11981 221408"
+            },
+            {
+              "at": 1790739167641,
+              "rows": "11960 187136\n11964 727648\n11981 221408"
+            },
+            {
+              "at": 1790739167846,
+              "rows": "11960 186848\n11964 731520\n11981 221168"
+            },
+            {
+              "at": 1790739168044,
+              "rows": "11960 188400\n11964 743216\n11981 222672"
+            },
+            {
+              "at": 1790739168245,
+              "rows": "11960 187248\n11964 740752\n11981 205168"
+            },
+            {
+              "at": 1790739168453,
+              "rows": "11960 186384\n11964 740528\n11981 203088"
+            },
+            {
+              "at": 1790739168646,
+              "rows": "11960 186352\n11964 743808\n11981 208704"
+            },
+            {
+              "at": 1790739168847,
+              "rows": "11960 186384\n11964 743056\n11981 227632"
+            },
+            {
+              "at": 1790739169054,
+              "rows": "11960 186032\n11964 740496\n11981 230288"
+            },
+            {
+              "at": 1790739169249,
+              "rows": "11960 178384\n11964 726976\n11981 231984"
+            },
+            {
+              "at": 1790739169450,
+              "rows": "11960 176208\n11964 625424\n11981 217696"
+            },
+            {
+              "at": 1790739169651,
+              "rows": "11960 180320\n11964 604064\n11981 222128"
+            },
+            {
+              "at": 1790739169852,
+              "rows": "11960 184320\n11964 547024\n11981 227056"
+            },
+            {
+              "at": 1790739170052,
+              "rows": "11960 192160\n11964 404976\n11981 232000"
+            },
+            {
+              "at": 1790739170254,
+              "rows": "11960 200656\n11964 381312\n11981 238672"
+            },
+            {
+              "at": 1790739170455,
+              "rows": "11960 213392\n11964 370464\n11981 243888"
+            },
+            {
+              "at": 1790739170658,
+              "rows": "11960 214672\n11964 363536\n11981 251632"
+            },
+            {
+              "at": 1790739170858,
+              "rows": "11960 205872\n11964 532688\n11981 250928"
+            },
+            {
+              "at": 1790739171057,
+              "rows": "11960 193456\n11964 736448\n11981 250928"
+            },
+            {
+              "at": 1790739171258,
+              "rows": "11960 193072\n11964 758544\n11981 250704"
+            },
+            {
+              "at": 1790739171458,
+              "rows": "11960 193280\n11964 768528\n11981 250576"
+            },
+            {
+              "at": 1790739171660,
+              "rows": "11960 193280\n11964 767920\n11981 250576"
+            },
+            {
+              "at": 1790739171859,
+              "rows": "11960 194144\n11964 767936\n11981 250512"
+            },
+            {
+              "at": 1790739172061,
+              "rows": "11960 194144\n11964 769760\n11981 250512"
+            },
+            {
+              "at": 1790739172260,
+              "rows": "11960 190624\n11964 760320\n11981 243248"
+            },
+            {
+              "at": 1790739172462,
+              "rows": "11960 189792\n11964 757344\n11981 215280"
+            },
+            {
+              "at": 1790739172663,
+              "rows": "11960 187744\n11964 752048\n11981 197008"
+            },
+            {
+              "at": 1790739172863,
+              "rows": "11960 187888\n11964 752416\n11981 197008"
+            },
+            {
+              "at": 1790739173064,
+              "rows": "11960 185968\n11964 747168\n11981 169904"
+            },
+            {
+              "at": 1790739173267,
+              "rows": "11960 184176\n11964 747280\n11981 164736"
+            },
+            {
+              "at": 1790739173465,
+              "rows": "11960 183296\n11964 748544\n11981 162224"
+            },
+            {
+              "at": 1790739173668,
+              "rows": "11960 183376\n11964 749728\n11981 162256"
+            },
+            {
+              "at": 1790739173869,
+              "rows": "11960 182608\n11964 750976\n11981 161888"
+            },
+            {
+              "at": 1790739174068,
+              "rows": "11960 182160\n11964 751008\n11981 150080"
+            },
+            {
+              "at": 1790739174273,
+              "rows": "11960 179280\n11964 751616\n11981 115136"
+            },
+            {
+              "at": 1790739174524,
+              "rows": "11960 142720\n11964 492384\n11981  77600"
+            },
+            {
+              "at": 1790739174702,
+              "rows": "11960 141088\n11964 398176\n11981  75936"
+            },
+            {
+              "at": 1790739174871,
+              "rows": "11960 140928\n11964 420016\n11981  77840"
+            },
+            {
+              "at": 1790739175073,
+              "rows": "11960 140384\n11964 402720\n11981  77696"
+            },
+            {
+              "at": 1790739175274,
+              "rows": "11960 140096\n11964 392368\n11981  77632"
+            },
+            {
+              "at": 1790739175476,
+              "rows": "11960 134848\n11964 372768\n11981  77840"
+            },
+            {
+              "at": 1790739175679,
+              "rows": "11960 134192\n11964 369168\n11981  77632"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 131072,
+            "ms": 202.87416600000142,
+            "rows": 207,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 121.18245799999568,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.41479100000288,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 115.58637499999895,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 141.84187500000553,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.31404199999815,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 103.58037499999773,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 105.1677090000012,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 111.53874999999971,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 108.91170799999963,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 103.38520900000003,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 104.37045900000521,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 99.76970900000015,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 95.97404200000165,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 108.04383399999642,
+            "rows": 256,
+            "hasNext": true
+          },
+          {
+            "method": "readOlderPage",
+            "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+            "maxBytes": 524288,
+            "ms": 101.69595800000388,
+            "rows": 212,
+            "hasNext": false
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": 267.015625,
+          "loadedTurns": 1
+        },
+        "expansion": [
+          {
+            "ms": 807.4000000059605,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739171363,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.782152
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 24.760858
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 2.247549
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:14.79 250720",
+                "main": "0:02.78 193120"
+              },
+              "after": {
+                "at": 1790739172225,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.791374
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 25.866002
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 2.286087
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:14.79 243200",
+                "main": "0:02.79 190592"
+              }
+            }
+          },
+          {
+            "ms": 505.7000000178814,
+            "before": 37000,
+            "after": 37000,
+            "resources": {
+              "before": {
+                "at": 1790739172592,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.796858
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 26.242413
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 2.315203
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:14.80 197312",
+                "main": "0:02.80 187936"
+              },
+              "after": {
+                "at": 1790739173584,
+                "chromium": {
+                  "processInfo": [
+                    {
+                      "type": "browser",
+                      "id": 11960,
+                      "cpuTime": 2.808563
+                    },
+                    {
+                      "type": "renderer",
+                      "id": 11964,
+                      "cpuTime": 27.227082
+                    },
+                    {
+                      "type": "GPU",
+                      "id": 11961,
+                      "cpuTime": 2.372862
+                    },
+                    {
+                      "type": "network.mojom.NetworkService",
+                      "id": 11962,
+                      "cpuTime": 0.055338
+                    }
+                  ]
+                },
+                "host": "0:14.80 162256",
+                "main": "0:02.81 183376"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "active": []
+  },
+  "hostRegistration": {
+    "pid": 11981,
+    "hostEpoch": "b52585d9-f382-4341-9ded-64772e6eb5cc",
+    "state": "ready"
+  },
+  "edge": {
+    "branchDepth": 0,
+    "restoreFirst": false
+  },
+  "summary": {
+    "idle": {
+      "selectionVisibleMs": {
+        "median": 2163,
+        "min": 2022.4,
+        "max": 2228.5
+      },
+      "oldTranscriptGoneMs": {
+        "median": 2163,
+        "min": 2022.4,
+        "max": 2228.5
+      },
+      "firstTargetTurnVisibleMs": {
+        "median": 2526.7,
+        "min": 2334.8,
+        "max": 2618
+      },
+      "targetAnchorVisibleMs": {
+        "median": 2526.7,
+        "min": 2334.8,
+        "max": 2618
+      },
+      "readyVisibleMs": {
+        "median": 2526.7,
+        "min": 2334.8,
+        "max": 2618
+      },
+      "stablePaintMs": {
+        "median": 2605.8,
+        "min": 2399.5,
+        "max": 2695.4
+      }
+    },
+    "active": {},
+    "idleStages": {
+      "sampleCount": 5,
+      "totalMedianMs": 2605.8,
+      "stages": [
+        {
+          "name": "clickToTranscriptOpen",
+          "medianMs": 41.3,
+          "percentOfTotal": 1.6
+        },
+        {
+          "name": "openToFirstBatch",
+          "medianMs": 472.7,
+          "percentOfTotal": 18.1
+        },
+        {
+          "name": "firstToReadyBatch",
+          "medianMs": 1571.2,
+          "percentOfTotal": 60.3
+        },
+        {
+          "name": "readyBatchAccept",
+          "medianMs": 0.7,
+          "percentOfTotal": 0
+        },
+        {
+          "name": "readyAcceptedToSelection",
+          "medianMs": 31.9,
+          "percentOfTotal": 1.2
+        },
+        {
+          "name": "selectionToAnchor",
+          "medianMs": 360.5,
+          "percentOfTotal": 13.8
+        },
+        {
+          "name": "anchorToStablePaint",
+          "medianMs": 77.9,
+          "percentOfTotal": 3
+        }
+      ],
+      "batchCountMedian": 33,
+      "payloadBytesMedian": 2544535,
+      "handlerCpuOverlayMedianMs": 23.7,
+      "handlerCpuOverlayPercent": 0.9
+    },
+    "activeStages": null,
+    "activeMinusIdleMedianMs": {}
+  },
+  "completedAt": "2026-09-30T03:32:55.926Z",
+  "ok": true
+}

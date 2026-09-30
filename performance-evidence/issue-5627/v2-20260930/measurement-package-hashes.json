@@ -1,0 +1,18 @@
+{
+  "both": {
+    "bytes": 180754833,
+    "sha256": "1d48802d0f89f86b30f7965c5e7b5056ba27613a7201b2a22771bf75fc8c1855"
+  },
+  "baseline": {
+    "bytes": 180740151,
+    "sha256": "cc878558ee43f6aaf3d56aa10532bff61fd9d2458c9e672001db5cc1a082ab4a"
+  },
+  "window": {
+    "bytes": 180754784,
+    "sha256": "f4b531df77220329104e8013e58eb44b3b94a94486d3218d6b7483fdeff2199b"
+  },
+  "lazy": {
+    "bytes": 180740200,
+    "sha256": "d98353532c6712f682ce7cce59a6a1970050c220dabdf422e9c73c39b26a154f"
+  }
+}

@@ -1,0 +1,2527 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "callFrame": {
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [2, 6, 9, 48, 62, 66, 67, 74, 80, 86, 87, 93, 95, 105, 117, 134, 144, 162, 165]
+    },
+    {
+      "id": 2,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [3]
+    },
+    {
+      "id": 3,
+      "callFrame": {
+        "functionName": "fn",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 476,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [4]
+    },
+    {
+      "id": 4,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 477,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [5]
+    },
+    {
+      "id": 5,
+      "callFrame": {
+        "functionName": "post",
+        "scriptId": "131",
+        "url": "node:inspector",
+        "lineNumber": 114,
+        "columnNumber": 6
+      },
+      "hitCount": 0
+    },
+    {
+      "id": 6,
+      "callFrame": {
+        "functionName": "readDurablePage",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 44,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [7]
+    },
+    {
+      "id": 7,
+      "callFrame": {
+        "functionName": "readPage",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 273,
+        "columnNumber": 22
+      },
+      "hitCount": 0,
+      "children": [8]
+    },
+    {
+      "id": 8,
+      "callFrame": {
+        "functionName": "scan",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 135,
+        "columnNumber": 33
+      },
+      "hitCount": 0
+    },
+    {
+      "id": 9,
+      "callFrame": {
+        "functionName": "runWithStorageRootLease",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 406,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [10]
+    },
+    {
+      "id": 10,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "166",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/execution-stores.js",
+        "lineNumber": 107,
+        "columnNumber": 70
+      },
+      "hitCount": 0,
+      "children": [11]
+    },
+    {
+      "id": 11,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "166",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/execution-stores.js",
+        "lineNumber": 374,
+        "columnNumber": 68
+      },
+      "hitCount": 0,
+      "children": [12]
+    },
+    {
+      "id": 12,
+      "callFrame": {
+        "functionName": "readTranscriptRun",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 425,
+        "columnNumber": 27
+      },
+      "hitCount": 0,
+      "children": [13]
+    },
+    {
+      "id": 13,
+      "callFrame": {
+        "functionName": "readTransaction",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 3143,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [14]
+    },
+    {
+      "id": 14,
+      "callFrame": {
+        "functionName": "transaction",
+        "scriptId": "217",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/operational-state-store.js",
+        "lineNumber": 178,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [15]
+    },
+    {
+      "id": 15,
+      "callFrame": {
+        "functionName": "transaction",
+        "scriptId": "217",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/operational-state-store.js",
+        "lineNumber": 222,
+        "columnNumber": 15
+      },
+      "hitCount": 0,
+      "children": [16, 174]
+    },
+    {
+      "id": 16,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 427,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [17]
+    },
+    {
+      "id": 17,
+      "callFrame": {
+        "functionName": "run",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 172,
+        "columnNumber": 7
+      },
+      "hitCount": 5,
+      "children": [18, 19, 20, 23],
+      "positionTicks": [{ "line": 198, "ticks": 5 }]
+    },
+    {
+      "id": 18,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 4,
+      "positionTicks": [{ "line": 188, "ticks": 3 }, { "line": 191, "ticks": 1 }]
+    },
+    {
+      "id": 19,
+      "callFrame": {
+        "functionName": "get",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 44,
+      "positionTicks": [{ "line": 188, "ticks": 1 }, { "line": 191, "ticks": 43 }]
+    },
+    {
+      "id": 20,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 409,
+        "columnNumber": 51
+      },
+      "hitCount": 0,
+      "children": [21, 128]
+    },
+    {
+      "id": 21,
+      "callFrame": {
+        "functionName": "completeInvocationRecordSync",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 828,
+        "columnNumber": 32
+      },
+      "hitCount": 0,
+      "children": [22]
+    },
+    {
+      "id": 22,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 831, "ticks": 1 }]
+    },
+    {
+      "id": 128,
+      "callFrame": {
+        "functionName": "readInvocationOpeningsSync",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 731,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [129, 167]
+    },
+    {
+      "id": 129,
+      "callFrame": {
+        "functionName": "all",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 776, "ticks": 1 }]
+    },
+    {
+      "id": 167,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 783,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "children": [169],
+      "positionTicks": [{ "line": 807, "ticks": 1 }]
+    },
+    {
+      "id": 169,
+      "callFrame": {
+        "functionName": "decodeRuntimeEventStorageRow",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 4361,
+        "columnNumber": 37
+      },
+      "hitCount": 0,
+      "children": [170]
+    },
+    {
+      "id": 170,
+      "callFrame": {
+        "functionName": "decodeStoredRuntimeEvent",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 4383,
+        "columnNumber": 33
+      },
+      "hitCount": 0,
+      "children": [171]
+    },
+    {
+      "id": 171,
+      "callFrame": {
+        "functionName": "decodeRuntimeEvent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 344,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [172]
+    },
+    {
+      "id": 172,
+      "callFrame": {
+        "functionName": "isRuntimeEventContent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 398,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [173]
+    },
+    {
+      "id": 173,
+      "callFrame": {
+        "functionName": "isRuntimeInvocationOpened",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 474,
+        "columnNumber": 34
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 478, "ticks": 1 }]
+    },
+    {
+      "id": 23,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 126,
+        "columnNumber": 7
+      },
+      "hitCount": 36,
+      "children": [24, 37],
+      "positionTicks": [
+        { "line": 443, "ticks": 1 },
+        { "line": 130, "ticks": 13 },
+        { "line": 131, "ticks": 22 }
+      ]
+    },
+    {
+      "id": 24,
+      "callFrame": {
+        "functionName": "events",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 282,
+        "columnNumber": 11
+      },
+      "hitCount": 217,
+      "children": [25, 36, 68],
+      "positionTicks": [
+        { "line": 317, "ticks": 1 },
+        { "line": 301, "ticks": 18 },
+        { "line": 305, "ticks": 8 },
+        { "line": 310, "ticks": 135 },
+        { "line": 297, "ticks": 55 }
+      ]
+    },
+    {
+      "id": 25,
+      "callFrame": {
+        "functionName": "decodeStoredEvent",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 313,
+        "columnNumber": 26
+      },
+      "hitCount": 294,
+      "children": [26],
+      "positionTicks": [{ "line": 315, "ticks": 294 }]
+    },
+    {
+      "id": 26,
+      "callFrame": {
+        "functionName": "decodeRuntimeEvent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 344,
+        "columnNumber": 34
+      },
+      "hitCount": 13,
+      "children": [27, 69, 71, 102, 161],
+      "positionTicks": [
+        { "line": 345, "ticks": 1 },
+        { "line": 51, "ticks": 1 },
+        { "line": 364, "ticks": 1 },
+        { "line": 368, "ticks": 1 },
+        { "line": 40, "ticks": 1 },
+        { "line": 369, "ticks": 5 },
+        { "line": 41, "ticks": 3 }
+      ]
+    },
+    {
+      "id": 27,
+      "callFrame": {
+        "functionName": "isRuntimeEventContent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 398,
+        "columnNumber": 30
+      },
+      "hitCount": 8,
+      "children": [28, 50, 83],
+      "positionTicks": [
+        { "line": 420, "ticks": 1 },
+        { "line": 431, "ticks": 1 },
+        { "line": 405, "ticks": 2 },
+        { "line": 413, "ticks": 1 },
+        { "line": 418, "ticks": 1 },
+        { "line": 41, "ticks": 1 },
+        { "line": 40, "ticks": 1 }
+      ]
+    },
+    {
+      "id": 28,
+      "callFrame": {
+        "functionName": "decodesDurableToolResultProjection",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 583,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [29]
+    },
+    {
+      "id": 29,
+      "callFrame": {
+        "functionName": "decodeDurableToolResultProjection",
+        "scriptId": "215",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/durable-tool-result-projection.js",
+        "lineNumber": 36,
+        "columnNumber": 49
+      },
+      "hitCount": 1,
+      "children": [30, 52],
+      "positionTicks": [{ "line": 38, "ticks": 1 }]
+    },
+    {
+      "id": 30,
+      "callFrame": {
+        "functionName": "serializedByteLength",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 37,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [31]
+    },
+    {
+      "id": 31,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 5,
+      "children": [32, 73],
+      "positionTicks": [
+        { "line": 175, "ticks": 1 },
+        { "line": 126, "ticks": 2 },
+        { "line": 87, "ticks": 1 },
+        { "line": 116, "ticks": 1 }
+      ]
+    },
+    {
+      "id": 32,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 1,
+      "children": [33, 154],
+      "positionTicks": [{ "line": 87, "ticks": 1 }]
+    },
+    {
+      "id": 33,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 1,
+      "children": [34, 91],
+      "positionTicks": [{ "line": 72, "ticks": 1 }]
+    },
+    {
+      "id": 34,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [35]
+    },
+    {
+      "id": 35,
+      "callFrame": {
+        "functionName": "countJsonString",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 128,
+        "columnNumber": 24
+      },
+      "hitCount": 196,
+      "positionTicks": [
+        { "line": 157, "ticks": 3 },
+        { "line": 184, "ticks": 4 },
+        { "line": 132, "ticks": 22 },
+        { "line": 144, "ticks": 4 },
+        { "line": 133, "ticks": 43 },
+        { "line": 179, "ticks": 21 },
+        { "line": 175, "ticks": 39 },
+        { "line": 147, "ticks": 20 },
+        { "line": 141, "ticks": 40 }
+      ]
+    },
+    {
+      "id": 91,
+      "callFrame": {
+        "functionName": "countJsonString",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 128,
+        "columnNumber": 24
+      },
+      "hitCount": 7,
+      "positionTicks": [
+        { "line": 175, "ticks": 1 },
+        { "line": 157, "ticks": 1 },
+        { "line": 133, "ticks": 1 },
+        { "line": 141, "ticks": 2 },
+        { "line": 147, "ticks": 2 }
+      ]
+    },
+    {
+      "id": 154,
+      "callFrame": {
+        "functionName": "countJsonString",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 128,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 132, "ticks": 1 }]
+    },
+    {
+      "id": 73,
+      "callFrame": {
+        "functionName": "countJsonString",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 128,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 133, "ticks": 1 }]
+    },
+    {
+      "id": 52,
+      "callFrame": {
+        "functionName": "isDurableToolResultProjection",
+        "scriptId": "215",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/durable-tool-result-projection.js",
+        "lineNumber": 44,
+        "columnNumber": 38
+      },
+      "hitCount": 2,
+      "children": [53, 163],
+      "positionTicks": [{ "line": 59, "ticks": 1 }, { "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 53,
+      "callFrame": {
+        "functionName": "hasExactShape",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 38,
+        "columnNumber": 29
+      },
+      "hitCount": 1,
+      "children": [79],
+      "positionTicks": [{ "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 79,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 39,
+        "columnNumber": 33
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 40, "ticks": 2 }]
+    },
+    {
+      "id": 163,
+      "callFrame": {
+        "functionName": "isDurableProjectionJson",
+        "scriptId": "215",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/durable-tool-result-projection.js",
+        "lineNumber": 108,
+        "columnNumber": 32
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 125, "ticks": 1 }]
+    },
+    {
+      "id": 50,
+      "callFrame": {
+        "functionName": "hasExactShape",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 38,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [51]
+    },
+    {
+      "id": 51,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 39,
+        "columnNumber": 33
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 40, "ticks": 3 }]
+    },
+    {
+      "id": 83,
+      "callFrame": {
+        "functionName": "isMessageContent",
+        "scriptId": "181",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/events.js",
+        "lineNumber": 190,
+        "columnNumber": 32
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 41, "ticks": 2 }]
+    },
+    {
+      "id": 69,
+      "callFrame": {
+        "functionName": "isRuntimeEventRefs",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 792,
+        "columnNumber": 27
+      },
+      "hitCount": 8,
+      "children": [103],
+      "positionTicks": [
+        { "line": 795, "ticks": 1 },
+        { "line": 41, "ticks": 3 },
+        { "line": 809, "ticks": 1 },
+        { "line": 810, "ticks": 3 }
+      ]
+    },
+    {
+      "id": 103,
+      "callFrame": {
+        "functionName": "hasExactShape",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 38,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [104]
+    },
+    {
+      "id": 104,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 40,
+        "columnNumber": 33
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 71,
+      "callFrame": {
+        "functionName": "hasExactShape",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 38,
+        "columnNumber": 29
+      },
+      "hitCount": 2,
+      "children": [72, 78],
+      "positionTicks": [{ "line": 41, "ticks": 2 }]
+    },
+    {
+      "id": 72,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 40,
+        "columnNumber": 33
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 41, "ticks": 3 }]
+    },
+    {
+      "id": 78,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 39,
+        "columnNumber": 33
+      },
+      "hitCount": 10,
+      "positionTicks": [{ "line": 40, "ticks": 10 }]
+    },
+    {
+      "id": 102,
+      "callFrame": {
+        "functionName": "normalizeMessageContent",
+        "scriptId": "181",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/events.js",
+        "lineNumber": 108,
+        "columnNumber": 39
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 115, "ticks": 1 }, { "line": 113, "ticks": 1 }]
+    },
+    {
+      "id": 161,
+      "callFrame": {
+        "functionName": "isRuntimeEventActions",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 595,
+        "columnNumber": 30
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 36,
+      "callFrame": {
+        "functionName": "next",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 271,
+      "positionTicks": [{ "line": 297, "ticks": 271 }]
+    },
+    {
+      "id": 68,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 287, "ticks": 1 }]
+    },
+    {
+      "id": 37,
+      "callFrame": {
+        "functionName": "push",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 437,
+        "columnNumber": 12
+      },
+      "hitCount": 112,
+      "children": [38, 58],
+      "positionTicks": [
+        { "line": 440, "ticks": 1 },
+        { "line": 444, "ticks": 6 },
+        { "line": 446, "ticks": 105 }
+      ]
+    },
+    {
+      "id": 38,
+      "callFrame": {
+        "functionName": "push",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 388,
+        "columnNumber": 17
+      },
+      "hitCount": 4,
+      "children": [39],
+      "positionTicks": [{ "line": 392, "ticks": 4 }]
+    },
+    {
+      "id": 39,
+      "callFrame": {
+        "functionName": "projectEvent",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 205,
+        "columnNumber": 25
+      },
+      "hitCount": 183,
+      "children": [40, 42, 49, 54, 55, 70],
+      "positionTicks": [
+        { "line": 432, "ticks": 1 },
+        { "line": 340, "ticks": 1 },
+        { "line": 190, "ticks": 1 },
+        { "line": 227, "ticks": 1 },
+        { "line": 331, "ticks": 1 },
+        { "line": 183, "ticks": 1 },
+        { "line": 247, "ticks": 1 },
+        { "line": 210, "ticks": 3 },
+        { "line": 181, "ticks": 1 },
+        { "line": 218, "ticks": 1 },
+        { "line": 266, "ticks": 1 },
+        { "line": 326, "ticks": 1 },
+        { "line": 832, "ticks": 1 },
+        { "line": 224, "ticks": 2 },
+        { "line": 219, "ticks": 2 },
+        { "line": 230, "ticks": 164 }
+      ]
+    },
+    {
+      "id": 40,
+      "callFrame": {
+        "functionName": "attributeEmitted",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 178,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [41]
+    },
+    {
+      "id": 41,
+      "callFrame": {
+        "functionName": "onMessage",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 429,
+        "columnNumber": 19
+      },
+      "hitCount": 51,
+      "children": [60],
+      "positionTicks": [{ "line": 432, "ticks": 51 }]
+    },
+    {
+      "id": 60,
+      "callFrame": {
+        "functionName": "byteLength",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 853,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [61]
+    },
+    {
+      "id": 61,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 17,
+      "positionTicks": [{ "line": 870, "ticks": 17 }]
+    },
+    {
+      "id": 42,
+      "callFrame": {
+        "functionName": "projectFunctionResponse",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 781,
+        "columnNumber": 32
+      },
+      "hitCount": 7,
+      "children": [43, 110],
+      "positionTicks": [
+        { "line": 1202, "ticks": 1 },
+        { "line": 800, "ticks": 1 },
+        { "line": 846, "ticks": 2 },
+        { "line": 826, "ticks": 3 }
+      ]
+    },
+    {
+      "id": 43,
+      "callFrame": {
+        "functionName": "projectTranscriptToolResult",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 109,
+        "columnNumber": 43
+      },
+      "hitCount": 7,
+      "children": [44],
+      "positionTicks": [
+        { "line": 117, "ticks": 2 },
+        { "line": 120, "ticks": 1 },
+        { "line": 116, "ticks": 4 }
+      ]
+    },
+    {
+      "id": 44,
+      "callFrame": {
+        "functionName": "truncateToolOutput",
+        "scriptId": "495",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/tool-output.js",
+        "lineNumber": 70,
+        "columnNumber": 34
+      },
+      "hitCount": 55,
+      "children": [45],
+      "positionTicks": [
+        { "line": 113, "ticks": 1 },
+        { "line": 107, "ticks": 1 },
+        { "line": 81, "ticks": 1 },
+        { "line": 108, "ticks": 15 },
+        { "line": 134, "ticks": 4 },
+        { "line": 80, "ticks": 17 },
+        { "line": 115, "ticks": 14 },
+        { "line": 144, "ticks": 1 },
+        { "line": 110, "ticks": 1 }
+      ]
+    },
+    {
+      "id": 45,
+      "callFrame": {
+        "functionName": "utf8Len",
+        "scriptId": "495",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/tool-output.js",
+        "lineNumber": 40,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [46, 101]
+    },
+    {
+      "id": 46,
+      "callFrame": {
+        "functionName": "byteLength",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 853,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [47]
+    },
+    {
+      "id": 47,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 26,
+      "positionTicks": [{ "line": 870, "ticks": 26 }]
+    },
+    {
+      "id": 101,
+      "callFrame": {
+        "functionName": "get",
+        "scriptId": "9",
+        "url": "node:internal/bootstrap/node",
+        "lineNumber": 473,
+        "columnNumber": 7
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 474, "ticks": 2 }]
+    },
+    {
+      "id": 110,
+      "callFrame": {
+        "functionName": "decodePersistedToolResultContent",
+        "scriptId": "209",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/tool-result-record-schema.js",
+        "lineNumber": 102,
+        "columnNumber": 48
+      },
+      "hitCount": 0,
+      "children": [111]
+    },
+    {
+      "id": 111,
+      "callFrame": {
+        "functionName": "decodeCanonicalToolResultContent",
+        "scriptId": "209",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/tool-result-record-schema.js",
+        "lineNumber": 84,
+        "columnNumber": 48
+      },
+      "hitCount": 0,
+      "children": [112]
+    },
+    {
+      "id": 112,
+      "callFrame": {
+        "functionName": "decodeCanonicalShellToolResultContent",
+        "scriptId": "210",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/shell-run-result.js",
+        "lineNumber": 84,
+        "columnNumber": 53
+      },
+      "hitCount": 0,
+      "children": [113]
+    },
+    {
+      "id": 113,
+      "callFrame": {
+        "functionName": "currentTerminalResult",
+        "scriptId": "210",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/shell-run-result.js",
+        "lineNumber": 91,
+        "columnNumber": 30
+      },
+      "hitCount": 1,
+      "children": [114],
+      "positionTicks": [{ "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 114,
+      "callFrame": {
+        "functionName": "hasExactShape",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 38,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [115, 116]
+    },
+    {
+      "id": 115,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 40,
+        "columnNumber": 33
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 41, "ticks": 1 }]
+    },
+    {
+      "id": 116,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 39,
+        "columnNumber": 33
+      },
+      "hitCount": 4,
+      "positionTicks": [{ "line": 40, "ticks": 4 }]
+    },
+    {
+      "id": 49,
+      "callFrame": {
+        "functionName": "projectThinking",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 712,
+        "columnNumber": 24
+      },
+      "hitCount": 140,
+      "positionTicks": [
+        { "line": 734, "ticks": 1 },
+        { "line": 1110, "ticks": 19 },
+        { "line": 1112, "ticks": 83 },
+        { "line": 1111, "ticks": 9 },
+        { "line": 1114, "ticks": 28 }
+      ]
+    },
+    {
+      "id": 54,
+      "callFrame": {
+        "functionName": "recordStepContentOrder",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 677,
+        "columnNumber": 31
+      },
+      "hitCount": 18,
+      "positionTicks": [{ "line": 698, "ticks": 7 }, { "line": 696, "ticks": 11 }]
+    },
+    {
+      "id": 55,
+      "callFrame": {
+        "functionName": "projectText",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 620,
+        "columnNumber": 20
+      },
+      "hitCount": 5,
+      "children": [56, 92],
+      "positionTicks": [
+        { "line": 639, "ticks": 1 },
+        { "line": 649, "ticks": 2 },
+        { "line": 629, "ticks": 2 }
+      ]
+    },
+    {
+      "id": 56,
+      "callFrame": {
+        "functionName": "nonCanonicalContentOrder",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 670,
+        "columnNumber": 40
+      },
+      "hitCount": 3,
+      "children": [57],
+      "positionTicks": [{ "line": 674, "ticks": 3 }]
+    },
+    {
+      "id": 57,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 674,
+        "columnNumber": 59
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 675, "ticks": 3 }]
+    },
+    {
+      "id": 92,
+      "callFrame": {
+        "functionName": "attachPendingThinking",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 1098,
+        "columnNumber": 30
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1100, "ticks": 1 }]
+    },
+    {
+      "id": 70,
+      "callFrame": {
+        "functionName": "projectFunctionCall",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 736,
+        "columnNumber": 28
+      },
+      "hitCount": 5,
+      "children": [164],
+      "positionTicks": [
+        { "line": 765, "ticks": 1 },
+        { "line": 770, "ticks": 1 },
+        { "line": 1229, "ticks": 1 },
+        { "line": 751, "ticks": 2 }
+      ]
+    },
+    {
+      "id": 164,
+      "callFrame": {
+        "functionName": "toolActivityKindStateDelta",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 1226,
+        "columnNumber": 35
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1229, "ticks": 1 }]
+    },
+    {
+      "id": 58,
+      "callFrame": {
+        "functionName": "byteLength",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 853,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [59]
+    },
+    {
+      "id": 59,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 38,
+      "positionTicks": [{ "line": 870, "ticks": 38 }]
+    },
+    {
+      "id": 174,
+      "callFrame": {
+        "functionName": "exec",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 237, "ticks": 1 }]
+    },
+    {
+      "id": 48,
+      "callFrame": {
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 30
+    },
+    {
+      "id": 62,
+      "callFrame": {
+        "functionName": "finish",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 452,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [63, 84]
+    },
+    {
+      "id": 63,
+      "callFrame": {
+        "functionName": "assertTurnPresentationBounded",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 385,
+        "columnNumber": 38
+      },
+      "hitCount": 70,
+      "children": [64],
+      "positionTicks": [{ "line": 392, "ticks": 70 }]
+    },
+    {
+      "id": 64,
+      "callFrame": {
+        "functionName": "byteLength",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 853,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [65]
+    },
+    {
+      "id": 65,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 16,
+      "positionTicks": [{ "line": 870, "ticks": 16 }]
+    },
+    {
+      "id": 84,
+      "callFrame": {
+        "functionName": "finish",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 393,
+        "columnNumber": 19
+      },
+      "hitCount": 4,
+      "children": [85],
+      "positionTicks": [
+        { "line": 426, "ticks": 1 },
+        { "line": 428, "ticks": 1 },
+        { "line": 421, "ticks": 2 }
+      ]
+    },
+    {
+      "id": 85,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 420,
+        "columnNumber": 17
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 421, "ticks": 1 }]
+    },
+    {
+      "id": 66,
+      "callFrame": {
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 8
+    },
+    {
+      "id": 67,
+      "callFrame": {
+        "functionName": "readPage",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 273,
+        "columnNumber": 22
+      },
+      "hitCount": 3,
+      "children": [152],
+      "positionTicks": [{ "line": 295, "ticks": 1 }, { "line": 313, "ticks": 2 }]
+    },
+    {
+      "id": 152,
+      "callFrame": {
+        "functionName": "from",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 336,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 539, "ticks": 1 }]
+    },
+    {
+      "id": 74,
+      "callFrame": {
+        "functionName": "readSessionTranscriptPage",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 57,
+        "columnNumber": 47
+      },
+      "hitCount": 0,
+      "children": [75, 130]
+    },
+    {
+      "id": 75,
+      "callFrame": {
+        "functionName": "pageFromSelection",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 128,
+        "columnNumber": 26
+      },
+      "hitCount": 0,
+      "children": [76]
+    },
+    {
+      "id": 76,
+      "callFrame": {
+        "functionName": "encodeCursor",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 161,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [77]
+    },
+    {
+      "id": 77,
+      "callFrame": {
+        "functionName": "signCursor",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 214,
+        "columnNumber": 19
+      },
+      "hitCount": 1,
+      "children": [118],
+      "positionTicks": [{ "line": 216, "ticks": 1 }]
+    },
+    {
+      "id": 118,
+      "callFrame": {
+        "functionName": "createHmac",
+        "scriptId": "141",
+        "url": "node:crypto",
+        "lineNumber": 168,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [119]
+    },
+    {
+      "id": 119,
+      "callFrame": {
+        "functionName": "Hmac",
+        "scriptId": "155",
+        "url": "node:internal/crypto/hash",
+        "lineNumber": 173,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [120, 168]
+    },
+    {
+      "id": 120,
+      "callFrame": {
+        "functionName": "prepareSecretKey",
+        "scriptId": "144",
+        "url": "node:internal/crypto/keys",
+        "lineNumber": 642,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [121]
+    },
+    {
+      "id": 121,
+      "callFrame": {
+        "functionName": "isKeyObject",
+        "scriptId": "144",
+        "url": "node:internal/crypto/keys",
+        "lineNumber": 971,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [122]
+    },
+    {
+      "id": 122,
+      "callFrame": {
+        "functionName": "getKeyObjectSlots",
+        "scriptId": "144",
+        "url": "node:internal/crypto/keys",
+        "lineNumber": 218,
+        "columnNumber": 26
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 226, "ticks": 3 }]
+    },
+    {
+      "id": 168,
+      "callFrame": {
+        "functionName": "init",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 181, "ticks": 1 }]
+    },
+    {
+      "id": 130,
+      "callFrame": {
+        "functionName": "storageSelection",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 114,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [131]
+    },
+    {
+      "id": 131,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 116,
+        "columnNumber": 41
+      },
+      "hitCount": 0,
+      "children": [132]
+    },
+    {
+      "id": 132,
+      "callFrame": {
+        "functionName": "toString",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 917,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [133]
+    },
+    {
+      "id": 133,
+      "callFrame": {
+        "functionName": "base64Slice",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 947, "ticks": 1 }]
+    },
+    {
+      "id": 80,
+      "callFrame": {
+        "functionName": "readBoundedMarkerFile",
+        "scriptId": "164",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/marker-file.js",
+        "lineNumber": 31,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [81]
+    },
+    {
+      "id": 81,
+      "callFrame": {
+        "functionName": "toString",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 917,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [82]
+    },
+    {
+      "id": 82,
+      "callFrame": {
+        "functionName": "utf8Slice",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 947, "ticks": 1 }]
+    },
+    {
+      "id": 86,
+      "callFrame": {
+        "functionName": "scan",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 135,
+        "columnNumber": 33
+      },
+      "hitCount": 1,
+      "children": [151, 179],
+      "positionTicks": [{ "line": 164, "ticks": 1 }]
+    },
+    {
+      "id": 151,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 159,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 163, "ticks": 1 }]
+    },
+    {
+      "id": 179,
+      "callFrame": {
+        "functionName": "projectTurn",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 75,
+        "columnNumber": 24
+      },
+      "hitCount": 0,
+      "children": [180]
+    },
+    {
+      "id": 180,
+      "callFrame": {
+        "functionName": "finish",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 452,
+        "columnNumber": 20
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 454, "ticks": 1 }]
+    },
+    {
+      "id": 87,
+      "callFrame": {
+        "functionName": "#sendTranscriptHistory",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 1092,
+        "columnNumber": 32
+      },
+      "hitCount": 0,
+      "children": [88, 108, 123]
+    },
+    {
+      "id": 88,
+      "callFrame": {
+        "functionName": "readOlderPage",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [89]
+    },
+    {
+      "id": 89,
+      "callFrame": {
+        "functionName": "loadTranscriptPage",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": 82,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [90]
+    },
+    {
+      "id": 90,
+      "callFrame": {
+        "functionName": "loadTranscriptPage",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 203,
+        "columnNumber": 22
+      },
+      "hitCount": 1,
+      "children": [155],
+      "positionTicks": [{ "line": 214, "ticks": 1 }]
+    },
+    {
+      "id": 155,
+      "callFrame": {
+        "functionName": "runtimeHostSessionFixture.snapshot",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": 73,
+        "columnNumber": 31
+      },
+      "hitCount": 0,
+      "children": [156]
+    },
+    {
+      "id": 156,
+      "callFrame": {
+        "functionName": "readSessionTranscriptPage",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 57,
+        "columnNumber": 47
+      },
+      "hitCount": 0,
+      "children": [157]
+    },
+    {
+      "id": 157,
+      "callFrame": {
+        "functionName": "resolvePosition",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 98,
+        "columnNumber": 24
+      },
+      "hitCount": 0,
+      "children": [158]
+    },
+    {
+      "id": 158,
+      "callFrame": {
+        "functionName": "decodeCursor",
+        "scriptId": "497",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-pager.js",
+        "lineNumber": 165,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [159]
+    },
+    {
+      "id": 159,
+      "callFrame": {
+        "functionName": "toString",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 917,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [160]
+    },
+    {
+      "id": 160,
+      "callFrame": {
+        "functionName": "utf8Slice",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 947, "ticks": 1 }]
+    },
+    {
+      "id": 108,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 1162,
+        "columnNumber": 42
+      },
+      "hitCount": 0,
+      "children": [109]
+    },
+    {
+      "id": 109,
+      "callFrame": {
+        "functionName": "encodedTranscriptMessageBytes",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 1481,
+        "columnNumber": 38
+      },
+      "hitCount": 4,
+      "positionTicks": [{ "line": 1483, "ticks": 4 }]
+    },
+    {
+      "id": 123,
+      "callFrame": {
+        "functionName": "send",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 1126,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [124]
+    },
+    {
+      "id": 124,
+      "callFrame": {
+        "functionName": "#sendTranscriptBatches",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 1400,
+        "columnNumber": 32
+      },
+      "hitCount": 0,
+      "children": [125]
+    },
+    {
+      "id": 125,
+      "callFrame": {
+        "functionName": "encodeDesktopTranscriptBatches",
+        "scriptId": "604",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-ipc.js",
+        "lineNumber": 38,
+        "columnNumber": 47
+      },
+      "hitCount": 0,
+      "children": [126]
+    },
+    {
+      "id": 126,
+      "callFrame": {
+        "functionName": "encodeMessages",
+        "scriptId": "604",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-ipc.js",
+        "lineNumber": 74,
+        "columnNumber": 24
+      },
+      "hitCount": 0,
+      "children": [127]
+    },
+    {
+      "id": 127,
+      "callFrame": {
+        "functionName": "encodeMessage",
+        "scriptId": "604",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-ipc.js",
+        "lineNumber": 78,
+        "columnNumber": 23
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 87, "ticks": 2 }, { "line": 80, "ticks": 1 }]
+    },
+    {
+      "id": 93,
+      "callFrame": {
+        "functionName": "projectTurn",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 75,
+        "columnNumber": 24
+      },
+      "hitCount": 2,
+      "children": [94],
+      "positionTicks": [{ "line": 104, "ticks": 2 }]
+    },
+    {
+      "id": 94,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 103,
+        "columnNumber": 38
+      },
+      "hitCount": 8,
+      "positionTicks": [
+        { "line": 109, "ticks": 3 },
+        { "line": 105, "ticks": 3 },
+        { "line": 113, "ticks": 2 }
+      ]
+    },
+    {
+      "id": 95,
+      "callFrame": {
+        "functionName": "readOlderPage",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [96]
+    },
+    {
+      "id": 96,
+      "callFrame": {
+        "functionName": "#withDecodedPage",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 491,
+        "columnNumber": 26
+      },
+      "hitCount": 0,
+      "children": [97]
+    },
+    {
+      "id": 97,
+      "callFrame": {
+        "functionName": "#withAssembly",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 494,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [98]
+    },
+    {
+      "id": 98,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 492,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [99]
+    },
+    {
+      "id": 99,
+      "callFrame": {
+        "functionName": "decodeTranscriptPage",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": 81,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [100]
+    },
+    {
+      "id": 100,
+      "callFrame": {
+        "functionName": "decodeTranscriptPage",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 162,
+        "columnNumber": 30
+      },
+      "hitCount": 1,
+      "children": [141],
+      "positionTicks": [{ "line": 193, "ticks": 1 }]
+    },
+    {
+      "id": 141,
+      "callFrame": {
+        "functionName": "accept",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 406,
+        "columnNumber": 10
+      },
+      "hitCount": 0,
+      "children": [142]
+    },
+    {
+      "id": 142,
+      "callFrame": {
+        "functionName": "#accept",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 430,
+        "columnNumber": 11
+      },
+      "hitCount": 0,
+      "children": [143, 175]
+    },
+    {
+      "id": 143,
+      "callFrame": {
+        "functionName": "#completeCurrent",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 483,
+        "columnNumber": 20
+      },
+      "hitCount": 3,
+      "children": [153],
+      "positionTicks": [{ "line": 494, "ticks": 3 }]
+    },
+    {
+      "id": 153,
+      "callFrame": {
+        "functionName": "toString",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 917,
+        "columnNumber": 45
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 925, "ticks": 1 }]
+    },
+    {
+      "id": 175,
+      "callFrame": {
+        "functionName": "from",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 336,
+        "columnNumber": 27
+      },
+      "hitCount": 0,
+      "children": [176]
+    },
+    {
+      "id": 176,
+      "callFrame": {
+        "functionName": "fromString",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 528,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [177]
+    },
+    {
+      "id": 177,
+      "callFrame": {
+        "functionName": "fromStringFast",
+        "scriptId": "24",
+        "url": "node:buffer",
+        "lineNumber": 495,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [178]
+    },
+    {
+      "id": 178,
+      "callFrame": {
+        "functionName": "base64Write",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 515, "ticks": 1 }]
+    },
+    {
+      "id": 105,
+      "callFrame": {
+        "functionName": "stableFileSnapshot",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 118,
+        "columnNumber": 33
+      },
+      "hitCount": 0,
+      "children": [106]
+    },
+    {
+      "id": 106,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "53",
+        "url": "node:internal/fs/utils",
+        "lineNumber": 398,
+        "columnNumber": 37
+      },
+      "hitCount": 0,
+      "children": [107]
+    },
+    {
+      "id": 107,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "53",
+        "url": "node:internal/fs/utils",
+        "lineNumber": 513,
+        "columnNumber": 51
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 519, "ticks": 1 }]
+    },
+    {
+      "id": 117,
+      "callFrame": {
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 5
+    },
+    {
+      "id": 134,
+      "callFrame": {
+        "functionName": "readStableBoundedFile",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 28,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [135]
+    },
+    {
+      "id": 135,
+      "callFrame": {
+        "functionName": "stableFileSnapshot",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 118,
+        "columnNumber": 33
+      },
+      "hitCount": 0,
+      "children": [136, 137]
+    },
+    {
+      "id": 136,
+      "callFrame": {
+        "functionName": "lstat",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1727,
+        "columnNumber": 20
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1735, "ticks": 1 }]
+    },
+    {
+      "id": 137,
+      "callFrame": {
+        "functionName": "stat",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 250,
+        "columnNumber": 6
+      },
+      "hitCount": 0,
+      "children": [138]
+    },
+    {
+      "id": 138,
+      "callFrame": {
+        "functionName": "fsCall",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1103,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "children": [139],
+      "positionTicks": [{ "line": 1118, "ticks": 1 }]
+    },
+    {
+      "id": 139,
+      "callFrame": {
+        "functionName": "fstat",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1718,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [140]
+    },
+    {
+      "id": 140,
+      "callFrame": {
+        "functionName": "fstat",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1721, "ticks": 1 }]
+    },
+    {
+      "id": 144,
+      "callFrame": {
+        "functionName": "confirmRootSnapshot",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 639,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [145]
+    },
+    {
+      "id": 145,
+      "callFrame": {
+        "functionName": "readMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 632,
+        "columnNumber": 24
+      },
+      "hitCount": 0,
+      "children": [146]
+    },
+    {
+      "id": 146,
+      "callFrame": {
+        "functionName": "readAndValidateRootMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 741,
+        "columnNumber": 40
+      },
+      "hitCount": 0,
+      "children": [147]
+    },
+    {
+      "id": 147,
+      "callFrame": {
+        "functionName": "readRootMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 744,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [148]
+    },
+    {
+      "id": 148,
+      "callFrame": {
+        "functionName": "readBoundedMarkerFile",
+        "scriptId": "164",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/marker-file.js",
+        "lineNumber": 31,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [149]
+    },
+    {
+      "id": 149,
+      "callFrame": {
+        "functionName": "readStableBoundedFile",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 28,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [150]
+    },
+    {
+      "id": 150,
+      "callFrame": {
+        "functionName": "open",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1340,
+        "columnNumber": 19
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1346, "ticks": 1 }]
+    },
+    {
+      "id": 162,
+      "callFrame": {
+        "functionName": "isOptionalString",
+        "scriptId": "174",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/record-schema.js",
+        "lineNumber": 61,
+        "columnNumber": 32
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 63, "ticks": 1 }]
+    },
+    {
+      "id": 165,
+      "callFrame": {
+        "functionName": "stat",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1741,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [166]
+    },
+    {
+      "id": 166,
+      "callFrame": {
+        "functionName": "getStatsFromBinding",
+        "scriptId": "53",
+        "url": "node:internal/fs/utils",
+        "lineNumber": 549,
+        "columnNumber": 28
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 559, "ticks": 1 }, { "line": 552, "ticks": 1 }]
+    }
+  ],
+  "startTime": 174917236084,
+  "endTime": 174919802834,
+  "samples": [
+    5, 8, 18, 19, 19, 19, 22, 24, 35, 24, 35, 25, 36, 24, 36, 36, 37, 24, 39, 36, 25, 25, 41, 35,
+    41, 39, 36, 23, 24, 36, 36, 44, 36, 36, 24, 37, 47, 48, 24, 39, 24, 24, 25, 49, 51, 24, 35, 53,
+    54, 41, 49, 44, 44, 36, 25, 35, 57, 41, 39, 35, 36, 37, 25, 37, 36, 49, 35, 36, 59, 25, 35, 39,
+    39, 61, 49, 38, 54, 36, 39, 23, 39, 36, 35, 39, 25, 49, 39, 36, 56, 37, 39, 37, 37, 42, 49, 47,
+    36, 37, 39, 24, 49, 36, 39, 38, 36, 35, 36, 65, 63, 65, 65, 66, 67, 19, 19, 19, 19, 68, 35, 24,
+    25, 69, 35, 24, 23, 25, 70, 25, 25, 37, 72, 24, 49, 24, 43, 39, 39, 44, 38, 35, 25, 47, 69, 48,
+    23, 37, 59, 36, 36, 35, 24, 25, 39, 39, 36, 25, 39, 25, 32, 24, 35, 37, 36, 25, 36, 44, 24, 39,
+    37, 39, 41, 24, 39, 41, 24, 25, 73, 66, 36, 49, 31, 24, 36, 25, 25, 49, 39, 61, 39, 49, 49, 24,
+    37, 49, 35, 25, 49, 25, 37, 39, 59, 23, 39, 25, 37, 25, 35, 49, 39, 24, 61, 44, 25, 63, 63, 65,
+    63, 63, 77, 19, 19, 19, 19, 27, 35, 24, 25, 35, 36, 47, 23, 49, 24, 35, 35, 25, 37, 36, 44, 36,
+    35, 25, 25, 36, 49, 23, 36, 24, 24, 61, 37, 78, 23, 57, 23, 49, 35, 36, 35, 25, 47, 49, 25, 35,
+    39, 25, 36, 44, 36, 25, 25, 72, 49, 49, 49, 36, 79, 49, 39, 39, 39, 49, 23, 37, 35, 49, 39, 25,
+    47, 59, 36, 25, 54, 39, 35, 36, 25, 36, 25, 36, 36, 49, 26, 24, 25, 35, 37, 36, 36, 47, 36, 61,
+    24, 49, 37, 63, 63, 63, 63, 63, 82, 18, 19, 19, 19, 25, 41, 35, 25, 24, 36, 37, 44, 35, 41, 36,
+    36, 35, 25, 24, 44, 24, 35, 59, 24, 39, 48, 41, 24, 83, 26, 61, 25, 24, 69, 37, 61, 36, 49, 43,
+    35, 37, 25, 24, 25, 36, 44, 41, 27, 39, 25, 36, 35, 25, 24, 37, 59, 36, 47, 25, 39, 35, 25, 54,
+    39, 49, 35, 39, 35, 36, 49, 59, 25, 35, 39, 25, 36, 49, 39, 69, 35, 35, 25, 36, 39, 70, 25, 41,
+    37, 36, 37, 25, 49, 39, 49, 36, 39, 24, 85, 65, 63, 63, 63, 86, 90, 19, 19, 19, 37, 37, 24, 25,
+    59, 35, 41, 78, 37, 49, 49, 25, 35, 36, 25, 25, 91, 37, 25, 25, 48, 36, 44, 25, 36, 25, 25, 25,
+    24, 39, 78, 59, 44, 35, 25, 24, 44, 39, 44, 25, 36, 25, 39, 37, 44, 47, 36, 44, 49, 37, 36, 24,
+    61, 39, 24, 25, 36, 25, 66, 25, 92, 49, 36, 36, 49, 25, 37, 49, 35, 26, 39, 41, 25, 36, 36, 39,
+    37, 36, 25, 25, 35, 35, 36, 39, 39, 39, 35, 25, 44, 24, 39, 35, 63, 63, 65, 63, 94, 67, 100, 18,
+    19, 19, 19, 37, 24, 24, 36, 48, 24, 39, 24, 24, 36, 36, 25, 43, 35, 35, 35, 44, 25, 25, 24, 25,
+    101, 44, 25, 43, 44, 57, 54, 25, 41, 41, 36, 102, 44, 25, 24, 25, 48, 48, 48, 36, 27, 37, 52,
+    35, 25, 59, 44, 39, 25, 59, 41, 24, 49, 24, 49, 36, 37, 24, 39, 37, 37, 104, 35, 35, 49, 24, 39,
+    24, 44, 24, 25, 39, 37, 35, 36, 36, 24, 36, 37, 25, 49, 25, 39, 25, 49, 24, 39, 39, 24, 25, 54,
+    35, 37, 39, 37, 36, 59, 35, 24, 49, 84, 65, 63, 63, 63, 63, 94, 107, 109, 19, 19, 19, 19, 35,
+    39, 24, 36, 25, 42, 25, 36, 43, 36, 35, 54, 44, 36, 24, 25, 25, 25, 36, 23, 49, 61, 42, 24, 49,
+    49, 36, 37, 25, 47, 48, 36, 25, 49, 36, 25, 101, 49, 36, 36, 36, 37, 25, 25, 71, 25, 25, 78, 39,
+    35, 24, 25, 36, 39, 36, 59, 36, 36, 24, 26, 24, 49, 39, 49, 25, 115, 49, 61, 39, 116, 27, 49,
+    37, 39, 49, 35, 25, 35, 44, 49, 25, 24, 35, 39, 39, 35, 25, 39, 37, 24, 37, 24, 36, 65, 63, 65,
+    63, 94, 117, 122, 127, 19, 19, 19, 129, 44, 24, 35, 25, 25, 37, 35, 37, 24, 25, 37, 25, 35, 24,
+    102, 39, 39, 36, 39, 39, 36, 35, 44, 24, 36, 39, 36, 24, 35, 25, 48, 23, 25, 36, 24, 39, 24, 36,
+    116, 24, 36, 49, 36, 25, 91, 37, 23, 25, 37, 37, 25, 39, 37, 26, 49, 39, 35, 29, 25, 39, 24, 35,
+    24, 49, 37, 25, 31, 35, 36, 39, 25, 25, 39, 36, 36, 59, 36, 37, 24, 39, 25, 36, 36, 24, 24, 39,
+    37, 91, 39, 35, 35, 36, 36, 36, 49, 24, 35, 23, 39, 65, 65, 63, 63, 65, 93, 133, 109, 136, 19,
+    19, 19, 36, 25, 24, 24, 54, 116, 35, 24, 36, 37, 39, 25, 36, 36, 24, 35, 24, 36, 39, 41, 59, 24,
+    23, 35, 61, 44, 54, 24, 48, 44, 49, 25, 25, 39, 24, 49, 24, 25, 24, 35, 25, 39, 25, 24, 25, 49,
+    113, 79, 39, 33, 24, 35, 39, 35, 24, 25, 36, 24, 25, 39, 37, 25, 49, 49, 39, 42, 37, 24, 35, 24,
+    25, 47, 25, 49, 39, 42, 24, 23, 49, 47, 36, 24, 59, 36, 36, 25, 39, 49, 37, 36, 35, 49, 49, 39,
+    49, 25, 36, 41, 39, 36, 63, 63, 63, 63, 63, 140, 143, 150, 19, 19, 19, 36, 25, 35, 47, 36, 35,
+    36, 36, 24, 35, 36, 36, 36, 24, 24, 24, 37, 23, 35, 39, 47, 25, 36, 47, 48, 35, 47, 35, 39, 36,
+    37, 25, 49, 23, 24, 36, 36, 23, 39, 37, 71, 37, 36, 66, 37, 35, 25, 37, 24, 54, 35, 25, 39, 36,
+    35, 25, 25, 25, 24, 35, 36, 24, 25, 35, 59, 24, 24, 35, 49, 24, 36, 36, 23, 49, 35, 36, 35, 54,
+    37, 36, 47, 36, 49, 49, 39, 25, 44, 35, 25, 23, 24, 49, 27, 36, 36, 63, 63, 63, 65, 63, 151,
+    152, 109, 48, 19, 19, 35, 25, 25, 116, 35, 25, 24, 24, 35, 35, 24, 36, 35, 35, 78, 35, 25, 36,
+    25, 24, 36, 39, 66, 36, 35, 24, 49, 36, 41, 44, 24, 25, 35, 59, 23, 56, 25, 48, 48, 48, 78, 35,
+    36, 35, 36, 39, 49, 37, 23, 39, 24, 36, 54, 25, 44, 36, 49, 49, 39, 25, 25, 36, 35, 25, 25, 39,
+    24, 25, 36, 36, 25, 49, 25, 36, 24, 24, 24, 24, 24, 37, 24, 41, 37, 39, 49, 54, 49, 36, 39, 49,
+    49, 37, 39, 59, 49, 24, 35, 25, 84, 63, 63, 63, 63, 63, 117, 153, 117, 19, 19, 25, 25, 35, 35,
+    35, 25, 36, 25, 25, 25, 36, 36, 25, 59, 25, 37, 35, 36, 41, 24, 35, 35, 25, 25, 27, 36, 35, 69,
+    59, 35, 91, 24, 24, 36, 25, 48, 44, 24, 49, 44, 43, 23, 23, 49, 41, 70, 39, 36, 36, 35, 25, 24,
+    25, 36, 24, 49, 35, 49, 25, 23, 25, 36, 35, 48, 36, 36, 41, 25, 39, 25, 35, 36, 31, 24, 39, 25,
+    35, 25, 36, 36, 36, 36, 25, 41, 36, 35, 49, 49, 36, 44, 37, 24, 39, 154, 49, 36, 65, 63, 63, 63,
+    63, 94, 122, 160, 19, 19, 41, 27, 36, 24, 35, 47, 78, 37, 17, 25, 59, 36, 24, 39, 25, 24, 25,
+    59, 35, 25, 24, 25, 35, 25, 35, 25, 37, 39, 36, 161, 48, 39, 24, 162, 44, 25, 39, 39, 24, 35,
+    37, 44, 61, 39, 56, 39, 39, 25, 39, 36, 49, 25, 44, 36, 35, 41, 41, 36, 25, 26, 31, 35, 36, 24,
+    24, 49, 44, 25, 37, 36, 24, 24, 49, 25, 39, 25, 59, 25, 39, 36, 35, 37, 24, 36, 35, 24, 39, 24,
+    23, 47, 24, 24, 24, 41, 39, 48, 84, 63, 63, 63, 63, 94, 122, 127, 19, 19, 25, 69, 35, 36, 24,
+    38, 47, 39, 35, 24, 35, 44, 35, 24, 54, 25, 49, 39, 25, 44, 24, 24, 49, 39, 25, 49, 36, 23, 36,
+    48, 25, 39, 25, 41, 35, 37, 36, 25, 35, 24, 70, 25, 36, 25, 49, 36, 36, 49, 36, 25, 163, 36, 25,
+    49, 36, 49, 25, 41, 25, 26, 41, 43, 44, 23, 36, 35, 41, 49, 49, 41, 55, 49, 36, 36, 24, 49, 23,
+    26, 164, 27, 41, 25, 35, 24, 25, 25, 49, 41, 39, 49, 36, 24, 25, 41, 39, 36, 39, 63, 63, 63, 63,
+    65, 117, 143, 48, 19, 19, 25, 36, 59, 37, 36, 25, 24, 25, 55, 25, 25, 36, 24, 35, 48, 44, 36,
+    36, 25, 25, 39, 48, 52, 41, 42, 36, 36, 37, 35, 24, 17, 25, 39, 35, 59, 36, 17, 26, 48, 48, 51,
+    35, 23, 26, 39, 39, 25, 25, 24, 23, 37, 25, 41, 37, 36, 25, 59, 25, 49, 39, 25, 37, 24, 49, 44,
+    25, 41, 35, 25, 49, 25, 59, 36, 49, 39, 49, 36, 39, 55, 39, 36, 25, 24, 39, 49, 39, 24, 24, 51,
+    39, 36, 35, 24, 36, 36, 66, 23, 49, 49, 36, 39, 35, 39, 63, 63, 63, 63, 63, 94, 138, 109, 166,
+    19, 36, 36, 25, 25, 36, 25, 25, 44, 25, 41, 35, 36, 24, 49, 59, 24, 36, 36, 36, 25, 24, 24, 35,
+    24, 24, 49, 24, 47, 24, 25, 37, 25, 48, 49, 24, 59, 25, 49, 25, 39, 24, 35, 36, 24, 39, 25, 72,
+    35, 25, 26, 37, 25, 35, 24, 37, 36, 37, 36, 24, 35, 36, 25, 35, 24, 36, 49, 35, 49, 39, 39, 69,
+    24, 39, 39, 36, 49, 36, 49, 49, 37, 36, 37, 35, 61, 37, 39, 47, 39, 39, 36, 84, 63, 65, 63, 63,
+    66, 143, 18, 167, 59, 24, 37, 24, 44, 24, 24, 69, 35, 35, 39, 37, 35, 35, 25, 36, 35, 25, 47,
+    36, 35, 24, 37, 37, 35, 25, 25, 48, 24, 35, 35, 26, 35, 39, 17, 17, 36, 44, 35, 59, 35, 39, 24,
+    35, 44, 24, 61, 24, 37, 24, 25, 41, 37, 24, 39, 25, 36, 35, 35, 36, 54, 39, 24, 36, 36, 36, 25,
+    44, 49, 35, 41, 25, 59, 42, 39, 25, 24, 39, 49, 39, 36, 39, 35, 35, 25, 24, 35, 44, 39, 36, 63,
+    63, 63, 63, 93, 168, 117, 173, 35, 36, 35, 25, 24, 26, 25, 24, 25, 37, 59, 35, 37, 36, 35, 24,
+    25, 36, 24, 39, 36, 25, 25, 48, 36, 61, 78, 41, 41, 54, 25, 35, 49, 41, 39, 24, 36, 41, 37, 35,
+    39, 35, 36, 35, 37, 25, 39, 49, 31, 49, 24, 25, 78, 39, 25, 44, 25, 37, 36, 35, 35, 24, 24, 36,
+    39, 47, 39, 39, 36, 37, 23, 36, 36, 44, 39, 36, 25, 49, 36, 39, 59, 25, 49, 55, 61, 61, 25, 25,
+    25, 47, 36, 174, 63, 63, 63, 63, 94, 178, 166, 23, 37, 24, 36, 25, 25, 25, 36, 35, 91, 55, 25,
+    37, 23, 36, 39, 35, 24, 91, 25, 39, 48, 25, 41, 36, 25, 39, 47, 25, 66, 25, 36, 37, 59, 35, 25,
+    25, 70, 35, 24, 36, 35, 37, 36, 37, 24, 25, 59, 54, 41, 25, 25, 91, 36, 35, 25, 36, 36, 24, 49,
+    24, 24, 41, 25, 41, 25, 49, 24, 49, 35, 37, 37, 25, 35, 49, 25, 25, 35, 25, 44, 39, 44, 78, 59,
+    24, 83, 49, 54, 49, 39, 39, 41, 39, 180, 63, 63, 63, 63, 94, 67, 127
+  ],
+  "timeDeltas": [
+    49917, 833, 542, 1291, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1208, 1292, 1167, 1250, 1250,
+    1250, 1291, 1250, 1292, 1250, 1292, 1250, 1291, 1250, 1167, 2250, 292, 1250, 1916, 584, 1250,
+    1250, 1250, 1250, 1083, 1083, 1250, 1250, 1250, 1250, 1292, 1250, 1292, 1291, 1250, 1292, 1250,
+    1250, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1041, 1292, 1208, 1292, 1250, 1208, 1209, 1291,
+    1250, 1250, 1292, 1250, 1292, 1250, 1250, 1291, 1000, 1292, 1208, 1209, 1208, 1250, 1292, 1250,
+    1250, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1292, 1208, 1208, 1209, 1166, 1292, 1250,
+    1292, 1291, 1250, 1250, 1292, 1292, 1250, 1291, 1209, 1250, 1250, 1250, 1250, 1291, 1250, 1250,
+    1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1125, 1292, 1250, 1250, 1292, 1250,
+    1250, 1208, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1208, 1250, 1292, 1250, 1208,
+    1250, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1208, 1209, 1250, 1291, 1125, 1250,
+    1292, 1250, 1208, 1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1000, 1291,
+    1209, 1291, 1209, 1250, 1250, 1250, 1291, 1209, 1250, 1250, 1083, 1083, 1250, 1250, 1292, 1250,
+    1250, 1250, 1250, 1292, 1250, 1250, 1083, 1292, 1250, 1250, 1250, 1291, 1292, 1250, 1250, 1292,
+    1250, 1291, 1209, 1250, 1250, 1250, 1250, 1291, 1250, 1250, 1250, 1209, 1291, 1250, 1250, 1292,
+    1208, 1250, 1292, 1250, 1250, 1292, 1208, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1292, 1250,
+    1250, 1250, 1250, 1167, 1250, 1291, 1209, 1250, 1250, 1250, 1291, 1209, 1208, 1208, 1250, 1250,
+    1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1291, 1250, 1250, 1250, 1292, 1250,
+    1250, 1250, 1292, 1250, 1291, 1250, 1250, 1250, 1292, 1250, 1250, 1042, 1208, 1250, 1250, 1250,
+    1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1292, 1208, 1250, 1250, 1250, 1250, 1292, 1167,
+    1250, 1250, 1291, 1209, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250,
+    1291, 1250, 1250, 1084, 1291, 1250, 1250, 1292, 1292, 1250, 1291, 1250, 1250, 1250, 1292, 1250,
+    1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1250, 1250, 1291,
+    1125, 1250, 1292, 1250, 1292, 1208, 1250, 1250, 1250, 1292, 1208, 1292, 1250, 1250, 1250, 1291,
+    1250, 1250, 1292, 1250, 1250, 1250, 1125, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1250, 1250,
+    1250, 1292, 1250, 1250, 1292, 1208, 1292, 1250, 1291, 1250, 1250, 1292, 1083, 1292, 1250, 1250,
+    1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1291, 1250, 1292, 1250,
+    1083, 1250, 1250, 1292, 1208, 1250, 1250, 1250, 1292, 1208, 1209, 1250, 1250, 1250, 1041, 1250,
+    1250, 1292, 1250, 1250, 1292, 1208, 1250, 1250, 1250, 1292, 1208, 1042, 1291, 1209, 1208, 1208,
+    1209, 1250, 1250, 1291, 1167, 1292, 1250, 1250, 1291, 1250, 1250, 1250, 1250, 1292, 1250, 1292,
+    1250, 1250, 1208, 1292, 1250, 1250, 1291, 1250, 1250, 1250, 1292, 1250, 1292, 1250, 1250, 1291,
+    1250, 1250, 1250, 1125, 1250, 1292, 1250, 1250, 1292, 1250, 1208, 1250, 1292, 1250, 1250, 1250,
+    1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1291, 1250, 1292,
+    1250, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1291, 1292, 1208, 1250, 1250, 1292,
+    1208, 1250, 1250, 1292, 1208, 1250, 1250, 1292, 1167, 1291, 1250, 1209, 1250, 1250, 1250, 1250,
+    1291, 1209, 1250, 1250, 1250, 1291, 1292, 1208, 1125, 1292, 1250, 1208, 1250, 1250, 1250, 1250,
+    1250, 1250, 1250, 1250, 1125, 1250, 1042, 1250, 1292, 1166, 1125, 1250, 1250, 1250, 1292, 1208,
+    1334, 1250, 1208, 1208, 1250, 1292, 1208, 1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250,
+    1250, 1291, 1250, 1250, 1292, 1292, 1208, 1167, 1250, 1291, 1250, 1292, 1250, 1250, 1875, 708,
+    1042, 1250, 1250, 1250, 1250, 1292, 1125, 1250, 1250, 1291, 1250, 1209, 1208, 1292, 1208, 1250,
+    1250, 1250, 1250, 1292, 1250, 1250, 1166, 1250, 1250, 1292, 1250, 1208, 1250, 1250, 1292, 1250,
+    1250, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1292, 1000, 1250, 1250, 1250, 1292, 1250, 1291,
+    1125, 1292, 1250, 1083, 1292, 1250, 1250, 1292, 1208, 1208, 1250, 1292, 1250, 1250, 1292, 1250,
+    1250, 1291, 1250, 1250, 1167, 1292, 1250, 1250, 1250, 1291, 1000, 1250, 1250, 1250, 1250, 1292,
+    1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1292, 1250, 1291, 1209,
+    1250, 1250, 1291, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1250, 1250, 1291, 1209, 1250,
+    1291, 1250, 1250, 1250, 1250, 1292, 1000, 1292, 1000, 1291, 1250, 1209, 1250, 1250, 1250, 1250,
+    1291, 1167, 1250, 1250, 1292, 1291, 1250, 1209, 1291, 1292, 1250, 1250, 1250, 1292, 1250, 1291,
+    1250, 1250, 1292, 1000, 1292, 1166, 1250, 1292, 1208, 1250, 1250, 1292, 1167, 1291, 1250, 1250,
+    1250, 1250, 1292, 1292, 1250, 1083, 1208, 1292, 1250, 1292, 1250, 1291, 1209, 1250, 1291, 1209,
+    1000, 1291, 1250, 1250, 1167, 1292, 1000, 1291, 1250, 1250, 1250, 1250, 1125, 1250, 1292, 1250,
+    1250, 1250, 3083, 3042, 1125, 1375, 1208, 1250, 1292, 1250, 1292, 1208, 1208, 1250, 1250, 1292,
+    1250, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1208, 1292, 1250, 1083, 1292, 1208, 1000, 1167,
+    1291, 1250, 1167, 1292, 1208, 1208, 1209, 1250, 1250, 1291, 1209, 1041, 1250, 1292, 1292, 1250,
+    1291, 1250, 1250, 1292, 1250, 1250, 1292, 1333, 1250, 1250, 1292, 1250, 1208, 1208, 1292, 1250,
+    1250, 1292, 1208, 1250, 1292, 1208, 1292, 1250, 1250, 1125, 1250, 1291, 1250, 1250, 1250, 1250,
+    1250, 1292, 1292, 1250, 1291, 1250, 1292, 1250, 1208, 1209, 1250, 1291, 1209, 1250, 1291, 1167,
+    1292, 1250, 1250, 1291, 1250, 1250, 1292, 1292, 1250, 1208, 1292, 1250, 1291, 1250, 1292, 1250,
+    1250, 1292, 1250, 1291, 1250, 1042, 1250, 1250, 1250, 1083, 1167, 1250, 1250, 1250, 1292, 1250,
+    1250, 1291, 1250, 1292, 1250, 1250, 1250, 1250, 1292, 1250, 1166, 1250, 1209, 1166, 1042, 1250,
+    1250, 1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1166, 1292,
+    1250, 1250, 1292, 1208, 1250, 1250, 1167, 1250, 1125, 1250, 1250, 1250, 1250, 1208, 1250, 1292,
+    1208, 1250, 1250, 1250, 1042, 1250, 1291, 1250, 1250, 1250, 1292, 1292, 1250, 1041, 1292, 1250,
+    1292, 1250, 1291, 1250, 1292, 1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1250, 1250, 1292,
+    1083, 1250, 1292, 1250, 1250, 1250, 1250, 1292, 1291, 1250, 1250, 1250, 1292, 1208, 1250, 1292,
+    1250, 1250, 1250, 1292, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1250,
+    1250, 1250, 1125, 1208, 1250, 1250, 1250, 1292, 1291, 1209, 1250, 1250, 1250, 1291, 1250, 1292,
+    1292, 1250, 1250, 1250, 1291, 1250, 1042, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250,
+    1292, 1166, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1208, 1292, 1208, 1292, 1208, 1250,
+    1292, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250,
+    1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1250, 1208, 1250, 1292,
+    1208, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1208, 1208,
+    1292, 1250, 1250, 1250, 1292, 1250, 1291, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1292, 1208,
+    1250, 1250, 1250, 1292, 1250, 1250, 1291, 1209, 1250, 1041, 1292, 1250, 1250, 1250, 1250, 1292,
+    1208, 1292, 1250, 1250, 1250, 1250, 1291, 1167, 1292, 1250, 1208, 1292, 1250, 1250, 1291, 1250,
+    1042, 1250, 1250, 1292, 1208, 1208, 1250, 1292, 1250, 1250, 1250, 1292, 1166, 1292, 1250, 1250,
+    1292, 1166, 1292, 1250, 1250, 1292, 1250, 1250, 1291, 1209, 1250, 1250, 1250, 1291, 1250, 1250,
+    1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1291, 1209, 1250, 1291, 1250, 1250, 1292, 1250,
+    1167, 1291, 1250, 1125, 1250, 1209, 1250, 1250, 1208, 1292, 1291, 1250, 1250, 1250, 1292, 1250,
+    1292, 1166, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1167, 1291, 1250, 1250, 1292, 1208,
+    1209, 1250, 1041, 1250, 1334, 1291, 1250, 1250, 1292, 1208, 1250, 1292, 1250, 1292, 1291, 1250,
+    1250, 1042, 1292, 1291, 1292, 1208, 1334, 1208, 1250, 1250, 1333, 1084, 1250, 1250, 1250, 1291,
+    1292, 1250, 1250, 1250, 1292, 1208, 1250, 1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1250,
+    1292, 1042, 1250, 1250, 1250, 1083, 1042, 1291, 1250, 1250, 1250, 1334, 1291, 1250, 1292, 1208,
+    1250, 1292, 1250, 1250, 1292, 1250, 1291, 1292, 1292, 1291, 1209, 1250, 1291, 1250, 1250, 1250,
+    1292, 1167, 1250, 1250, 1291, 1209, 1250, 1250, 1125, 1291, 1250, 1292, 1250, 1292, 1208, 1042,
+    1208, 1083, 1334, 1291, 1250, 1292, 1250, 1250, 1292, 1166, 1292, 1250, 1250, 1292, 1250, 1166,
+    1250, 1250, 1250, 1292, 1250, 1250, 1292, 1291, 1250, 1292, 1208, 1250, 1292, 1250, 1250, 1292,
+    1250, 1250, 1291, 1250, 1209, 1208, 1042, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1083, 1209,
+    1208, 1250, 1250, 1292, 1250, 1250, 1250, 1208, 1292, 1250, 1208, 1250, 1292, 1291, 1250, 1292,
+    1250, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1208, 1292, 1125, 1208, 1250, 1292,
+    1250, 1292, 1208, 1250, 1083, 1042, 1292, 1208, 1208, 1084, 1250, 1250, 1041, 1209, 1291, 1250,
+    1250, 1292, 1250, 1292, 1166, 1250, 1292, 1250, 1250, 1292, 1208, 1250, 1250, 1292, 1250, 1250,
+    1291, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1292, 1250, 1291, 1250, 1250, 1292,
+    1250, 1208, 1292, 1250, 1250, 1250, 1250, 1292, 1083, 1292, 1250, 1250, 1250, 1166, 1334, 1250,
+    1250, 1250, 1291, 1250, 1292, 1250, 1208, 1209, 1291, 1250, 1250, 1250, 1292, 1250, 1250, 1250,
+    1292, 1250, 1250, 1250, 1250, 1250, 1125, 1291, 1209, 1250, 1291, 1209, 1291, 1250, 1292, 1250,
+    1167, 1208, 1292, 1250, 1291, 1250, 1250, 1292, 1292, 1250, 1291, 1292, 1250, 1083, 1292, 1250,
+    1250, 1250, 1250, 1292, 1041, 1250, 1292, 1167, 1041, 1292, 1250, 1042, 1208, 1250, 1292, 1250,
+    1250, 1166, 1292, 1250, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1042, 1250, 1292, 1166, 1250,
+    1250, 1250, 1250, 1250, 1250, 1250, 1084, 1208, 1250, 1250, 1292, 1250, 1083, 1250, 1292, 1250,
+    1250, 1250, 1291, 1250, 1250, 1292, 1125, 1292, 1208, 1208, 1250, 1125, 1209, 1041, 1250, 1292,
+    1250, 1083, 1209, 1250, 1250, 1291, 1209, 1250, 1125, 1291, 1250, 1250, 1250, 1250, 1084, 1250,
+    1291, 1250, 1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1291, 1250, 1250, 1250,
+    1250, 1250, 1250, 1292, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1291, 1250, 1292, 1208,
+    1084, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1208, 1250, 1250, 1250, 1292, 1292, 1208,
+    1250, 1250, 1250, 1292, 1166, 1250, 1000, 1250, 1292, 1208, 1250, 1292, 1250, 1250, 1250, 1250,
+    1250, 1292, 1250, 1250, 1291, 1250, 1250, 1167, 1250, 1292, 1250, 1250, 1250, 1250, 1291, 1250,
+    1250, 1250, 1292, 1292, 1208, 1250, 1250, 1250, 1292, 1250, 1250, 1291, 1250, 1292, 1250, 1250,
+    1250, 1292, 1250, 1250, 1250, 1291, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1208, 1250,
+    1292, 1250, 1250, 1250, 1250, 1250, 1292, 1083, 1292, 1250, 1250, 1291, 1209, 1250, 1250, 1250,
+    1291, 1250, 1250, 1250, 1292, 1167, 1208, 1292, 1250, 1291, 1250, 1250, 1250, 1292, 1250, 1250,
+    1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1291,
+    1250, 1125, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1250, 1292, 1250, 1250, 1250, 1291,
+    1250, 1250, 1292, 1208, 1250, 1250, 1250, 1292, 1250, 1292, 1250, 1250, 1125, 1250, 1291, 1250,
+    1292, 1250, 1250, 1250, 1292, 1250, 1291, 1250, 1292, 1250, 1250, 1250, 1083, 1292, 1250, 1250,
+    1292, 1250, 1250, 1291, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1250, 1250, 1292, 1250,
+    1291, 959, 1291, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1250, 1167, 1250, 1291, 1209, 1250,
+    1250, 1291, 1250, 1250, 1292, 1250, 1250, 1250, 1250, 1292, 1208, 1208, 1250, 1250, 1292, 1250,
+    1250, 1250, 1292, 1291, 1250, 1250, 1250, 1292, 1250, 1083, 1209, 1208, 1250, 1250, 1292, 1250,
+    1250, 1291, 1250, 1250, 1250, 1292, 1250, 1250, 1292, 1041, 1209, 1291, 1250, 1250, 1250, 1292,
+    1250, 1250, 1292, 1250, 1250, 1291, 1250, 1250, 1292, 1208, 1209, 1250, 1250, 1250, 1250, 1250,
+    1250, 1291, 1250, 1250, 1292, 1250, 1250, 1292, 1166, 1084, 1250, 1250, 1250, 1250, 1250, 1291,
+    1250, 1250, 1250, 1292, 1250, 1250, 1292, 1250, 1250, 1250, 1291, 1250, 1292, 1250, 1250, 1250,
+    1292, 1250, 1291, 1209, 1250, 1250, 1291, 1209, 1083, 1250, 1292, 1250, 1250, 1250, 1291, 1292,
+    1208, 1292, 1250, 1250, 1250, 1250, 1292, 1250, 1250, 1291, 1292, 1250, 1250, 1250, 1250, 1292,
+    1250, 1250, 1291, 1209, 1291, 1292, 1250, 1250, 1292, 1250, 1208, 1292, 1250, 1250, 1291, 1250
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-30T04:40:24.441640+00:00",
+  "reason": "Baseline branch creation returned outcome_unknown and remained CPU-bound without publication for over four minutes. This repeats the prior documented 600-second creation failure. No command resubmission; preserved native profile and isolated fixture; no return samples collected. Continuing with a previously committed 300-Turn branch.",
+  "processes": [
+    {
+      "pid": 10490,
+      "command": "/opt/homebrew/Cellar/node@24/24.20.0/bin/node /Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-edge-switch.mjs --manifest /Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/fixtures/extra-baseline/manifest.json --output /Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/extra-baseline-branch-restore-1000 --runs 5 --state idle --observe-ms 1500 --source-dwell-ms 500 --target-session-id synthetic-session-0006 --source-session-id synthetic-session-0001 --executable /Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/baseline/mac-arm64/Maka.app/Contents/MacOS/Maka --label extra-baseline-branch-restore-1000 --branch-depth 1 --restore-first"
+    },
+    {
+      "pid": 10499,
+      "command": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/baseline/mac-arm64/Maka.app/Contents/MacOS/Maka --remote-debugging-port=57677 --inspect=0"
+    },
+    {
+      "pid": 10518,
+      "command": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/baseline/mac-arm64/Maka.app/Contents/MacOS/Maka /Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/baseline/mac-arm64/Maka.app/Contents/Resources/app.asar/node_modules/@maka/runtime-host/dist/execution-candidate-main.js --root /Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/fixtures/extra-baseline/user-data/workspaces/default --expected-root-id dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5 --startup-attempt-id a06f415b-1165-48ba-95db-077633b45ce5 --initial-connection-timeout-ms 75000 --generation 0.2.0"
+    }
+  ]
+}

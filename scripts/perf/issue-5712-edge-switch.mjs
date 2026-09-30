@@ -55,6 +55,9 @@ const { values } = parseArgs({
     'branch-depth': { type: 'string', default: '0' },
     'existing-branch-id': { type: 'string' },
     'restore-first': { type: 'boolean', default: false },
+    'expand-process': { type: 'boolean', default: false },
+    'restore-index': { type: 'string', default: '0' },
+    'window-check': { type: 'boolean', default: false },
   },
 });
 
@@ -317,43 +320,75 @@ try {
   };
 
   let targetUiSessionId = await resolveUiSessionIdByTitle(page, target.name, timeoutMs);
-  report.edge = { branchDepth: Number(values['branch-depth']), restoreFirst: values['restore-first'] };
+  report.edge = {
+    branchDepth: Number(values['branch-depth']),
+    restoreFirst: values['restore-first'],
+    restoreIndex: Number(values['restore-index']),
+  };
   if (values['existing-branch-id']) {
     const rows = await page.evaluate(() => window.maka.sessions.list());
     const branch = rows.find((row) => rawSessionId(row.id) === values['existing-branch-id']);
     if (!branch) throw new Error('The requested existing branch is absent');
     targetUiSessionId = branch.id;
-    const index = await page.evaluate((id) => window.maka.sessions.listTurnLandmarks(id), branch.id);
+    const index = await page.evaluate(
+      (id) => window.maka.sessions.listTurnLandmarks(id),
+      branch.id,
+    );
     target.lastRenderableTurnId = index.landmarks.at(-1).turnId;
     targetTurnBase = target.lastRenderableTurnId.replace(/_t\d+_turn$/, '');
     report.edge.existingBranch = true;
   }
   for (let depth = 1; depth <= report.edge.branchDepth; depth++) {
     const started = performance.now();
-    const outcome = await page.evaluate(async ({ sessionId, turnId, depth }) => {
-      const copyId = crypto.randomUUID();
-      try { return { copyId, branch: await window.maka.sessions.branchFromTurn(sessionId, {
-        sourceTurnId: turnId, copyId, name: `Edge branch depth ${depth}`,
-      }) }; } catch (error) { return { copyId, error: String(error) }; }
-    }, { sessionId: targetUiSessionId, turnId: target.lastRenderableTurnId, depth });
+    const outcome = await page.evaluate(
+      async ({ sessionId, turnId, depth }) => {
+        const copyId = crypto.randomUUID();
+        try {
+          return {
+            copyId,
+            branch: await window.maka.sessions.branchFromTurn(sessionId, {
+              sourceTurnId: turnId,
+              copyId,
+              name: `Edge branch depth ${depth}`,
+            }),
+          };
+        } catch (error) {
+          return { copyId, error: String(error) };
+        }
+      },
+      { sessionId: targetUiSessionId, turnId: target.lastRenderableTurnId, depth },
+    );
     let branch = outcome.branch;
     if (!branch) {
       // Reconcile the outcome of this one command by reading; never resubmit it.
-      console.log(JSON.stringify({stage:'branch-outcome-unknown',error:outcome.error}));
-      await until(async () => {
-        const rows = await page.evaluate(() => window.maka.sessions.list()).catch(() => []);
-        branch = rows.find((row) => rawSessionId(row.id) === outcome.copyId);
-        return Boolean(branch);
-      }, 600000, 'original branch command publication');
+      console.log(JSON.stringify({ stage: 'branch-outcome-unknown', error: outcome.error }));
+      await until(
+        async () => {
+          const rows = await page.evaluate(() => window.maka.sessions.list()).catch(() => []);
+          branch = rows.find((row) => rawSessionId(row.id) === outcome.copyId);
+          return Boolean(branch);
+        },
+        600000,
+        'original branch command publication',
+      );
     }
-    (report.edge.branchPreparation ??= []).push({ depth, milliseconds: performance.now() - started,
-      id: branch.id, commandError: outcome.error ?? null });
+    (report.edge.branchPreparation ??= []).push({
+      depth,
+      milliseconds: performance.now() - started,
+      id: branch.id,
+      commandError: outcome.error ?? null,
+    });
     targetUiSessionId = branch.id;
-    const index = await page.evaluate((id) => window.maka.sessions.listTurnLandmarks(id), branch.id);
+    const index = await page.evaluate(
+      (id) => window.maka.sessions.listTurnLandmarks(id),
+      branch.id,
+    );
     target.lastRenderableTurnId = index.landmarks.at(-1).turnId;
     targetTurnBase = target.lastRenderableTurnId.replace(/_t\d+_turn$/, '');
-    await page.evaluate(({ id, name }) => window.maka.sessions.rename(id, name),
-      { id: branch.id, name: `Edge branch depth ${depth}` });
+    await page.evaluate(({ id, name }) => window.maka.sessions.rename(id, name), {
+      id: branch.id,
+      name: `Edge branch depth ${depth}`,
+    });
   }
   if (values['first-input']) {
     if (!values['first-access']) throw new Error('--first-input requires --first-access');
@@ -487,18 +522,26 @@ try {
 
   let measuredAnchor = target.lastRenderableTurnId;
   if (values['restore-first']) {
-    const tick = page.locator('[data-prompt-turn-id]').first();
+    const expectedAnchor = `${targetTurnBase}_t${Number(values['restore-index'])}_turn`;
+    const tick = page.locator(`[data-prompt-turn-id="${expectedAnchor}"]`);
     await tick.waitFor({ state: 'attached', timeout: timeoutMs });
     measuredAnchor = await tick.getAttribute('data-prompt-turn-id');
+    if (measuredAnchor !== expectedAnchor)
+      throw new Error('The prepared landmark is not the requested Turn');
     const started = performance.now();
     await tick.click({ timeout: timeoutMs });
-    await page.waitForFunction((id) => {
-      const scroller = document.querySelector('[data-chat-scroll-container]');
-      const row = document.querySelector(`[data-turn-id^="${CSS.escape(id)}"]`);
-      if (!scroller || !row) return false;
-      const a = scroller.getBoundingClientRect(), b = row.getBoundingClientRect();
-      return b.bottom > a.top && b.top < a.bottom;
-    }, measuredAnchor, { timeout: timeoutMs });
+    await page.waitForFunction(
+      (id) => {
+        const scroller = document.querySelector('[data-chat-scroll-container]');
+        const row = document.querySelector(`[data-turn-id^="${CSS.escape(id)}"]`);
+        if (!scroller || !row) return false;
+        const a = scroller.getBoundingClientRect(),
+          b = row.getBoundingClientRect();
+        return b.bottom > a.top && b.top < a.bottom;
+      },
+      measuredAnchor,
+      { timeout: timeoutMs },
+    );
     await new Promise((done) => setTimeout(done, 700));
     report.edge.anchorPreparationMs = performance.now() - started;
     report.edge.anchor = measuredAnchor;
@@ -512,21 +555,65 @@ try {
   await inspector.evaluate(`(async () => {
     const root = ${requireElectronForProbe}.app.getAppPath();
     const {DesktopTranscriptReplica} = process.getBuiltinModule('module').createRequire(root + '/package.json')(root + '/dist/main/desktop-transcript-replica.js');
-    const original = DesktopTranscriptReplica.prototype.readOlderPage;
     globalThis.__edgePages = [];
-    DesktopTranscriptReplica.prototype.readOlderPage = async function(...args) {
+    for (const method of ['readOlderPage', 'readNewerPage']) {
+    const original = DesktopTranscriptReplica.prototype[method];
+    if (!original) continue;
+    DesktopTranscriptReplica.prototype[method] = async function(...args) {
       const started = performance.now();
       try {
         const result = await original.apply(this,args);
-        globalThis.__edgePages.push({sessionId:this.sessionId,maxBytes:args[2],ms:performance.now()-started,rows:result.durable.length,hasNext:result.nextCursor!==null});
+        globalThis.__edgePages.push({method,sessionId:this.sessionId,maxBytes:args[method === 'readOlderPage' ? 2 : 3],ms:performance.now()-started,rows:result.durable.length,hasNext:result.nextCursor!==null});
         return result;
       } catch(error) {
         globalThis.__edgePages.push({sessionId:this.sessionId,ms:performance.now()-started,error:String(error)});
         throw error;
       }
     };
+    }
     return true;
   })()`);
+
+  if (values['window-check']) {
+    const count = () =>
+      page
+        .locator('[data-turn-source-count]')
+        .first()
+        .getAttribute('data-turn-source-count')
+        .then(Number);
+    const before = await count();
+    const scroller = page.locator('[data-chat-scroll-container]').first();
+    const bounds = await scroller.boundingBox();
+    await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+    for (let step = 0; step < 30 && (await count()) === before; step += 1) {
+      await page.mouse.wheel(0, 1200);
+      await new Promise((done) => setTimeout(done, 120));
+    }
+    const afterDown = await count();
+    if (!(afterDown > before && afterDown < target.turns))
+      throw new Error('Downward paging did not extend a bounded window');
+    for (let step = 0; step < 50 && (await count()) === afterDown; step += 1) {
+      await page.mouse.wheel(0, -1200);
+      await new Promise((done) => setTimeout(done, 120));
+    }
+    const afterUp = await count();
+    if (!(afterUp > afterDown && afterUp < target.turns))
+      throw new Error('Upward paging did not extend a bounded window');
+    await page.screenshot({ path: join(output, 'bidirectional-window.png') });
+    const latest = page.getByRole('button', { name: '滚动主对话到底部', exact: true });
+    await latest.click();
+    await page
+      .locator(`[data-turn-id^="${target.lastRenderableTurnId}"]`)
+      .first()
+      .waitFor({ timeout: timeoutMs });
+    report.windowChecks = { before, afterDown, afterUp, afterLatest: await count() };
+    await page.screenshot({ path: join(output, 'returned-to-latest.png') });
+    await selectSession(page, source.uiSessionId, source.lastRenderableTurnId, timeoutMs);
+    // Restore the requested anchor for the measured cycle after the smoke check.
+    await selectSession(page, targetUiSessionId, target.lastRenderableTurnId, timeoutMs);
+    await page.locator(`[data-prompt-turn-id="${measuredAnchor}"]`).click();
+    await new Promise((done) => setTimeout(done, 700));
+  }
 
   if (values.profile) {
     await selectSession(page, source.uiSessionId, source.lastRenderableTurnId, timeoutMs);
@@ -607,12 +694,62 @@ try {
         sample.anchorViewport = await page.evaluate((id) => {
           const scroller = document.querySelector('[data-chat-scroll-container]');
           const row = document.querySelector(`[data-turn-id^="${CSS.escape(id)}"]`);
-          const a = scroller?.getBoundingClientRect(), b = row?.getBoundingClientRect();
-          return { visible: Boolean(a && b && b.bottom > a.top && b.top < a.bottom),
-            offset: a && b ? b.top-a.top : null,
-            loadedTurns: Number(document.querySelector('[data-turn-source-count]')?.getAttribute('data-turn-source-count')) };
+          const a = scroller?.getBoundingClientRect(),
+            b = row?.getBoundingClientRect();
+          return {
+            visible: Boolean(a && b && b.bottom > a.top && b.top < a.bottom),
+            offset: a && b ? b.top - a.top : null,
+            loadedTurns: Number(
+              document
+                .querySelector('[data-turn-source-count]')
+                ?.getAttribute('data-turn-source-count'),
+            ),
+          };
         }, measuredAnchor);
-        if (!sample.anchorViewport.visible) throw new Error('Expected reading anchor is outside the viewport');
+        if (!sample.anchorViewport.visible)
+          throw new Error('Expected reading anchor is outside the viewport');
+        if (values['expand-process']) {
+          const summary = page
+            .locator(`[data-turn-id^="${measuredAnchor}"] .maka-processing-summary`)
+            .first();
+          sample.expansion = [];
+          for (let attempt = 0; attempt < 2; attempt += 1) {
+            const beforeExpand = await readResources();
+            await summary.evaluate((node) => {
+              globalThis.__processBefore = node.parentElement
+                .querySelector('.maka-processing-body')
+                .querySelectorAll('*').length;
+              node.addEventListener(
+                'pointerdown',
+                () => {
+                  globalThis.__processStarted = performance.now();
+                },
+                { once: true },
+              );
+            });
+            await summary.click();
+            await page.waitForFunction(
+              () =>
+                document.querySelector('.maka-processing-sequence[open] .maka-processing-body')
+                  ?.children.length > 0,
+            );
+            const measurement = await page.evaluate(async () => {
+              await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+              return {
+                ms: performance.now() - globalThis.__processStarted,
+                before: globalThis.__processBefore,
+                after: document
+                  .querySelector('.maka-processing-sequence[open] .maka-processing-body')
+                  .querySelectorAll('*').length,
+              };
+            });
+            sample.expansion.push({
+              ...measurement,
+              resources: { before: beforeExpand, after: await readResources() },
+            });
+            await summary.click();
+          }
+        }
         if (observeMs) await new Promise((done) => setTimeout(done, observeMs));
         sample.resources.cycleBefore = cycleBefore;
         sample.resources.observedAfter = await readResources();
@@ -621,9 +758,17 @@ try {
         sample.resources.memorySamples = memorySamples;
         report.samples.idle.push(sample);
         await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2));
-        console.log(JSON.stringify({ stage: 'idle', run, visibleMs: sample.fadeCompletePaintMs,
-          readyMs: sample.transcript.readyBatchMs, bytes: sample.transcript.bytes, pages: sample.pages?.length,
-          anchor: sample.anchorViewport }));
+        console.log(
+          JSON.stringify({
+            stage: 'idle',
+            run,
+            visibleMs: sample.fadeCompletePaintMs,
+            readyMs: sample.transcript.readyBatchMs,
+            bytes: sample.transcript.bytes,
+            pages: sample.pages?.length,
+            anchor: sample.anchorViewport,
+          }),
+        );
       } finally {
         clearInterval(memoryTimer);
         await memoryPending;

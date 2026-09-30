@@ -1,0 +1,845 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "callFrame": {
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [2, 6, 18, 19, 33, 48, 56, 67, 69]
+    },
+    {
+      "id": 2,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [3]
+    },
+    {
+      "id": 3,
+      "callFrame": {
+        "functionName": "fn",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 476,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [4]
+    },
+    {
+      "id": 4,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 477,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [5]
+    },
+    {
+      "id": 5,
+      "callFrame": {
+        "functionName": "post",
+        "scriptId": "131",
+        "url": "node:inspector",
+        "lineNumber": 114,
+        "columnNumber": 6
+      },
+      "hitCount": 0
+    },
+    {
+      "id": 6,
+      "callFrame": {
+        "functionName": "runWithStorageRootLease",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 406,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [7]
+    },
+    {
+      "id": 7,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "166",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/execution-stores.js",
+        "lineNumber": 107,
+        "columnNumber": 70
+      },
+      "hitCount": 0,
+      "children": [8]
+    },
+    {
+      "id": 8,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "166",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/execution-stores.js",
+        "lineNumber": 374,
+        "columnNumber": 68
+      },
+      "hitCount": 0,
+      "children": [9]
+    },
+    {
+      "id": 9,
+      "callFrame": {
+        "functionName": "readTranscriptRun",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 425,
+        "columnNumber": 27
+      },
+      "hitCount": 0,
+      "children": [10]
+    },
+    {
+      "id": 10,
+      "callFrame": {
+        "functionName": "readTransaction",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 3143,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [11]
+    },
+    {
+      "id": 11,
+      "callFrame": {
+        "functionName": "transaction",
+        "scriptId": "217",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/operational-state-store.js",
+        "lineNumber": 178,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [12]
+    },
+    {
+      "id": 12,
+      "callFrame": {
+        "functionName": "transaction",
+        "scriptId": "217",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/operational-state-store.js",
+        "lineNumber": 222,
+        "columnNumber": 15
+      },
+      "hitCount": 0,
+      "children": [13]
+    },
+    {
+      "id": 13,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 427,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [14]
+    },
+    {
+      "id": 14,
+      "callFrame": {
+        "functionName": "run",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 172,
+        "columnNumber": 7
+      },
+      "hitCount": 0,
+      "children": [15, 45, 66]
+    },
+    {
+      "id": 15,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 126,
+        "columnNumber": 7
+      },
+      "hitCount": 0,
+      "children": [16, 28]
+    },
+    {
+      "id": 16,
+      "callFrame": {
+        "functionName": "events",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 282,
+        "columnNumber": 11
+      },
+      "hitCount": 1,
+      "children": [17, 34, 65],
+      "positionTicks": [{ "line": 297, "ticks": 1 }]
+    },
+    {
+      "id": 17,
+      "callFrame": {
+        "functionName": "next",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 3,
+      "positionTicks": [{ "line": 297, "ticks": 3 }]
+    },
+    {
+      "id": 34,
+      "callFrame": {
+        "functionName": "decodeStoredEvent",
+        "scriptId": "223",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/runtime-transcript-query.js",
+        "lineNumber": 313,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "children": [35],
+      "positionTicks": [{ "line": 315, "ticks": 1 }]
+    },
+    {
+      "id": 35,
+      "callFrame": {
+        "functionName": "decodeRuntimeEvent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 344,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [36]
+    },
+    {
+      "id": 36,
+      "callFrame": {
+        "functionName": "isRuntimeEventContent",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 398,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [37]
+    },
+    {
+      "id": 37,
+      "callFrame": {
+        "functionName": "decodesDurableToolResultProjection",
+        "scriptId": "176",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/runtime-event.js",
+        "lineNumber": 583,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [38]
+    },
+    {
+      "id": 38,
+      "callFrame": {
+        "functionName": "decodeDurableToolResultProjection",
+        "scriptId": "215",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/durable-tool-result-projection.js",
+        "lineNumber": 36,
+        "columnNumber": 49
+      },
+      "hitCount": 0,
+      "children": [39]
+    },
+    {
+      "id": 39,
+      "callFrame": {
+        "functionName": "serializedByteLength",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 37,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [40]
+    },
+    {
+      "id": 40,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [41]
+    },
+    {
+      "id": 41,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [42]
+    },
+    {
+      "id": 42,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [43]
+    },
+    {
+      "id": 43,
+      "callFrame": {
+        "functionName": "countSerializedValue",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 49,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [44]
+    },
+    {
+      "id": 44,
+      "callFrame": {
+        "functionName": "countJsonString",
+        "scriptId": "189",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/core/dist/serialized-byte-length.js",
+        "lineNumber": 128,
+        "columnNumber": 24
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        { "line": 133, "ticks": 1 },
+        { "line": 179, "ticks": 1 },
+        { "line": 132, "ticks": 1 }
+      ]
+    },
+    {
+      "id": 65,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 287, "ticks": 1 }]
+    },
+    {
+      "id": 28,
+      "callFrame": {
+        "functionName": "push",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 437,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [29]
+    },
+    {
+      "id": 29,
+      "callFrame": {
+        "functionName": "push",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 388,
+        "columnNumber": 17
+      },
+      "hitCount": 0,
+      "children": [30]
+    },
+    {
+      "id": 30,
+      "callFrame": {
+        "functionName": "projectEvent",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 205,
+        "columnNumber": 25
+      },
+      "hitCount": 0,
+      "children": [31]
+    },
+    {
+      "id": 31,
+      "callFrame": {
+        "functionName": "projectFunctionResponse",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 781,
+        "columnNumber": 32
+      },
+      "hitCount": 1,
+      "children": [32],
+      "positionTicks": [{ "line": 806, "ticks": 1 }]
+    },
+    {
+      "id": 32,
+      "callFrame": {
+        "functionName": "projectTranscriptToolResult",
+        "scriptId": "490",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime/dist/runtime-event-read-model.js",
+        "lineNumber": 109,
+        "columnNumber": 43
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 117, "ticks": 1 }]
+    },
+    {
+      "id": 45,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 409,
+        "columnNumber": 51
+      },
+      "hitCount": 0,
+      "children": [46]
+    },
+    {
+      "id": 46,
+      "callFrame": {
+        "functionName": "readInvocationOpeningsSync",
+        "scriptId": "272",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/sqlite-runtime-store.js",
+        "lineNumber": 731,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [47]
+    },
+    {
+      "id": 47,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 735, "ticks": 1 }]
+    },
+    {
+      "id": 66,
+      "callFrame": {
+        "functionName": "prepare",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 188, "ticks": 1 }]
+    },
+    {
+      "id": 18,
+      "callFrame": {
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1
+    },
+    {
+      "id": 19,
+      "callFrame": {
+        "functionName": "#establish",
+        "scriptId": "602",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-subscription-owner.js",
+        "lineNumber": 129,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [20]
+    },
+    {
+      "id": 20,
+      "callFrame": {
+        "functionName": "#prepareActivation",
+        "scriptId": "602",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-subscription-owner.js",
+        "lineNumber": 266,
+        "columnNumber": 28
+      },
+      "hitCount": 0,
+      "children": [21]
+    },
+    {
+      "id": 21,
+      "callFrame": {
+        "functionName": "prepareActivation",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 505,
+        "columnNumber": 31
+      },
+      "hitCount": 0,
+      "children": [22]
+    },
+    {
+      "id": 22,
+      "callFrame": {
+        "functionName": "#prepareSubscriptionActivation",
+        "scriptId": "499",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/runtime-host-session-observer.js",
+        "lineNumber": 754,
+        "columnNumber": 40
+      },
+      "hitCount": 0,
+      "children": [23]
+    },
+    {
+      "id": 23,
+      "callFrame": {
+        "functionName": "get projectionSeed",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 124,
+        "columnNumber": 22
+      },
+      "hitCount": 0,
+      "children": [24]
+    },
+    {
+      "id": 24,
+      "callFrame": {
+        "functionName": "messages",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 140,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [25]
+    },
+    {
+      "id": 25,
+      "callFrame": {
+        "functionName": "#orderedDurable",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 473,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [26]
+    },
+    {
+      "id": 26,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 476,
+        "columnNumber": 17
+      },
+      "hitCount": 0,
+      "children": [27]
+    },
+    {
+      "id": 27,
+      "callFrame": {
+        "functionName": "structuredClone",
+        "scriptId": "28",
+        "url": "node:internal/worker/js_transferable",
+        "lineNumber": 112,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 127, "ticks": 1 }]
+    },
+    {
+      "id": 33,
+      "callFrame": {
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 2
+    },
+    {
+      "id": 48,
+      "callFrame": {
+        "functionName": "confirmRootSnapshot",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 639,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [49]
+    },
+    {
+      "id": 49,
+      "callFrame": {
+        "functionName": "readMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 632,
+        "columnNumber": 24
+      },
+      "hitCount": 0,
+      "children": [50]
+    },
+    {
+      "id": 50,
+      "callFrame": {
+        "functionName": "readAndValidateRootMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 741,
+        "columnNumber": 40
+      },
+      "hitCount": 0,
+      "children": [51]
+    },
+    {
+      "id": 51,
+      "callFrame": {
+        "functionName": "readRootMarker",
+        "scriptId": "140",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/root-authority.js",
+        "lineNumber": 744,
+        "columnNumber": 29
+      },
+      "hitCount": 0,
+      "children": [52, 53]
+    },
+    {
+      "id": 52,
+      "callFrame": {
+        "functionName": "join",
+        "scriptId": "38",
+        "url": "node:path",
+        "lineNumber": 1331,
+        "columnNumber": 6
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1348, "ticks": 1 }]
+    },
+    {
+      "id": 53,
+      "callFrame": {
+        "functionName": "readBoundedMarkerFile",
+        "scriptId": "164",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/marker-file.js",
+        "lineNumber": 31,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [54]
+    },
+    {
+      "id": 54,
+      "callFrame": {
+        "functionName": "readStableBoundedFile",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 28,
+        "columnNumber": 43
+      },
+      "hitCount": 0,
+      "children": [55]
+    },
+    {
+      "id": 55,
+      "callFrame": {
+        "functionName": "open",
+        "scriptId": "121",
+        "url": "node:internal/fs/promises",
+        "lineNumber": 1340,
+        "columnNumber": 19
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 1346, "ticks": 1 }]
+    },
+    {
+      "id": 56,
+      "callFrame": {
+        "functionName": "readOlderPage",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [57]
+    },
+    {
+      "id": 57,
+      "callFrame": {
+        "functionName": "#withDecodedPage",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 491,
+        "columnNumber": 26
+      },
+      "hitCount": 0,
+      "children": [58]
+    },
+    {
+      "id": 58,
+      "callFrame": {
+        "functionName": "#withAssembly",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 494,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [59]
+    },
+    {
+      "id": 59,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "603",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/apps/desktop/dist/main/desktop-transcript-replica.js",
+        "lineNumber": 492,
+        "columnNumber": 34
+      },
+      "hitCount": 0,
+      "children": [60]
+    },
+    {
+      "id": 60,
+      "callFrame": {
+        "functionName": "decodeTranscriptPage",
+        "scriptId": "88",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/scripts/perf/issue-5712-v2-attribution.mjs",
+        "lineNumber": 81,
+        "columnNumber": 36
+      },
+      "hitCount": 0,
+      "children": [61]
+    },
+    {
+      "id": 61,
+      "callFrame": {
+        "functionName": "decodeTranscriptPage",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 162,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [62]
+    },
+    {
+      "id": 62,
+      "callFrame": {
+        "functionName": "accept",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 406,
+        "columnNumber": 10
+      },
+      "hitCount": 0,
+      "children": [63]
+    },
+    {
+      "id": 63,
+      "callFrame": {
+        "functionName": "#accept",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 430,
+        "columnNumber": 11
+      },
+      "hitCount": 0,
+      "children": [64]
+    },
+    {
+      "id": 64,
+      "callFrame": {
+        "functionName": "#completeCurrent",
+        "scriptId": "286",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/client/session-subscription.js",
+        "lineNumber": 483,
+        "columnNumber": 20
+      },
+      "hitCount": 2,
+      "positionTicks": [{ "line": 494, "ticks": 2 }]
+    },
+    {
+      "id": 67,
+      "callFrame": {
+        "functionName": "finish",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 452,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [68]
+    },
+    {
+      "id": 68,
+      "callFrame": {
+        "functionName": "assertTurnPresentationBounded",
+        "scriptId": "489",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/runtime-host/dist/server/session-transcript-reader.js",
+        "lineNumber": 385,
+        "columnNumber": 38
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 392, "ticks": 1 }]
+    },
+    {
+      "id": 69,
+      "callFrame": {
+        "functionName": "readStableBoundedFile",
+        "scriptId": "165",
+        "url": "file:///Users/admin/.codex/worktrees/issue-5627-pr/maka/packages/storage/dist/stable-storage.js",
+        "lineNumber": 28,
+        "columnNumber": 43
+      },
+      "hitCount": 1,
+      "positionTicks": [{ "line": 29, "ticks": 1 }]
+    }
+  ],
+  "startTime": 174920467959,
+  "endTime": 174920524709,
+  "samples": [
+    5, 17, 18, 17, 27, 32, 33, 44, 47, 44, 52, 34, 55, 17, 64, 65, 33, 44, 66, 68, 31, 69, 16, 64
+  ],
+  "timeDeltas": [
+    28250, 1292, 1041, 1000, 1250, 1250, 1125, 1250, 1250, 1250, 1084, 1208, 1083, 1292, 1042, 1291,
+    1209, 1250, 1250, 1291, 1209, 1250, 1291, 1250
+  ]
+}

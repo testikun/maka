@@ -1,0 +1,102 @@
+{
+  "at": "2026-09-30T04:17:19.012576+00:00",
+  "scope": "One diagnostic snapshot, not per-sample load attribution; no background process was stopped.",
+  "processes": [
+    {
+      "pid": 21578,
+      "cpuPercent": 316.8,
+      "memoryPercent": 2.5,
+      "executable": "/Users/admin/Documents/maka/worktrees/repair-4751/node_modules/@typescript/typescript-darwin-arm64/lib/tsc"
+    },
+    {
+      "pid": 21577,
+      "cpuPercent": 283.3,
+      "memoryPercent": 2.6,
+      "executable": "/Users/admin/Documents/maka/worktrees/repair-5458/node_modules/@typescript/typescript-darwin-arm64/lib/tsc"
+    },
+    {
+      "pid": 3714,
+      "cpuPercent": 60.2,
+      "memoryPercent": 1.5,
+      "executable": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/both/mac-arm64/Maka.app/Contents/MacOS/Maka"
+    },
+    {
+      "pid": 21579,
+      "cpuPercent": 12.0,
+      "memoryPercent": 0.1,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 21590,
+      "cpuPercent": 11.6,
+      "memoryPercent": 0.1,
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 407,
+      "cpuPercent": 11.4,
+      "memoryPercent": 0.7,
+      "executable": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer"
+    },
+    {
+      "pid": 21580,
+      "cpuPercent": 10.9,
+      "memoryPercent": 0.1,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 362,
+      "cpuPercent": 10.3,
+      "memoryPercent": 0.2,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds"
+    },
+    {
+      "pid": 21497,
+      "cpuPercent": 9.4,
+      "memoryPercent": 0.2,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 21304,
+      "cpuPercent": 8.3,
+      "memoryPercent": 0.1,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 21368,
+      "cpuPercent": 8.0,
+      "memoryPercent": 0.2,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 1110,
+      "cpuPercent": 7.7,
+      "memoryPercent": 4.5,
+      "executable": "/System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine"
+    },
+    {
+      "pid": 21367,
+      "cpuPercent": 6.6,
+      "memoryPercent": 0.2,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    },
+    {
+      "pid": 1377,
+      "cpuPercent": 6.4,
+      "memoryPercent": 3.8,
+      "executable": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.57/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)"
+    },
+    {
+      "pid": 3710,
+      "cpuPercent": 6.1,
+      "memoryPercent": 4.9,
+      "executable": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/both/mac-arm64/Maka.app/Contents/Frameworks/Maka Helper (Renderer).app/Contents/MacOS/Maka Helper (Renderer)"
+    },
+    {
+      "pid": 21502,
+      "cpuPercent": 6.1,
+      "memoryPercent": 0.1,
+      "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared"
+    }
+  ]
+}

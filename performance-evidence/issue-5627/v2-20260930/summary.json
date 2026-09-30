@@ -11573,6 +11573,868 @@
       ]
     },
     {
+      "name": "merged-giant-1000",
+      "build": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+      "target": {
+        "sessionId": "37797ed6-80d2-4485-b0bb-19dc7fb8c357",
+        "name": "Fixture 0003 - 1 turns - 1000 tools",
+        "turns": 1,
+        "tools": 1000,
+        "payloadBytes": 4576672,
+        "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"37797ed6-80d2-4485-b0bb-19dc7fb8c357\"]"
+      },
+      "edge": {
+        "branchDepth": 0,
+        "restoreFirst": false,
+        "restoreIndex": 0
+      },
+      "metrics": {
+        "visibleMs": {
+          "n": 5,
+          "p50": 2188.1,
+          "min": 2173.3,
+          "max": 2195,
+          "first": 2194.9
+        },
+        "readyMs": {
+          "n": 5,
+          "p50": 1990.2,
+          "min": 1964.9,
+          "max": 2000.1,
+          "first": 2000.1
+        },
+        "rangeReadyMs": {
+          "n": 5,
+          "p50": 1990.2,
+          "min": 1964.9,
+          "max": 2000.1,
+          "first": 2000.1
+        },
+        "bytes": {
+          "n": 5,
+          "p50": 2544535,
+          "min": 2544535,
+          "max": 2544535,
+          "first": 2544535
+        },
+        "pages": {
+          "n": 5,
+          "p50": 16,
+          "min": 16,
+          "max": 16,
+          "first": 16
+        },
+        "loadedTurns": {
+          "n": 5,
+          "p50": 1,
+          "min": 1,
+          "max": 1,
+          "first": 1
+        },
+        "firstExpandMs": {
+          "n": 5,
+          "p50": 798.8,
+          "min": 765,
+          "max": 861.7,
+          "first": 861.7
+        },
+        "reopenMs": {
+          "n": 5,
+          "p50": 452.8,
+          "min": 442.7,
+          "max": 500.4,
+          "first": 500.4
+        },
+        "hiddenNodes": {
+          "n": 5,
+          "p50": 0,
+          "min": 0,
+          "max": 0,
+          "first": 0
+        },
+        "expandedNodes": {
+          "n": 5,
+          "p50": 37000,
+          "min": 37000,
+          "max": 37000,
+          "first": 37000
+        },
+        "hostCpuSeconds": {
+          "n": 5,
+          "p50": 2.13,
+          "min": 2.09,
+          "max": 2.17,
+          "first": 2.11
+        },
+        "mainCpuSeconds": {
+          "n": 5,
+          "p50": 0.16,
+          "min": 0.15,
+          "max": 0.23,
+          "first": 0.23
+        },
+        "rendererCpuSeconds": {
+          "n": 5,
+          "p50": 0.484,
+          "min": 0.472,
+          "max": 0.541,
+          "first": 0.472
+        },
+        "cyclehostCpuSeconds": {
+          "n": 5,
+          "p50": 2.21,
+          "min": 2.18,
+          "max": 2.35,
+          "first": 2.35
+        },
+        "cyclemainCpuSeconds": {
+          "n": 5,
+          "p50": 0.22,
+          "min": 0.21,
+          "max": 0.31,
+          "first": 0.31
+        },
+        "cyclerendererCpuSeconds": {
+          "n": 5,
+          "p50": 4.725,
+          "min": 4.442,
+          "max": 4.946,
+          "first": 4.442
+        },
+        "hostPeakMiB": {
+          "n": 5,
+          "p50": 341.016,
+          "min": 322.109,
+          "max": 361.156,
+          "first": 361.156
+        },
+        "mainPeakMiB": {
+          "n": 5,
+          "p50": 406.594,
+          "min": 402.797,
+          "max": 411.406,
+          "first": 410.609
+        },
+        "rendererPeakMiB": {
+          "n": 5,
+          "p50": 825.781,
+          "min": 728.609,
+          "max": 827.672,
+          "first": 728.609
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "visibleMs": 2194.9,
+          "readyMs": 2000.1,
+          "rangeReadyMs": 2000.10009765625,
+          "bytes": 2544535,
+          "pages": 16,
+          "loadedTurns": 1,
+          "firstExpandMs": 861.7000000001863,
+          "reopenMs": 500.3999999994412,
+          "hiddenNodes": 0,
+          "expandedNodes": 37000,
+          "hostCpuSeconds": 2.11,
+          "mainCpuSeconds": 0.23,
+          "rendererCpuSeconds": 0.472,
+          "cyclehostCpuSeconds": 2.35,
+          "cyclemainCpuSeconds": 0.31,
+          "cyclerendererCpuSeconds": 4.442,
+          "hostPeakMiB": 361.156,
+          "mainPeakMiB": 410.609,
+          "rendererPeakMiB": 728.609
+        },
+        {
+          "run": 2,
+          "visibleMs": 2184.5,
+          "readyMs": 1964.9,
+          "rangeReadyMs": 1964.9000976560637,
+          "bytes": 2544535,
+          "pages": 16,
+          "loadedTurns": 1,
+          "firstExpandMs": 811.0999999996275,
+          "reopenMs": 452.80000000074506,
+          "hiddenNodes": 0,
+          "expandedNodes": 37000,
+          "hostCpuSeconds": 2.13,
+          "mainCpuSeconds": 0.15,
+          "rendererCpuSeconds": 0.541,
+          "cyclehostCpuSeconds": 2.18,
+          "cyclemainCpuSeconds": 0.21,
+          "cyclerendererCpuSeconds": 4.946,
+          "hostPeakMiB": 352.813,
+          "mainPeakMiB": 411.406,
+          "rendererPeakMiB": 816.922
+        },
+        {
+          "run": 3,
+          "visibleMs": 2188.1,
+          "readyMs": 1999.2,
+          "rangeReadyMs": 1999.2000000001863,
+          "bytes": 2544535,
+          "pages": 16,
+          "loadedTurns": 1,
+          "firstExpandMs": 779.0999999996275,
+          "reopenMs": 442.69999999925494,
+          "hiddenNodes": 0,
+          "expandedNodes": 37000,
+          "hostCpuSeconds": 2.14,
+          "mainCpuSeconds": 0.21,
+          "rendererCpuSeconds": 0.484,
+          "cyclehostCpuSeconds": 2.18,
+          "cyclemainCpuSeconds": 0.27,
+          "cyclerendererCpuSeconds": 4.682,
+          "hostPeakMiB": 341.016,
+          "mainPeakMiB": 406.594,
+          "rendererPeakMiB": 825.781
+        },
+        {
+          "run": 4,
+          "visibleMs": 2195,
+          "readyMs": 1990.2,
+          "rangeReadyMs": 1990.2000488275662,
+          "bytes": 2544535,
+          "pages": 16,
+          "loadedTurns": 1,
+          "firstExpandMs": 798.7999999998137,
+          "reopenMs": 494.29999999981374,
+          "hiddenNodes": 0,
+          "expandedNodes": 37000,
+          "hostCpuSeconds": 2.17,
+          "mainCpuSeconds": 0.16,
+          "rendererCpuSeconds": 0.482,
+          "cyclehostCpuSeconds": 2.21,
+          "cyclemainCpuSeconds": 0.22,
+          "cyclerendererCpuSeconds": 4.725,
+          "hostPeakMiB": 340.625,
+          "mainPeakMiB": 402.797,
+          "rendererPeakMiB": 827.625
+        },
+        {
+          "run": 5,
+          "visibleMs": 2173.3,
+          "readyMs": 1975.8,
+          "rangeReadyMs": 1975.800048828125,
+          "bytes": 2544535,
+          "pages": 16,
+          "loadedTurns": 1,
+          "firstExpandMs": 765,
+          "reopenMs": 443.79999999981374,
+          "hiddenNodes": 0,
+          "expandedNodes": 37000,
+          "hostCpuSeconds": 2.09,
+          "mainCpuSeconds": 0.15,
+          "rendererCpuSeconds": 0.513,
+          "cyclehostCpuSeconds": 2.22,
+          "cyclemainCpuSeconds": 0.21,
+          "cyclerendererCpuSeconds": 4.833,
+          "hostPeakMiB": 322.109,
+          "mainPeakMiB": 405.688,
+          "rendererPeakMiB": 827.672
+        }
+      ]
+    },
+    {
+      "name": "merged-restore-1000",
+      "build": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+      "target": {
+        "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+        "name": "Fixture 0006 - 1000 turns - 10000 tools",
+        "turns": 1000,
+        "tools": 10000,
+        "payloadBytes": 46432000,
+        "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"b2f58770-08fb-4c5a-8b58-0e197ab67098\"]"
+      },
+      "edge": {
+        "branchDepth": 0,
+        "restoreFirst": true,
+        "restoreIndex": 0,
+        "anchorPreparationMs": 1270.114709,
+        "anchor": "synthetic-session-0006_t0_turn"
+      },
+      "metrics": {
+        "visibleMs": {
+          "n": 5,
+          "p50": 345.6,
+          "min": 336.9,
+          "max": 354.7,
+          "first": 337.9
+        },
+        "readyMs": {
+          "n": 5,
+          "p50": 88.8,
+          "min": 88.6,
+          "max": 99.4,
+          "first": 88.6
+        },
+        "rangeReadyMs": {
+          "n": 5,
+          "p50": 88.8,
+          "min": 88.6,
+          "max": 99.4,
+          "first": 88.6
+        },
+        "bytes": {
+          "n": 5,
+          "p50": 211320,
+          "min": 211320,
+          "max": 211320,
+          "first": 211320
+        },
+        "pages": {
+          "n": 5,
+          "p50": 3,
+          "min": 3,
+          "max": 3,
+          "first": 3
+        },
+        "loadedTurns": {
+          "n": 5,
+          "p50": 8,
+          "min": 8,
+          "max": 8,
+          "first": 8
+        },
+        "firstExpandMs": null,
+        "reopenMs": null,
+        "hiddenNodes": null,
+        "expandedNodes": null,
+        "hostCpuSeconds": {
+          "n": 5,
+          "p50": 0.11,
+          "min": 0.09,
+          "max": 0.19,
+          "first": 0.19
+        },
+        "mainCpuSeconds": {
+          "n": 5,
+          "p50": 0.03,
+          "min": 0.03,
+          "max": 0.05,
+          "first": 0.05
+        },
+        "rendererCpuSeconds": {
+          "n": 5,
+          "p50": 0.338,
+          "min": 0.277,
+          "max": 0.41,
+          "first": 0.356
+        },
+        "cyclehostCpuSeconds": {
+          "n": 5,
+          "p50": 0.18,
+          "min": 0.14,
+          "max": 0.23,
+          "first": 0.23
+        },
+        "cyclemainCpuSeconds": {
+          "n": 5,
+          "p50": 0.07,
+          "min": 0.06,
+          "max": 0.11,
+          "first": 0.11
+        },
+        "cyclerendererCpuSeconds": {
+          "n": 5,
+          "p50": 0.834,
+          "min": 0.808,
+          "max": 0.936,
+          "first": 0.823
+        },
+        "hostPeakMiB": {
+          "n": 5,
+          "p50": 298.828,
+          "min": 292.344,
+          "max": 301.188,
+          "first": 298.828
+        },
+        "mainPeakMiB": {
+          "n": 5,
+          "p50": 394.563,
+          "min": 386.203,
+          "max": 402.875,
+          "first": 386.203
+        },
+        "rendererPeakMiB": {
+          "n": 5,
+          "p50": 528.422,
+          "min": 483.438,
+          "max": 530.375,
+          "first": 483.438
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "visibleMs": 337.9,
+          "readyMs": 88.6,
+          "rangeReadyMs": 88.6000000005588,
+          "bytes": 211320,
+          "pages": 3,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.19,
+          "mainCpuSeconds": 0.05,
+          "rendererCpuSeconds": 0.356,
+          "cyclehostCpuSeconds": 0.23,
+          "cyclemainCpuSeconds": 0.11,
+          "cyclerendererCpuSeconds": 0.823,
+          "hostPeakMiB": 298.828,
+          "mainPeakMiB": 386.203,
+          "rendererPeakMiB": 483.438
+        },
+        {
+          "run": 2,
+          "visibleMs": 336.9,
+          "readyMs": 88.8,
+          "rangeReadyMs": 88.79990234412253,
+          "bytes": 211320,
+          "pages": 3,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.09,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.299,
+          "cyclehostCpuSeconds": 0.14,
+          "cyclemainCpuSeconds": 0.06,
+          "cyclerendererCpuSeconds": 0.936,
+          "hostPeakMiB": 299.594,
+          "mainPeakMiB": 389.875,
+          "rendererPeakMiB": 524.828
+        },
+        {
+          "run": 3,
+          "visibleMs": 345.6,
+          "readyMs": 88.7,
+          "rangeReadyMs": 88.70004882849753,
+          "bytes": 211320,
+          "pages": 3,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.1,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.41,
+          "cyclehostCpuSeconds": 0.22,
+          "cyclemainCpuSeconds": 0.07,
+          "cyclerendererCpuSeconds": 0.901,
+          "hostPeakMiB": 301.188,
+          "mainPeakMiB": 394.563,
+          "rendererPeakMiB": 530.375
+        },
+        {
+          "run": 4,
+          "visibleMs": 354.2,
+          "readyMs": 99.4,
+          "rangeReadyMs": 99.39995117206126,
+          "bytes": 211320,
+          "pages": 3,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.11,
+          "mainCpuSeconds": 0.04,
+          "rendererCpuSeconds": 0.277,
+          "cyclehostCpuSeconds": 0.15,
+          "cyclemainCpuSeconds": 0.07,
+          "cyclerendererCpuSeconds": 0.834,
+          "hostPeakMiB": 292.344,
+          "mainPeakMiB": 398.922,
+          "rendererPeakMiB": 530.328
+        },
+        {
+          "run": 5,
+          "visibleMs": 354.7,
+          "readyMs": 98.1,
+          "rangeReadyMs": 98.1000000005588,
+          "bytes": 211320,
+          "pages": 3,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.13,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.338,
+          "cyclehostCpuSeconds": 0.18,
+          "cyclemainCpuSeconds": 0.06,
+          "cyclerendererCpuSeconds": 0.808,
+          "hostPeakMiB": 292.375,
+          "mainPeakMiB": 402.875,
+          "rendererPeakMiB": 528.422
+        }
+      ]
+    },
+    {
+      "name": "merged-tail-1000",
+      "build": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+      "target": {
+        "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+        "name": "Fixture 0006 - 1000 turns - 10000 tools",
+        "turns": 1000,
+        "tools": 10000,
+        "payloadBytes": 46432000,
+        "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"b2f58770-08fb-4c5a-8b58-0e197ab67098\"]"
+      },
+      "edge": {
+        "branchDepth": 0,
+        "restoreFirst": false,
+        "restoreIndex": 0
+      },
+      "metrics": {
+        "visibleMs": {
+          "n": 5,
+          "p50": 453,
+          "min": 444.8,
+          "max": 460.5,
+          "first": 453.1
+        },
+        "readyMs": {
+          "n": 5,
+          "p50": 88.4,
+          "min": 82.4,
+          "max": 92.1,
+          "first": 82.5
+        },
+        "rangeReadyMs": {
+          "n": 5,
+          "p50": 88.4,
+          "min": 82.4,
+          "max": 92.1,
+          "first": 82.5
+        },
+        "bytes": {
+          "n": 5,
+          "p50": 213896,
+          "min": 213896,
+          "max": 213896,
+          "first": 213896
+        },
+        "pages": {
+          "n": 5,
+          "p50": 2,
+          "min": 2,
+          "max": 2,
+          "first": 2
+        },
+        "loadedTurns": {
+          "n": 5,
+          "p50": 8,
+          "min": 8,
+          "max": 8,
+          "first": 8
+        },
+        "firstExpandMs": null,
+        "reopenMs": null,
+        "hiddenNodes": null,
+        "expandedNodes": null,
+        "hostCpuSeconds": {
+          "n": 5,
+          "p50": 0.11,
+          "min": 0.11,
+          "max": 0.12,
+          "first": 0.12
+        },
+        "mainCpuSeconds": {
+          "n": 5,
+          "p50": 0.03,
+          "min": 0.03,
+          "max": 0.05,
+          "first": 0.03
+        },
+        "rendererCpuSeconds": {
+          "n": 5,
+          "p50": 0.411,
+          "min": 0.394,
+          "max": 0.526,
+          "first": 0.431
+        },
+        "cyclehostCpuSeconds": {
+          "n": 5,
+          "p50": 0.16,
+          "min": 0.15,
+          "max": 0.27,
+          "first": 0.19
+        },
+        "cyclemainCpuSeconds": {
+          "n": 5,
+          "p50": 0.07,
+          "min": 0.06,
+          "max": 0.07,
+          "first": 0.07
+        },
+        "cyclerendererCpuSeconds": {
+          "n": 5,
+          "p50": 0.955,
+          "min": 0.917,
+          "max": 0.996,
+          "first": 0.917
+        },
+        "hostPeakMiB": {
+          "n": 5,
+          "p50": 295.891,
+          "min": 295.594,
+          "max": 309.031,
+          "first": 308.359
+        },
+        "mainPeakMiB": {
+          "n": 5,
+          "p50": 394.188,
+          "min": 386.281,
+          "max": 402.391,
+          "first": 386.281
+        },
+        "rendererPeakMiB": {
+          "n": 5,
+          "p50": 515.625,
+          "min": 472.547,
+          "max": 516.453,
+          "first": 472.547
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "visibleMs": 453.1,
+          "readyMs": 82.5,
+          "rangeReadyMs": 82.50004882831126,
+          "bytes": 213896,
+          "pages": 2,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.12,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.431,
+          "cyclehostCpuSeconds": 0.19,
+          "cyclemainCpuSeconds": 0.07,
+          "cyclerendererCpuSeconds": 0.917,
+          "hostPeakMiB": 308.359,
+          "mainPeakMiB": 386.281,
+          "rendererPeakMiB": 472.547
+        },
+        {
+          "run": 2,
+          "visibleMs": 445.8,
+          "readyMs": 82.4,
+          "rangeReadyMs": 82.39990234375,
+          "bytes": 213896,
+          "pages": 2,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.11,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.402,
+          "cyclehostCpuSeconds": 0.15,
+          "cyclemainCpuSeconds": 0.07,
+          "cyclerendererCpuSeconds": 0.996,
+          "hostPeakMiB": 309.031,
+          "mainPeakMiB": 389.484,
+          "rendererPeakMiB": 514.844
+        },
+        {
+          "run": 3,
+          "visibleMs": 444.8,
+          "readyMs": 92.1,
+          "rangeReadyMs": 92.0999511713162,
+          "bytes": 213896,
+          "pages": 2,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.12,
+          "mainCpuSeconds": 0.05,
+          "rendererCpuSeconds": 0.394,
+          "cyclehostCpuSeconds": 0.27,
+          "cyclemainCpuSeconds": 0.07,
+          "cyclerendererCpuSeconds": 0.993,
+          "hostPeakMiB": 295.594,
+          "mainPeakMiB": 394.188,
+          "rendererPeakMiB": 515.688
+        },
+        {
+          "run": 4,
+          "visibleMs": 460.5,
+          "readyMs": 88.4,
+          "rangeReadyMs": 88.40009765606374,
+          "bytes": 213896,
+          "pages": 2,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.11,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.526,
+          "cyclehostCpuSeconds": 0.16,
+          "cyclemainCpuSeconds": 0.06,
+          "cyclerendererCpuSeconds": 0.955,
+          "hostPeakMiB": 295.891,
+          "mainPeakMiB": 398.422,
+          "rendererPeakMiB": 515.625
+        },
+        {
+          "run": 5,
+          "visibleMs": 453,
+          "readyMs": 92,
+          "rangeReadyMs": 92.00004882831126,
+          "bytes": 213896,
+          "pages": 2,
+          "loadedTurns": 8,
+          "hostCpuSeconds": 0.11,
+          "mainCpuSeconds": 0.03,
+          "rendererCpuSeconds": 0.411,
+          "cyclehostCpuSeconds": 0.16,
+          "cyclemainCpuSeconds": 0.06,
+          "cyclerendererCpuSeconds": 0.951,
+          "hostPeakMiB": 295.688,
+          "mainPeakMiB": 402.391,
+          "rendererPeakMiB": 516.453
+        }
+      ]
+    },
+    {
+      "name": "merged-window",
+      "build": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+      "target": {
+        "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+        "name": "Fixture 0006 - 1000 turns - 10000 tools",
+        "turns": 1000,
+        "tools": 10000,
+        "payloadBytes": 46432000,
+        "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"b2f58770-08fb-4c5a-8b58-0e197ab67098\"]"
+      },
+      "edge": {
+        "branchDepth": 0,
+        "restoreFirst": true,
+        "restoreIndex": 507,
+        "anchorPreparationMs": 1093.363875,
+        "anchor": "synthetic-session-0006_t507_turn"
+      },
+      "windowChecks": {
+        "before": 12,
+        "afterDown": 32,
+        "afterUp": 52,
+        "afterLatest": 8
+      },
+      "metrics": {
+        "visibleMs": {
+          "n": 1,
+          "p50": 420.7,
+          "min": 420.7,
+          "max": 420.7,
+          "first": 420.7
+        },
+        "readyMs": {
+          "n": 1,
+          "p50": 113.7,
+          "min": 113.7,
+          "max": 113.7,
+          "first": 113.7
+        },
+        "rangeReadyMs": {
+          "n": 1,
+          "p50": 113.7,
+          "min": 113.7,
+          "max": 113.7,
+          "first": 113.7
+        },
+        "bytes": {
+          "n": 1,
+          "p50": 320844,
+          "min": 320844,
+          "max": 320844,
+          "first": 320844
+        },
+        "pages": {
+          "n": 1,
+          "p50": 3,
+          "min": 3,
+          "max": 3,
+          "first": 3
+        },
+        "loadedTurns": {
+          "n": 1,
+          "p50": 12,
+          "min": 12,
+          "max": 12,
+          "first": 12
+        },
+        "firstExpandMs": null,
+        "reopenMs": null,
+        "hiddenNodes": null,
+        "expandedNodes": null,
+        "hostCpuSeconds": {
+          "n": 1,
+          "p50": 0.14,
+          "min": 0.14,
+          "max": 0.14,
+          "first": 0.14
+        },
+        "mainCpuSeconds": {
+          "n": 1,
+          "p50": 0.1,
+          "min": 0.1,
+          "max": 0.1,
+          "first": 0.1
+        },
+        "rendererCpuSeconds": {
+          "n": 1,
+          "p50": 0.437,
+          "min": 0.437,
+          "max": 0.437,
+          "first": 0.437
+        },
+        "cyclehostCpuSeconds": {
+          "n": 1,
+          "p50": 0.2,
+          "min": 0.2,
+          "max": 0.2,
+          "first": 0.2
+        },
+        "cyclemainCpuSeconds": {
+          "n": 1,
+          "p50": 0.14,
+          "min": 0.14,
+          "max": 0.14,
+          "first": 0.14
+        },
+        "cyclerendererCpuSeconds": {
+          "n": 1,
+          "p50": 0.981,
+          "min": 0.981,
+          "max": 0.981,
+          "first": 0.981
+        },
+        "hostPeakMiB": {
+          "n": 1,
+          "p50": 308.453,
+          "min": 308.453,
+          "max": 308.453,
+          "first": 308.453
+        },
+        "mainPeakMiB": {
+          "n": 1,
+          "p50": 416.531,
+          "min": 416.531,
+          "max": 416.531,
+          "first": 416.531
+        },
+        "rendererPeakMiB": {
+          "n": 1,
+          "p50": 582.109,
+          "min": 582.109,
+          "max": 582.109,
+          "first": 582.109
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "visibleMs": 420.7,
+          "readyMs": 113.7,
+          "rangeReadyMs": 113.699951171875,
+          "bytes": 320844,
+          "pages": 3,
+          "loadedTurns": 12,
+          "hostCpuSeconds": 0.14,
+          "mainCpuSeconds": 0.1,
+          "rendererCpuSeconds": 0.437,
+          "cyclehostCpuSeconds": 0.2,
+          "cyclemainCpuSeconds": 0.14,
+          "cyclerendererCpuSeconds": 0.981,
+          "hostPeakMiB": 308.453,
+          "mainPeakMiB": 416.531,
+          "rendererPeakMiB": 582.109
+        }
+      ]
+    },
+    {
       "name": "pilot-baseline-giant-1000",
       "build": "8d73d4e237609dd784b816181a8e4cc2061a7579;baseline;patch=a298af64906684bcfd494d26a61ae66285a0152d1289db59ad329014aca73443",
       "target": {

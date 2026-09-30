@@ -1,0 +1,9 @@
+{
+  "productCommit": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+  "upstreamCommit": "0aa2707b5fb07c95bc5e3a21080ccb709e438acb",
+  "sourceTree": "f948433b293ae11ac0d0fc51e13eb63eacca1d55",
+  "trackedTreeCleanAtBuild": true,
+  "files": {
+    "Contents/Resources/app.asar": "4c5d7b122f86cbbaf0bd69f04903691078bf5cd0e8d2ce3bc07d2e7119f4021a"
+  }
+}

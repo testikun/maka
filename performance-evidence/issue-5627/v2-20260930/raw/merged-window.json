@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "label": "merged-window",
+  "issue": 5627,
+  "startedAt": "2026-09-30T05:25:07.723Z",
+  "environment": {
+    "commit": "929a30090c17822d4529e7fde995c00ff5e7ecc9",
+    "platform": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M2 Pro",
+    "memoryBytes": 17179869184,
+    "node": "v24.20.0",
+    "electron": "43.4.1",
+    "executable": "/Users/admin/.codex/worktrees/issue-5627-pr/maka/artifacts/issue-5712-v2/packages/merged/mac-arm64/Maka.app/Contents/MacOS/Maka",
+    "renderer": "packaged production build",
+    "host": "real isolated local Host using packaged production composition"
+  },
+  "fixture": {
+    "scenarioFingerprint": "ad15b2eac7da6373497f9321948498e2d909d4ea32f5ae9cc177b96efd17b683",
+    "sessions": 5,
+    "turns": 1104,
+    "tools": 12003,
+    "target": {
+      "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+      "name": "Fixture 0006 - 1000 turns - 10000 tools",
+      "turns": 1000,
+      "tools": 10000,
+      "payloadBytes": 46432000,
+      "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"b2f58770-08fb-4c5a-8b58-0e197ab67098\"]"
+    },
+    "source": {
+      "sessionId": "deb3610e-22c9-42e1-be98-07a98adb60db",
+      "uiSessionId": "[\"dc57e1c52feb88eaec83eb23dc81984a184d576d8dfc4b45439b3af17082d3f5\",\"deb3610e-22c9-42e1-be98-07a98adb60db\"]",
+      "name": "Fixture 0001 - 2 turns - 2 tools",
+      "turnId": "synthetic-session-0001_t1_turn"
+    }
+  },
+  "method": {
+    "runsPerState": 1,
+    "sourceDwellMs": 500,
+    "observeMs": 1500,
+    "resourceWindow": "Entire target -> source -> target cycle plus fixed post-display observation; RSS sampled every 200 ms (sampled peak, not kernel high-water mark).",
+    "streamBytes": 6000,
+    "streamDescription": "A deterministic FakeBackend response emits one text delta about every 45 ms while the target is active.",
+    "milestones": "Renderer performance.now() from pointerdown to selected row, old transcript removal, first target turn, target anchor, and live bubble; stablePaintMs is anchor plus double RAF, not layout stability.",
+    "caveat": "Wall-clock samples run without CPU profiling. A --profile run is diagnostic and must not be mixed into timing medians."
+  },
+  "samples": {
+    "idle": [
+      {
+        "run": 1,
+        "active": false,
+        "clickRoundTripMs": 79,
+        "clickCompletedMs": 68.9,
+        "selectionVisibleMs": 144.1,
+        "oldTranscriptGoneMs": 144.1,
+        "firstTargetTurnVisibleMs": 144.1,
+        "targetAnchorVisibleMs": 144.1,
+        "readyVisibleMs": 144.1,
+        "stablePaintMs": 309.5,
+        "fadeCompletePaintMs": 420.7,
+        "bridgeWrapped": false,
+        "transcriptAttempts": [
+          {
+            "openedMs": 39,
+            "resolvedMs": 144.5,
+            "batches": [
+              {
+                "at": 80.5,
+                "ready": false,
+                "generation": "111524ff-1566-47d8-97f5-924c1b65d99a",
+                "hostEpoch": "9f250460-3d81-40f3-b51d-b6af31a777c4",
+                "deliverySequence": 1,
+                "bytes": 106948,
+                "handledAt": 81.5
+              },
+              {
+                "at": 96.10009765625,
+                "ready": false,
+                "generation": "111524ff-1566-47d8-97f5-924c1b65d99a",
+                "hostEpoch": "9f250460-3d81-40f3-b51d-b6af31a777c4",
+                "deliverySequence": 2,
+                "bytes": 106948,
+                "handledAt": 97
+              },
+              {
+                "at": 112.60009765625,
+                "ready": false,
+                "generation": "111524ff-1566-47d8-97f5-924c1b65d99a",
+                "hostEpoch": "9f250460-3d81-40f3-b51d-b6af31a777c4",
+                "deliverySequence": 3,
+                "bytes": 106948,
+                "handledAt": 113.39990234375
+              },
+              {
+                "at": 113.699951171875,
+                "ready": true,
+                "generation": "111524ff-1566-47d8-97f5-924c1b65d99a",
+                "hostEpoch": "9f250460-3d81-40f3-b51d-b6af31a777c4",
+                "deliverySequence": 4,
+                "bytes": 0,
+                "handledAt": 113.699951171875
+              }
+            ]
+          }
+        ],
+        "transcript": {
+          "openCalledMs": 39,
+          "firstBatchMs": 80.5,
+          "readyBatchMs": 113.7,
+          "readyBatchHandledMs": 113.7,
+          "openResolvedMs": 144.5,
+          "batches": 4,
+          "bytes": 320844,
+          "handlerMs": 2.7,
+          "source": "preload-probe"
+        },
+        "oldTranscriptRemainedAfterSelection": false,
+        "longTasks": [],
+        "resources": {
+          "before": {
+            "at": 1790745915024,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 34722,
+                  "cpuTime": 1.75731
+                },
+                {
+                  "type": "renderer",
+                  "id": 34729,
+                  "cpuTime": 4.95018
+                },
+                {
+                  "type": "GPU",
+                  "id": 34723,
+                  "cpuTime": 1.277149
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 34724,
+                  "cpuTime": 0.052018
+                }
+              ]
+            },
+            "host": "0:01.97 314368",
+            "main": "0:01.76 425568"
+          },
+          "after": {
+            "at": 1790745915497,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 34722,
+                  "cpuTime": 1.859268
+                },
+                {
+                  "type": "renderer",
+                  "id": 34729,
+                  "cpuTime": 5.386878
+                },
+                {
+                  "type": "GPU",
+                  "id": 34723,
+                  "cpuTime": 1.360271
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 34724,
+                  "cpuTime": 0.052018
+                }
+              ]
+            },
+            "host": "0:02.11 315856",
+            "main": "0:01.86 426512"
+          },
+          "cycleBefore": {
+            "at": 1790745914295,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 34722,
+                  "cpuTime": 1.733693
+                },
+                {
+                  "type": "renderer",
+                  "id": 34729,
+                  "cpuTime": 4.688361
+                },
+                {
+                  "type": "GPU",
+                  "id": 34723,
+                  "cpuTime": 1.204535
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 34724,
+                  "cpuTime": 0.052018
+                }
+              ]
+            },
+            "host": "0:01.92 314240",
+            "main": "0:01.73 425296"
+          },
+          "observedAfter": {
+            "at": 1790745917012,
+            "chromium": {
+              "processInfo": [
+                {
+                  "type": "browser",
+                  "id": 34722,
+                  "cpuTime": 1.867093
+                },
+                {
+                  "type": "renderer",
+                  "id": 34729,
+                  "cpuTime": 5.669333
+                },
+                {
+                  "type": "GPU",
+                  "id": 34723,
+                  "cpuTime": 1.469459
+                },
+                {
+                  "type": "network.mojom.NetworkService",
+                  "id": 34724,
+                  "cpuTime": 0.052018
+                }
+              ]
+            },
+            "host": "0:02.12 315856",
+            "main": "0:01.87 426528"
+          },
+          "memorySamples": [
+            {
+              "at": 1790745914508,
+              "rows": "34722 425568\n34729 584880\n34751 314368"
+            },
+            {
+              "at": 1790745914707,
+              "rows": "34722 425568\n34729 585088\n34751 314368"
+            },
+            {
+              "at": 1790745914908,
+              "rows": "34722 425568\n34729 585088\n34751 314368"
+            },
+            {
+              "at": 1790745915108,
+              "rows": "34722 425568\n34729 585456\n34751 314368"
+            },
+            {
+              "at": 1790745915311,
+              "rows": "34722 426512\n34729 585856\n34751 314784"
+            },
+            {
+              "at": 1790745915509,
+              "rows": "34722 426528\n34729 586080\n34751 315856"
+            },
+            {
+              "at": 1790745915710,
+              "rows": "34722 426528\n34729 586320\n34751 315856"
+            },
+            {
+              "at": 1790745915911,
+              "rows": "34722 426528\n34729 586512\n34751 315856"
+            },
+            {
+              "at": 1790745916112,
+              "rows": "34722 426528\n34729 595984\n34751 315856"
+            },
+            {
+              "at": 1790745916322,
+              "rows": "34722 426528\n34729 596032\n34751 315856"
+            },
+            {
+              "at": 1790745916521,
+              "rows": "34722 426528\n34729 596064\n34751 315856"
+            },
+            {
+              "at": 1790745916721,
+              "rows": "34722 426528\n34729 596064\n34751 315856"
+            },
+            {
+              "at": 1790745916921,
+              "rows": "34722 426528\n34729 596080\n34751 315856"
+            }
+          ]
+        },
+        "pages": [
+          {
+            "method": "readOlderPage",
+            "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+            "maxBytes": 131072,
+            "ms": 16.928375000000415,
+            "rows": 172,
+            "hasNext": true
+          },
+          {
+            "method": "readNewerPage",
+            "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+            "maxBytes": 131072,
+            "ms": 13.460458000000472,
+            "rows": 172,
+            "hasNext": true
+          },
+          {
+            "method": "readNewerPage",
+            "sessionId": "b2f58770-08fb-4c5a-8b58-0e197ab67098",
+            "maxBytes": 131072,
+            "ms": 13.318999999999505,
+            "rows": 172,
+            "hasNext": true
+          }
+        ],
+        "anchorViewport": {
+          "visible": true,
+          "offset": -0.0625,
+          "loadedTurns": 12
+        }
+      }
+    ],
+    "active": []
+  },
+  "hostRegistration": {
+    "pid": 34751,
+    "hostEpoch": "9f250460-3d81-40f3-b51d-b6af31a777c4",
+    "state": "ready"
+  },
+  "edge": {
+    "branchDepth": 0,
+    "restoreFirst": true,
+    "restoreIndex": 507,
+    "anchorPreparationMs": 1093.363875,
+    "anchor": "synthetic-session-0006_t507_turn"
+  },
+  "windowChecks": {
+    "before": 12,
+    "afterDown": 32,
+    "afterUp": 52,
+    "afterLatest": 8
+  },
+  "summary": {
+    "idle": {
+      "selectionVisibleMs": {
+        "median": 144.1,
+        "min": 144.1,
+        "max": 144.1
+      },
+      "oldTranscriptGoneMs": {
+        "median": 144.1,
+        "min": 144.1,
+        "max": 144.1
+      },
+      "firstTargetTurnVisibleMs": {
+        "median": 144.1,
+        "min": 144.1,
+        "max": 144.1
+      },
+      "targetAnchorVisibleMs": {
+        "median": 144.1,
+        "min": 144.1,
+        "max": 144.1
+      },
+      "readyVisibleMs": {
+        "median": 144.1,
+        "min": 144.1,
+        "max": 144.1
+      },
+      "stablePaintMs": {
+        "median": 309.5,
+        "min": 309.5,
+        "max": 309.5
+      }
+    },
+    "active": {},
+    "idleStages": {
+      "sampleCount": 1,
+      "totalMedianMs": 309.5,
+      "stages": [
+        {
+          "name": "clickToTranscriptOpen",
+          "medianMs": 39,
+          "percentOfTotal": 12.6
+        },
+        {
+          "name": "openToFirstBatch",
+          "medianMs": 41.5,
+          "percentOfTotal": 13.4
+        },
+        {
+          "name": "firstToReadyBatch",
+          "medianMs": 33.2,
+          "percentOfTotal": 10.7
+        },
+        {
+          "name": "readyBatchAccept",
+          "medianMs": 0,
+          "percentOfTotal": 0
+        },
+        {
+          "name": "readyAcceptedToSelection",
+          "medianMs": 30.4,
+          "percentOfTotal": 9.8
+        },
+        {
+          "name": "selectionToAnchor",
+          "medianMs": 0,
+          "percentOfTotal": 0
+        },
+        {
+          "name": "anchorToStablePaint",
+          "medianMs": 165.4,
+          "percentOfTotal": 53.4
+        }
+      ],
+      "batchCountMedian": 4,
+      "payloadBytesMedian": 320844,
+      "handlerCpuOverlayMedianMs": 2.7,
+      "handlerCpuOverlayPercent": 0.9
+    },
+    "activeStages": null,
+    "activeMinusIdleMedianMs": {}
+  },
+  "completedAt": "2026-09-30T05:25:17.155Z",
+  "ok": true
+}

@@ -19,7 +19,7 @@
 
 # Transcript 极端场景优化 v2：实现与验证
 
-日期：2026-09-30。对应[已评审方案](./DESIGN.zh-CN.md)。本轮实现基线：`8d73d4e237609dd784b816181a8e4cc2061a7579`，交付提交：`79fd458d2`，PR #5712 工作树。
+日期：2026-09-30。对应[已评审方案](./DESIGN.zh-CN.md)。本轮实现基线：`8d73d4e237609dd784b816181a8e4cc2061a7579`，功能提交：`79fd458d2`，合并主分支后的交付提交：`929a30090`，PR #5712 工作树。
 
 ## 实现与取舍
 
@@ -37,7 +37,7 @@
 
 ## 正确性验证
 
-- Desktop 全套 3,066 项、UI 全套 695 项通过。全工作区类型检查和严格架构检查通过。
+- 合并最新主分支 `0aa2707b5` 后，Desktop 全套 3,087 项、UI 全套 697 项通过；全工作区构建、类型检查、严格架构检查（以该主分支为基线，含 121 项规则测试）通过。合并前的功能提交也通过 Desktop 3,066 项、UI 695 项。
 - 新增真实 SQLite 账本集成测试，贯穿生产 Host reader/pager、Client subscription、Main observer/registry 和 Renderer range store。覆盖定点打开、两端补页、嵌套 Turn、完整导出、断线恢复、窗口外新消息落盘、连续定位取消。
 - 旧窗口与完整导出均不误标尾部已读；完整导出不替换阅读窗口；新消息确认和页面发布分别判断，避免把窗口外正文当成发送失败。
 - 实窗在 1,000 Turn 历史的中段刻度（索引 507）打开 12 个 Turn，向下自动扩展为 32 个、向上扩展为 52 个；回到最新后只保留尾部 8 个。恢复后的目标在视口内，偏移约 -0.06 px。
@@ -148,9 +148,11 @@ RSS 受 GC、分配器保留与进程生命周期影响。巨大 Turn 组的 aft
 
 复核包重新做 n=5：最近历史 418.3 ms、1,000 tools 2,017.6 ms、恢复 1,000 Turn 开头 336.3 ms；对应页数、字节与正式 after 完全相同。距离 100 Turn、已有分支、反序与远端回归使用该包。交付代码最后增加“已有完整历史直接导出”的快路径，并通过全量测试；它不参与上述切回样本。
 
-正式候选 patch SHA-256 为 `dd9eb13c84eacc4ed3f2d22ca61ea7a8e75c64e775f6dadc5786543571080ed2`，复核候选为 `5c1dde313a8fc4290f5d88400de80cf0c7266f39512a8f7d395784c49b333341`。两者的源文件哈希和精确差异均保留。最终交付 `79fd458d2` 重新打包，逐文件核对构建输入与 Git 提交一致，并再次通过中段定位、向下/向上滚动自动补页和回到最新的实窗校验（12 → 32 → 52 → 8 个 Turn）。这次单次交付烟测不加入正式性能分布。
+正式候选 patch SHA-256 为 `dd9eb13c84eacc4ed3f2d22ca61ea7a8e75c64e775f6dadc5786543571080ed2`，复核候选为 `5c1dde313a8fc4290f5d88400de80cf0c7266f39512a8f7d395784c49b333341`。两者的源文件哈希和精确差异均保留。功能提交 `79fd458d2` 重新打包，逐文件核对构建输入与 Git 提交一致，并再次通过中段定位、向下/向上滚动自动补页和回到最新的实窗校验（12 → 32 → 52 → 8 个 Turn）。这次单次烟测不加入正式性能分布。
 
 首次可输入时还执行一次实窗键入校验：9 个字符完整保留，仍选中原目标会话，发送按钮可用。首字符至双 RAF 约 18.8 ms，全部字符至双 RAF 约 75.7 ms。这是输入完整性烟测，不是 B 场景“启动到可以输入”的统计分布。
+
+交付前主分支新增会话 UI 读取边界重构，产生两处合并冲突。采用上游的当前会话错误选择器，保留本轮范围与翻页逻辑，并重新生成架构统计；严格对比上游未增加壳层债务。合并提交 `929a30090` 全量构建、测试后重新打包，每类 n=5 复核：最近历史 453.0 ms、1,000 tools 2,188.1 ms、恢复开头 345.6 ms。双向滚动再次通过 12 → 32 → 52 → 8 个 Turn 的断言，9 字符输入完整、会话正确、发送按钮可用。这些是最新交付包的独立复核，未混入此前 n=50 分布；包的源码树和 `app.asar` 哈希另存。
 
 ### 四组消融
 
@@ -195,6 +197,6 @@ RSS 受 GC、分配器保留与进程生命周期影响。巨大 Turn 组的 aft
 
 ## 数据与复现
 
-[复现步骤](./REPRODUCE.md)、[逐样本统计](./summary.json)、[原始报告](./raw/)、[排除记录](./excluded/)、[Host 归因](./host-attribution.json)和[正确性及删除消融输出](./validation.json)随本报告保存。构建身份分为[正式候选](./build-identity.json)、[复核候选](./verification-build-identity.json)和[最终交付](./delivery-build-identity.json)。
+[复现步骤](./REPRODUCE.md)、[逐样本统计](./summary.json)、[原始报告](./raw/)、[排除记录](./excluded/)、[Host 归因](./host-attribution.json)和[功能提交的正确性及删除消融输出](./validation.json)随本报告保存。构建身份分为[正式候选](./build-identity.json)、[复核候选](./verification-build-identity.json)、[功能提交](./delivery-build-identity.json)及[合并后交付](./merged-build-identity.json)。[合并后全套验证](./merged-validation.json)和 `raw/merged-*` 是交付提交的独立复核。
 
-[中段恢复截图](./screenshots/prepared-anchor.png)、[双向滚动后截图](./screenshots/bidirectional-window.png)、[回到最新截图](./screenshots/returned-to-latest.png)。
+功能提交的[中段恢复截图](./screenshots/prepared-anchor.png)、[双向滚动后截图](./screenshots/bidirectional-window.png)、[回到最新截图](./screenshots/returned-to-latest.png)随报告保留；合并后交付再次通过同样的窗口断言，见[原始记录](./raw/merged-window.json)。
